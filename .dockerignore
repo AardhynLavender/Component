@@ -1,0 +1,11 @@
+editor/node_modules
+editor/dist
+editor/public
+editor/src/modules
+.git
+npm-debug.log
+.coverage
+.coverage.*
+.env
+*.md
+Dockerfile
