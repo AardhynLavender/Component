@@ -2,6 +2,8 @@
 
 > Aardhyn Lavender 2022-2023
 
+A visual programming editor and game engine.
+
 ## Installation
 
 ```bash
