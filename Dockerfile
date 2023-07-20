@@ -1,15 +1,20 @@
 FROM emscripten/emsdk:latest
-WORKDIR /component
+WORKDIR /app
+COPY Makefile .
 
-RUN apt update && apt upgrade 
-
+# install dependencies
 COPY editor/package-lock.json editor/package.json editor/
-RUN cd editor && npm ci
+RUN make install-editor
 
-COPY . .
+# build core module
+COPY core core
 RUN make build-core
+
+# build editor module
+COPY editor editor/
 RUN make build-editor
 
 EXPOSE $CLIENT_PORT
+
 RUN echo "cd editor && npm run dev" > run.sh
 ENTRYPOINT ["sh", "run.sh"]

@@ -1,3 +1,5 @@
+.PHONY: run build start stop reload clean restart
+
 # https://emscripten.org/docs/optimizing/Optimizing-Code.html
 no_optimization = -O0 # use development builds
 low_optimization = -O1
@@ -10,6 +12,32 @@ container_name = component_container
 port = 5000
 optimization_level = $(no_optimization)
 cpp_std = c++20
+
+run:
+	docker compose up
+
+build: 
+	docker compose build
+
+start:
+	docker compose up
+
+stop:
+	docker compose down
+
+reload:
+	make stop \
+		&& make run
+
+clean:
+	docker compose down \
+		--rmi all \
+		--remove-orphans \
+
+restart:
+	make clean \
+		&& make build \
+		&& make run
 
 build-core: core
 	mkdir -p editor/src/modules
@@ -27,27 +55,23 @@ build-core: core
 	mkdir -p editor/public
 	mv editor/src/modules/core.wasm editor/public/core.wasm
 
+install-editor: editor/package.json
+	cd editor \
+		&& npm ci
+
 build-editor: editor
-	cd editor;
-	npm run build;
+	cd editor \
+		&& npm ci \
+		&& npm run build
 
-build-container: .
-	if [[ `docker image inspect $(image_name) --format='found' 2> /dev/null` == 'found' ]]; then
-		docker rmi $(image_name);
-	fi
-	docker build -t $(image_name) .
-
-delete-container:
-	if [[ `docker container inspect $(container_name) --format='found' 2> /dev/null` == 'found' ]]; then
-		docker stop $(container_name);
-	fi
-
-run-dev: editor
-	cd editor && npm run dev
+run-editor: editor
+	cd editor \
+		&& npm run dev
 
 clean-core: core
-	rm editor/public/core.wasm editor/src/modules/core.mjs;
+	rm editor/public/core.wasm \
+		editor/src/modules/core.mjs;
 
 clean-editor: editor
-	cd editor;
-	rm dist -rf;
+	cd editor \
+		&& rm dist -rf;

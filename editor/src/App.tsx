@@ -31,14 +31,12 @@ export default function App() {
   };
   useEffect(() => {
     const program = localStorage.getItem(LOCAL_STORAGE_KEY); // load from local storage for now...
-    console.log('program is', program);
     loadAst(program ?? JSON.stringify(BLANK_PROGRAM));
   }, []);
 
   // update local state when `ast` in store updates
   useEffect(() => {
     const ast = JSON.stringify(program, null, 2);
-    console.log(ast);
     setAstString(ast);
 
     localStorage.setItem(LOCAL_STORAGE_KEY, ast); // save to local storage for now...

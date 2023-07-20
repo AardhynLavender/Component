@@ -1,0 +1,9 @@
+version: "2"
+services:
+  component:
+    container_name: app
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}"

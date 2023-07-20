@@ -1,113 +1,58 @@
 # Component
 
-Aardhyn Lavender 2022-2023
+> Aardhyn Lavender 2022-2023
 
-> Requires just `Docker` for containerized builds
+## Installation
 
-> Requires `GNU Make`, `Node`, and `Emscripten` for local non-containerized builds
-
-## Abstract
-
+```bash
+git clone https://github.com/AardhynLavender/Component
+cd Component
 ```
 
+## Configuration
+
+Create the `.env` file.
+
+```bash
+cp template.env .env
+vim .env
 ```
 
-## **Component** Editor
+The port default is `4096`.
 
+> view the [`template.env`](./template.env) for more information.
+
+## Execution
+
+> Requires [`GNU Make`](https://www.gnu.org/software/make/) (agnostic build tool) and [`Docker`](https://docs.docker.com/?_gl=1*1dpf1tn*_ga*ODY2NDcwMzM5LjE2NjgwMjM2NDE.*_ga_XJWPQMJYHQ*MTY4OTg1MTQwMC40Mi4xLjE2ODk4NTE0MDAuNjAuMC4w) (container management).
+
+Build and run everything in a docker container.
+
+```bash
+make
 ```
 
+> View [`http://localhost:4096`](`http://localhost:4096`) in a web browser.
+
+Remove the container and image when finished.
+
+```bash
+make clean
 ```
 
-### Installation
+> View the [`Makefile`](./Makefile) for more specific tasks.
 
+#### non-containerized build
+
+> Requires [`GNU Make`](https://www.gnu.org/software/make/) (build tool), [`Node`](https://nodejs.org/en/docs) (Javascript Runtime), and [`Emscripten`](https://emscripten.org/docs/introducing_emscripten/index.html) (C and C++ WebAssembly compiler toolchain based on LLVM/Clang)
+
+```bash
+make install-editor # installs editor dependencies
+make build-core # compiles core into wasm
+make build-editor # builds the editor ( depends on core )
+make run-editor # run on the configured port
 ```
 
-```
+## License
 
-### Configuration
-
-```
-
-```
-
-### Execution
-
-```
-
-```
-
-### Documentation
-
-```
-
-```
-
-### Quality Assurance
-
-```
-
-```
-
-### Deployment
-
-```
-
-```
-
-## **Component** Core
-
-### Installation
-
-```
-
-```
-
-### Compilation
-
-```
-
-```
-
-### Configuration
-
-```
-
-```
-
-### Execution
-
-```
-
-```
-
-### Documentation
-
-```
-
-```
-
-### Quality Assurance
-
-```
-
-```
-
-## Contribution
-
-### Issues + Project Board
-
-```
-
-```
-
-### Forking + Pull Requests
-
-```
-
-```
-
-## Licence
-
-```
-
-```
+This software uses the [MIT License](LICENSE.md)
