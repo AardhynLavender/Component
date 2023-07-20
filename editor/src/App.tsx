@@ -1,46 +1,30 @@
 import CoreModuleConsumer from 'consumers/CoreModuleConsumer';
 import ProgramCanvas from 'routes/ProgramCanvas';
 import { s } from 'theme/stitches.config';
-import { useEffect, useState } from 'react';
-import useComponentStore from './structures/program/store';
+import { ChangeEvent } from 'react';
 import { Drag } from './util/Drag';
 import ComponentList from './routes/ComponentList';
-import { BLANK_PROGRAM, LOCAL_STORAGE_KEY } from 'constants/program';
-import { Program } from 'structures/program';
+import useProgram from 'hooks/useProgram';
+import { CoreApi } from 'types';
 
 export default function App() {
-  const [astString, setAstString] = useState<string>();
-  const [error, setError] = useState(false);
-
   Drag.useBodyDrop();
 
-  const [program, loadProgram] = useComponentStore((state) => [
-    state.program,
-    state.setProgram,
-  ]);
+  const { astString, program, error, loadAst } = useProgram();
 
-  // load test program on mount
-  const loadAst = (json: string) => {
-    setAstString(json); // update local state regardless successful parse
-    parseAst(json)
-      .then((program) => {
-        loadProgram(program); // load program if parse is successful
-        setError(false);
-      })
-      .catch(() => setError(true)); // invalid json
+  const handleRun = (core: CoreApi) => {
+    core.Parse(JSON.stringify(program?.ast));
   };
-  useEffect(() => {
-    const program = localStorage.getItem(LOCAL_STORAGE_KEY); // load from local storage for now...
-    loadAst(program ?? JSON.stringify(BLANK_PROGRAM));
-  }, []);
 
-  // update local state when `ast` in store updates
-  useEffect(() => {
-    const ast = JSON.stringify(program, null, 2);
-    setAstString(ast);
+  const handleClear = () => {
+    const stdout = document.getElementById('component:stdout');
+    if (stdout) stdout.innerHTML = '';
+    else throw new Error('stdout element not found');
+  };
 
-    localStorage.setItem(LOCAL_STORAGE_KEY, ast); // save to local storage for now...
-  }, [program?.ast]);
+  const handleLoad = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    loadAst(e.target.value);
+  };
 
   return (
     <div className="App">
@@ -64,23 +48,8 @@ export default function App() {
                   }}
                 />
                 <s.div css={{ p: 16, d: 'flex', gap: 16 }}>
-                  <button
-                    onClick={() => {
-                      core.Parse(JSON.stringify(program?.ast));
-                    }}
-                  >
-                    Run
-                  </button>
-                  <button
-                    onClick={() => {
-                      const stdout =
-                        document.getElementById('component:stdout');
-                      if (stdout) stdout.innerHTML = '';
-                      else throw new Error('stdout element not found');
-                    }}
-                  >
-                    Clear output
-                  </button>
+                  <button onClick={() => handleRun(core)}>Run</button>
+                  <button onClick={handleClear}>Clear output</button>
                 </s.div>
               </s.div>
               <s.textarea
@@ -88,7 +57,7 @@ export default function App() {
                 rows={40}
                 css={{ w: '100%', h: '100%', color: error ? 'red' : 'initial' }}
                 value={astString}
-                onChange={(e) => loadAst(e.target.value)}
+                onChange={handleLoad}
               />
               <ComponentList />
               <div
@@ -110,14 +79,4 @@ export default function App() {
       />
     </div>
   );
-}
-
-function parseAst(jsonAst: string) {
-  return new Promise<Program>((resolve, reject) => {
-    try {
-      resolve(JSON.parse(jsonAst));
-    } catch (e) {
-      reject(e);
-    }
-  });
 }
