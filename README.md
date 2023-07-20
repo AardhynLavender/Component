@@ -2,7 +2,7 @@
 
 Aardhyn Lavender 2022-2023
 
-> Requires `Docker` for containerized builds
+> Requires just `Docker` for containerized builds
 
 > Requires `GNU Make`, `Node`, and `Emscripten` for local non-containerized builds
 
