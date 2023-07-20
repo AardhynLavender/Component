@@ -1,3 +1,9 @@
+# vsc
+.vscode
+
+# Webstorm
+.idea
+
 # `Component` specific files
 editor/src/modules
 
