@@ -1,7 +1,7 @@
-import { CoreModuleType } from "types";
-import useWebAsembly from "./useWebAssembly";
-import LoadModule from "modules/core.mjs";
+import { CoreApi } from 'types';
+import useWebAssembly from './useWebAssembly';
+import LoadModule from 'modules/core.mjs';
 
 export default function useLoadCoreModule() {
-   return useWebAsembly<CoreModuleType>(LoadModule);
+  return useWebAssembly<CoreApi>(LoadModule);
 }

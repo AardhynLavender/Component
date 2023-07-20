@@ -1,16 +1,23 @@
-import {createContext, ReactElement} from "react";
-import { CoreModuleType } from "types";
-import useLoadCoreModule from "hooks/useLoadCoreModule";
-import {GenericModule} from "hooks/useWebAssembly";
+import { createContext, ReactElement } from 'react';
+import { CoreApi } from 'types';
+import useLoadCoreModule from 'hooks/useLoadCoreModule';
+import { GenericModule } from 'hooks/useWebAssembly';
 
-const initalState: GenericModule<CoreModuleType> = { module: null, error: new Error("No `Core Module` Provider!") };
+const initalState: GenericModule<CoreApi> = {
+  module: null,
+  error: new Error('No `Core Module` Provider!'),
+};
 
-export const CoreContext = createContext<GenericModule<CoreModuleType>>(initalState);
+export const CoreContext = createContext<GenericModule<CoreApi>>(initalState);
 
-export function CoreModuleProvider({ children } : { children: ReactElement | ReactElement[] | undefined} ) {
-    const coreModule = useLoadCoreModule();
+export function CoreModuleProvider({
+  children,
+}: {
+  children: ReactElement | ReactElement[] | undefined;
+}) {
+  const coreModule = useLoadCoreModule();
 
-    return <CoreContext.Provider value={coreModule}>
-        {children}
-    </CoreContext.Provider>;
+  return (
+    <CoreContext.Provider value={coreModule}>{children}</CoreContext.Provider>
+  );
 }
