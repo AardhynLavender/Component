@@ -1,10 +1,9 @@
 import { Drag } from 'util/Drag';
-import { s } from 'theme/stitches.config';
 import { ReactElement, useState } from 'react';
-import { Component, Variable } from 'types';
+import { Variable } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
-import { useMutateComponent } from '../../structures/program/store';
+import { useMutateComponent } from 'structures/program/store';
 
 export function VariableExpression({
   expression,

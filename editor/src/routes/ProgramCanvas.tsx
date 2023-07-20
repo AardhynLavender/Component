@@ -1,6 +1,6 @@
 import { styled, CSS } from 'theme/stitches.config';
 import useComponentStore from 'structures/program/store';
-import GenericBlockSet from '../components/blocks/BlockSet';
+import GenericBlockSet from 'components/blocks/BlockSet';
 
 export default function ProgramCanvas({ css }: { css?: CSS }) {
   const [program] = useComponentStore((state) => [state.program]);

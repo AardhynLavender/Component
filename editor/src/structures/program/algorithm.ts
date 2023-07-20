@@ -1,5 +1,5 @@
 import { Emplacement, EmplacementAction, Mutation } from './types';
-import { Block } from 'types'; // shallow copy state;
+import { Block } from 'types';
 import { Expression } from 'components/componentTypes';
 import produce from 'immer';
 import { IsBlock, IsCondition, IsLiteral, IsVariable } from 'types/predicates';

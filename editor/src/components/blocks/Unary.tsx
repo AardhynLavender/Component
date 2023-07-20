@@ -1,5 +1,5 @@
-import { Drag } from 'util/Drag';
 import { ReactElement } from 'react';
+import { Drag } from 'util/Drag';
 import { UnaryOperation } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';

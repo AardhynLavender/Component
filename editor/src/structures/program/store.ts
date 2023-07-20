@@ -3,7 +3,7 @@ import produce from 'immer';
 import { Component } from 'types';
 import { algorithm } from './algorithm';
 import { EmplacementAction, Mutation, Program } from './types';
-import { BLANK_PROGRAM } from '../../constants/program';
+import { BLANK_PROGRAM } from 'constants/program';
 
 type ProgramStore = {
   /**

@@ -2,7 +2,7 @@ import { s } from 'theme/stitches.config';
 import { ComponentType } from 'types';
 import { blockTypes, conditions, operators } from 'components/componentTypes';
 import { CreateComponent } from 'util/components';
-import { GetJsxComponent } from '../components/blocks/generic';
+import { GetJsxComponent } from 'components/blocks/generic';
 
 const ComponentCategories = {
   blocks: blockTypes,

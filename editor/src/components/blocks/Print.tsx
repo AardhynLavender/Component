@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
 import { Print, IsLiteral } from 'types';
-import { LiteralExpression } from './Literal';
 import { BlockRoot, ExpressionDropzone } from './generic';
+import { LiteralExpression } from './Literal';
 import { VariableExpression } from './Variable';
 import { Drag } from 'util/Drag';
-import { IsVariable } from '../../types/predicates';
+import { IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 
 export const MIN_PRINT_WIDTH = 48;

@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, ReactElement } from 'react';
+import { HTMLAttributes, ReactElement } from 'react';
 import useCoreModule from 'hooks/useCoreModule';
 import { CoreApi } from 'types';
 

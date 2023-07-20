@@ -1,5 +1,5 @@
-import { s, styled } from 'theme/stitches.config';
-import { forwardRef, ReactElement, useEffect, useRef, useState } from 'react';
+import { s } from 'theme/stitches.config';
+import { ReactElement, useState } from 'react';
 import { useMutateComponent } from 'structures/program';
 import { Literal } from 'types';
 import { ExpressionDropzone } from './generic';

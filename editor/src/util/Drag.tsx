@@ -4,16 +4,18 @@ import {
   CSSProperties,
   ReactNode,
   useMemo,
-  forwardRef,
 } from 'react';
-import { ConnectDropTarget, useDrag, useDragLayer, useDrop } from 'react-dnd';
+import { useDrag, useDragLayer, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { Component } from 'types';
-import { EmplacementAction } from 'structures/program/types';
 import { CSS, keyframes, s, styled } from 'theme/stitches.config';
 import { GetJsxComponent } from 'components/blocks';
-import { useRemoveComponent } from '../structures/program/store';
-import { useAddComponent, useMoveComponent } from '../structures/program/store';
+import { EmplacementAction } from 'structures/program/types';
+import {
+  useRemoveComponent,
+  useAddComponent,
+  useMoveComponent,
+} from 'structures/program/store';
 
 type DropAction = 'move' | 'copy';
 type DragItem = { component: Component; action: DropAction };

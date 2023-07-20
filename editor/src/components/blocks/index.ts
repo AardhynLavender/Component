@@ -1,6 +1,6 @@
 export * from './generic';
 export * from './Branch';
-export * from '../expressions/Condition';
+export * from 'components/expressions/Condition';
 export * from './Definition';
 export * from './Literal';
 export * from './Repeat';

@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { BlockRoot } from './generic';
 
 export function ClearBlock({
