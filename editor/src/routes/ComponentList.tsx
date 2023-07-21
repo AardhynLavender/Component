@@ -3,6 +3,8 @@ import { ComponentType } from 'types';
 import { blockTypes, conditions, operators } from 'components/componentTypes';
 import { CreateComponent } from 'util/components';
 import { GetJsxComponent } from 'components/blocks/generic';
+import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
+import DragHandle from 'ui/DragHandle';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -13,24 +15,33 @@ const ComponentCategories = {
 type ComponentCategory = keyof typeof ComponentCategories;
 
 export default function ComponentList() {
-  const categories = [];
+  const { bind, width, rangeCheck } = useDragPanePrimitive('left', {
+    minWidth: 256,
+    maxWidth: 512,
+  });
+
   return (
-    <s.div css={{ p: 8, height: '100%', overflowY: 'auto' }}>
-      <h2>Component List</h2>
-      <s.div
-        css={{
-          d: 'flex',
-          fd: 'column',
-          gap: 32,
-        }}
-      >
-        {Object.entries(ComponentCategories).map(([category, types]) => (
-          <ComponentListCategory
-            key={category}
-            category={category as ComponentCategory}
-            components={types}
-          />
-        ))}
+    <s.div
+      css={{
+        p: 8,
+        width,
+        overflowY: 'auto',
+        pos: 'relative',
+        ...rangeCheck,
+      }}
+    >
+      <s.div css={{ h: '100%', overflowY: 'auto' }}>
+        <h2>Component List</h2>
+        <s.div css={{ d: 'flex', fd: 'column', gap: 32 }}>
+          {Object.entries(ComponentCategories).map(([category, types]) => (
+            <ComponentListCategory
+              key={category}
+              category={category as ComponentCategory}
+              components={types}
+            />
+          ))}
+        </s.div>
+        <DragHandle {...bind()} size={4} anchor="left" />
       </s.div>
     </s.div>
   );
@@ -44,13 +55,7 @@ function ComponentListCategory({
   components: readonly ComponentType[];
 }) {
   return (
-    <s.div
-      css={{
-        d: 'flex',
-        fd: 'column',
-        gap: 8,
-      }}
-    >
+    <s.div css={{ d: 'flex', fd: 'column', gap: 8 }}>
       <h3>{category[0].toUpperCase() + category.slice(1)}</h3>
       <s.div
         css={{

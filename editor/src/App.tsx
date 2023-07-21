@@ -34,9 +34,11 @@ export default function App() {
             <s.div
               css={{
                 display: 'grid',
-                h: '100vh',
-                w: '100vw',
-                gridTemplateColumns: '1fr 1fr 1fr',
+                maxH: '100vh',
+                minH: '100vh',
+                maxW: '100vw',
+                minW: '100vw',
+                gridTemplateColumns: '1fr 1fr auto',
                 gridTemplateRows: '2fr 1fr',
               }}
             >
