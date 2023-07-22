@@ -1,15 +1,12 @@
 import CoreModuleConsumer from 'consumers/CoreModuleConsumer';
-import Main from 'routes/main/ProgramCanvas';
-import { s } from 'theme/stitches.config';
-import { ChangeEvent } from 'react';
 import { Drag } from './util/Drag';
-import ComponentList from './routes/ComponentList';
-import useProgram from 'hooks/useProgram';
-import { CoreApi } from 'types';
 import Layout from 'routes/Layout';
+import { useGlobalStyles } from './theme/stitches.config';
 
 export default function App() {
   Drag.useBodyDrop();
+
+  useGlobalStyles();
 
   return (
     <div className="App">

@@ -17,15 +17,25 @@ const config = createStitches({
   },
   theme: {
     colors: {
+      text: '#24292e',
       primary: '#117dff',
+      primary2: '#0f69d5',
       onPrimary: '#fff',
-      primary2: '#117dff',
       tonal: '#576069',
       tonal2: '#24292e',
       outline: '#d0d7de',
       background: '#fff',
       background2: '#f6f8fa',
       background3: '#e1e4e8',
+      error: '#f2e1e3',
+      onError: '#e35557',
+    },
+    fontWeights: {
+      thin: 300,
+      light: 400,
+      normal: 500,
+      medium: 600,
+      bold: 700,
     },
   },
   utils: {
@@ -103,7 +113,26 @@ const config = createStitches({
   },
 });
 
-export const { styled, css, keyframes } = config;
+export const { styled, css, keyframes, globalCss } = config;
+
+const globalStyles = globalCss({
+  '*': {
+    boxSizing: 'border-box',
+    m: 0,
+    p: 0,
+  },
+  body: {
+    color: '$text',
+    lineHeight: 1.5,
+    '-webkit-text-size-adjust': '100%',
+    fontFamily:
+      "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+  },
+});
+
+export function useGlobalStyles() {
+  globalStyles();
+}
 
 export type CSS = StitchesCSS<typeof config>;
 
