@@ -3,6 +3,7 @@ import { ComponentType } from 'types';
 import { blockTypes, conditions, operators } from 'components/componentTypes';
 import { CreateComponent } from 'util/components';
 import { GetJsxComponent } from 'components/blocks/generic';
+import useComponentStore from 'structures/program/store';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -13,6 +14,12 @@ const ComponentCategories = {
 type ComponentCategory = keyof typeof ComponentCategories;
 
 export default function ComponentList() {
+  // so... when you copy a component out of the list, I need the uuid's to refresh
+  // and the simplest is to force <ComponentList /> to re-render when `program` changes.
+  // Achieved by reducing program state from the component store so zustand creates a
+  // signal. This is a bit of a  hack, but it'll do for now.
+  const _ = useComponentStore((store) => store.program);
+
   return (
     <s.div
       css={{
@@ -52,7 +59,7 @@ function ComponentListCategory({
           gap: 8,
         }}
       >
-        {components.map((type, index) => {
+        {components.map((type) => {
           const component = CreateComponent(type);
           const parent = undefined;
           const preview = true;
