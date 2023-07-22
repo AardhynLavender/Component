@@ -5,5 +5,15 @@ export const AST_VERSION = '0.0.1';
 export const BLANK_PROGRAM = {
   version: AST_VERSION,
   name: 'Untitled Program',
-  ast: [],
+  ast: [
+    {
+      id: '1',
+      type: 'print',
+      expression: {
+        id: '2',
+        type: 'literal',
+        expression: 'Hello, World!',
+      },
+    },
+  ],
 };
