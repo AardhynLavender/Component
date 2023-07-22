@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -6,6 +7,8 @@
 EM_JS(void, JS_ClientPrint, (const char* message), { document.getElementById("component:stdout").innerHTML += "<code>" + UTF8ToString(message) + "</code>"; });
 EM_JS(void, JS_ClientClear, (), { document.getElementById("component:stdout").innerHTML = ""; });
 #endif // __EMSCRIPTEN__
+
+#include "Json.hpp"
 
 // Log a message to the console
 template<typename T>
