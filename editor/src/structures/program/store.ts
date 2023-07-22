@@ -4,6 +4,12 @@ import { Component } from 'types';
 import { algorithm } from './algorithm';
 import { EmplacementAction, Mutation, Program } from './types';
 import { BLANK_PROGRAM } from 'constants/program';
+import { LOCAL_STORAGE_KEY } from '../../constants/program';
+import { ReadPersistent } from 'hooks/usePersistent';
+
+// read any existing program from disk
+const defaultProgram =
+  ReadPersistent<Program>(LOCAL_STORAGE_KEY) ?? BLANK_PROGRAM;
 
 type ProgramStore = {
   /**
@@ -56,7 +62,7 @@ type ProgramStore = {
 };
 
 const useComponentStore = create<ProgramStore>((set, get) => ({
-  program: BLANK_PROGRAM,
+  program: defaultProgram,
 
   setProgram: (program) => set((state) => (state = { ...state, program })),
 
