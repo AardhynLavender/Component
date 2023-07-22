@@ -54,6 +54,7 @@ namespace Block {
     if constexpr (variableA) {
       block["expression"][LEFT]["type"] = "variable";
       block["expression"][LEFT]["key"] = a; // if `variable`, this will be the key
+      block["expression"][LEFT]["primitive"] = "number"; // todo: not a good assumption... true in all current cases, but not future-proof
     } else {
       block["expression"][LEFT]["type"] = "literal";
       block["expression"][LEFT]["expression"] = a; // if `variable`, this will be the key
@@ -65,6 +66,7 @@ namespace Block {
     } else {
       block["expression"][RIGHT]["type"] = "literal";
       block["expression"][RIGHT]["expression"] = b; // if `variable`, this will be the key
+      block["expression"][RIGHT]["primitive"] = "number"; // todo: not a good assumption... true in all current cases, but not future-proof
     }
 
     return block;
@@ -86,7 +88,6 @@ namespace Block {
       block["expression"]["type"] = "literal";
       block["expression"]["value"] = value;
     }
-
 
     return block;
   }

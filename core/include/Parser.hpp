@@ -120,6 +120,9 @@ private:
         else if (left["type"] == "variable") {
             const auto primitive = left["primitive"];
             if (primitive == "string") lvalue = ParseVariable<std::string>(left);
+            else if (primitive == "number") lvalue = ParseVariable<int>(left);
+            else if (primitive == "boolean") lvalue = ParseVariable<bool>(left);
+            else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
         }
         else lvalue = ParseConditional(left);
 
@@ -132,6 +135,9 @@ private:
             else if (right["type"] == "variable") {
                 const auto primitive = right["primitive"];
                 if (primitive == "string") rvalue = ParseVariable<std::string>(right);
+                else if (primitive == "number") lvalue = ParseVariable<int>(right);
+                else if (primitive == "boolean") lvalue = ParseVariable<bool>(right);
+                else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
             }
             else rvalue = ParseConditional(right);
 
