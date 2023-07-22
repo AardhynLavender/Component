@@ -56,7 +56,7 @@ export function DefinitionBlock({
       css={{
         fd: 'row',
         items: 'center',
-        outline: error ? '2px solid #c00' : 'none',
+        outline: error ? '2px solid $error' : 'none',
       }}
     >
       <PrimitiveDropdown
