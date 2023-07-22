@@ -11,6 +11,7 @@ export default function useProgram() {
     state.program,
     state.setProgram,
   ]);
+
   // load test program on mount
   const loadAst = (json: string) => {
     setAstString(json); // update local state regardless successful parse

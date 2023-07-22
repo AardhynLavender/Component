@@ -2,7 +2,7 @@ import { styled, CSS } from 'theme/stitches.config';
 import useComponentStore from 'structures/program/store';
 import GenericBlockSet from 'components/blocks/BlockSet';
 
-export default function ProgramCanvas({ css }: { css?: CSS }) {
+export default function Main({ css }: { css?: CSS }) {
   const [program] = useComponentStore((state) => [state.program]);
   if (!program) return null;
 
@@ -18,4 +18,4 @@ export default function ProgramCanvas({ css }: { css?: CSS }) {
   );
 }
 
-const Root = styled('div', {});
+const Root = styled('section', { p: 8 });

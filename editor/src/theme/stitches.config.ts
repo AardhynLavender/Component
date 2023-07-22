@@ -4,6 +4,8 @@ import {
   CSSProperties as CssProp,
 } from '@stitches/react';
 
+// See https://stitches.dev/docs/introduction
+
 const config = createStitches({
   media: {
     // from `Tailwind`
@@ -13,7 +15,19 @@ const config = createStitches({
     xl: '(min-width: 1280px)',
     xxl: '(min-width: 1536px)',
   },
-  theme: {},
+  theme: {
+    colors: {
+      primary: '#117dff',
+      onPrimary: '#fff',
+      primary2: '#117dff',
+      tonal: '#576069',
+      tonal2: '#24292e',
+      outline: '#d0d7de',
+      background: '#fff',
+      background2: '#f6f8fa',
+      background3: '#e1e4e8',
+    },
+  },
   utils: {
     // Layout
 
@@ -27,6 +41,8 @@ const config = createStitches({
     direction: (flexDirection: CssProp['flexDirection']) => ({
       flexDirection,
     }),
+
+    z: (zIndex: CssProp['zIndex']) => ({ zIndex }),
 
     m: (margin: CssProp['margin']) => ({ margin }),
     mt: (marginTop: CssProp['marginTop']) => ({ marginTop }),
@@ -71,10 +87,19 @@ const config = createStitches({
       backgroundColor,
     }),
     c: (color: CssProp['color']) => ({ color }),
+
+    // Border
+
     r: (borderRadius: CssProp['borderRadius']) => ({ borderRadius }),
     b: (border: CssProp['border']) => ({ border }),
+    bt: (borderTop: CssProp['borderTop']) => ({ borderTop }),
+    bb: (borderBottom: CssProp['borderBottom']) => ({ borderBottom }),
+    bl: (borderLeft: CssProp['borderLeft']) => ({ borderLeft }),
+    br: (borderRight: CssProp['borderRight']) => ({ borderRight }),
+
+    // Shadow
+
     bs: (boxShadow: CssProp['boxShadow']) => ({ boxShadow }),
-    z: (zIndex: CssProp['zIndex']) => ({ zIndex }),
   },
 });
 
@@ -106,6 +131,7 @@ export const s = {
   ol: styled('ol'),
   p: styled('p'),
   pre: styled('pre'),
+  section: styled('section'),
   select: styled('select'),
   span: styled('span'),
   sup: styled('sup'),
