@@ -54,7 +54,13 @@ export namespace Drag {
           css?: CSS;
         }) =>
           (
-            <s.div ref={drag} css={css}>
+            <s.div
+              ref={drag}
+              css={{
+                ...css,
+                touchAction: 'none', // prevent scrolling while dragging on mobile
+              }}
+            >
               {children}
             </s.div>
           ),
