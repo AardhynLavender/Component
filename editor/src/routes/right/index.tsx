@@ -12,6 +12,18 @@ import Ast from './Ast';
 import DragHandle from 'ui/DragHandle';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 
+const tabs = [
+  {
+    label: 'Components',
+    component: <Components />,
+  },
+  {
+    label: 'AST',
+    component: <Ast />,
+  },
+] as const;
+const DEFAULT_TAB: typeof tabs[number]['label'] = 'Components';
+
 export default function RightSidebar({ css }: { css: CSS }) {
   const { bind, width, rangeConstraint } = useDragPanePrimitive(
     'right-sidebar',
@@ -27,17 +39,19 @@ export default function RightSidebar({ css }: { css: CSS }) {
         ...css,
       }}
     >
-      <TabRoot defaultValue="ast" css={{ h: '100%' }}>
+      <TabRoot defaultValue={DEFAULT_TAB} css={{ h: '100%' }}>
         <Tabs>
-          <TabsTrigger value="ast">AST</TabsTrigger>
-          <TabsTrigger value="components">Components</TabsTrigger>
+          {tabs.map(({ label }) => (
+            <TabsTrigger key={label} value={label}>
+              {label}
+            </TabsTrigger>
+          ))}
         </Tabs>
-        <Content value="ast">
-          <Ast />
-        </Content>
-        <Content value="components">
-          <Components />
-        </Content>
+        {tabs.map(({ label, component }) => (
+          <Content key={label} value={label}>
+            {component}
+          </Content>
+        ))}
       </TabRoot>
       <DragHandle {...bind()} size={4} anchor="left" />
     </Root>
