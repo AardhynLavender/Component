@@ -13,7 +13,7 @@ export default function Button({
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <ButtonRoot {...buttonProps} size={size} color={color}>
-      {children}
+      <span>{children}</span>
     </ButtonRoot>
   );
 }
@@ -22,12 +22,13 @@ const ButtonRoot = styled('button', {
   all: 'unset',
   fontFamily: 'inherit',
   d: 'inline-flex',
+  h: 24,
   color: 'inherit',
   items: 'center',
   justify: 'center',
   cursor: 'pointer',
   userSelect: 'none',
-  r: 4,
+  r: 2,
   variants: {
     color: {
       primary: {

@@ -16,26 +16,22 @@ export default function RightSidebar({ css }: { css: CSS }) {
   const { bind, width, rangeConstraint } = useDragPanePrimitive(
     'right-sidebar',
     'left',
-    {
-      minSize: 256,
-      maxSize: 512,
-    },
+    { minSize: 256, maxSize: 512 },
   );
 
   return (
     <Root
       css={{
-        h: '100%',
         width,
         ...rangeConstraint,
         ...css,
       }}
     >
       <TabRoot defaultValue="ast" css={{ h: '100%' }}>
-        <TabsList>
+        <Tabs>
           <TabsTrigger value="ast">AST</TabsTrigger>
           <TabsTrigger value="components">Components</TabsTrigger>
-        </TabsList>
+        </Tabs>
         <Content value="ast">
           <Ast />
         </Content>
@@ -54,6 +50,11 @@ const Root = styled('section', {
   h: '100%',
   w: '100%',
   bl: '2px solid $outline',
+  background: '$background2',
+});
+
+const Tabs = styled(TabsList, {
+  borderBottom: '2px solid $outline',
 });
 
 const Content = styled(TabsContent, {

@@ -22,5 +22,6 @@ export default function LeftSidebar({ css }: { css: CSS }) {
 const Root = styled('section', {
   pos: 'relative',
   p: 8,
+  background: '$background2',
   br: '2px solid $outline',
 });

@@ -14,18 +14,22 @@ type ComponentCategory = keyof typeof ComponentCategories;
 
 export default function ComponentList() {
   return (
-    <s.div css={{ h: '100%' }}>
-      <s.div css={{ h: '100%', overflowY: 'auto' }}>
-        <s.div css={{ d: 'flex', fd: 'column', gap: 32 }}>
-          {Object.entries(ComponentCategories).map(([category, types]) => (
-            <ComponentListCategory
-              key={category}
-              category={category as ComponentCategory}
-              components={types}
-            />
-          ))}
-        </s.div>
-      </s.div>
+    <s.div
+      css={{
+        h: '100%',
+        overflowY: 'auto',
+        d: 'flex',
+        fd: 'column',
+        gap: 32,
+      }}
+    >
+      {Object.entries(ComponentCategories).map(([category, types]) => (
+        <ComponentListCategory
+          key={category}
+          category={category as ComponentCategory}
+          components={types}
+        />
+      ))}
     </s.div>
   );
 }
@@ -39,7 +43,7 @@ function ComponentListCategory({
 }) {
   return (
     <s.div css={{ d: 'flex', fd: 'column', gap: 8, p: 8 }}>
-      <h3>{category[0].toUpperCase() + category.slice(1)}</h3>
+      <strong>{category[0].toUpperCase() + category.slice(1)}</strong>
       <s.div
         css={{
           d: 'flex',

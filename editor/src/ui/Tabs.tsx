@@ -15,7 +15,6 @@ export const TabsList = styled(TabsPrimitive.List, {
 
 export const TabsTrigger = styled(TabsPrimitive.Trigger, {
   all: 'unset',
-  fontFamily: 'inherit',
   flex: 1,
   h: TAB_HEIGHT,
   d: 'flex',
@@ -24,7 +23,7 @@ export const TabsTrigger = styled(TabsPrimitive.Trigger, {
   userSelect: 'none',
   '&[data-state="active"]': { color: '$primary' },
   '&:hover': { background: '$background2' },
-  '&:focus': { background: '$background2' },
+  '&:focus': { background: '$background2', fontWeight: 600 },
 });
 
 export const TabsContent = styled(TabsPrimitive.Content, {});

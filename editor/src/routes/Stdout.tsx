@@ -3,6 +3,7 @@ import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 import DragHandle from 'ui/DragHandle';
 import { useRef } from 'react';
 import Button from 'ui/Button';
+import { H5 } from 'theme/Typography';
 
 export default function Stdout({ css }: { css: CSS }) {
   const { bind, rangeConstraint, width } = useDragPanePrimitive(
@@ -29,7 +30,7 @@ export default function Stdout({ css }: { css: CSS }) {
         }}
       >
         <Ribbon>
-          <span>Output</span>
+          <H5>Output</H5>
           <Button size="small" onClick={handleClear}>
             Clear
           </Button>
