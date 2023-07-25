@@ -179,7 +179,13 @@ private:
         else throw std::invalid_argument("Invalid TYPE for STDOUT expression");
     }
 
-    void ParseClear() { JS_ClientClear(); }
+    void ParseClear() {
+#ifdef __EMSCRIPTEN__
+		 JS_ClientClear();
+#else
+		 // todo: some native clear
+#endif // __EMSCIPTION__
+	 }
 
     void ParseBranch(Json& expression) {
         Json& branches = expression["branches"];

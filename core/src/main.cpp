@@ -91,7 +91,10 @@ void Parse(const std::string& program) {
 }
 
 int main() {
-    Log("Core has initalized!"); // called when `LoadModule` resolves
+    Log("Core has initialized!"); // called when `LoadModule` resolves
+#ifndef __EMSCRIPTEN__
+	// todo: parse cmdline args
+#endif // __EMSCRIPTEN__
     return EXIT_SUCCESS;
 }
 

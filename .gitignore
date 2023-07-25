@@ -1,8 +1,9 @@
 # vsc
 .vscode
 
-# Webstorm
+# Jetbrains
 .idea
+cmake-build-debug
 
 # `Component` specific files
 editor/src/modules
