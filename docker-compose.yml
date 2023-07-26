@@ -2,6 +2,7 @@ version: "2"
 services:
   component:
     container_name: app
+    image: component
     build: .
     env_file:
       - .env

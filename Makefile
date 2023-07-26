@@ -10,14 +10,11 @@ full_optimization = -O3 # use release builds
 optimization_level = $(no_optimization)
 cpp_std = c++20
 
-dev:
-	docker compose up --build -d
+start:
+	docker compose up
 
 build: 
 	docker compose build
-
-start:
-	docker compose up
 
 stop:
 	docker compose down
