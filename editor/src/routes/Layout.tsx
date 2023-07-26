@@ -1,6 +1,5 @@
 import { styled } from 'theme/stitches.config';
 import { CoreApi } from 'types';
-import Filler from './header/Fillter';
 import Ribbon from './header/Ribbon';
 import Title from './header/Title';
 import LeftSidebar from './left';
@@ -13,7 +12,6 @@ export default function Layout({ core }: { core: CoreApi }) {
     <Root>
       <Title core={core} css={{ gridArea: 'header' }} />
       <Ribbon core={core} css={{ gridArea: 'ribbon' }} />
-      <Filler css={{ gridArea: 'filler' }} />
       <LeftSidebar css={{ gridArea: 'left' }} />
       <Main css={{ gridArea: 'main' }} />
       <RightSidebar css={{ gridArea: 'right' }} />
@@ -30,7 +28,7 @@ const Root = styled('div', {
   gridTemplateColumns: 'auto 1fr auto',
   gridTemplateRows: 'auto 1fr auto',
   gridTemplateAreas: `
-    "header ribbon filler"
+    "header ribbon ribbon"
     "left main right"
     "left stdout right"
     `,
