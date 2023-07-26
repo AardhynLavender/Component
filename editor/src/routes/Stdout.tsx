@@ -6,7 +6,7 @@ import Button from 'ui/Button';
 import { H5 } from 'theme/Typography';
 
 export default function Stdout({ css }: { css: CSS }) {
-  const { bind, rangeConstraint, width } = useDragPanePrimitive(
+  const { bind, rangeConstraint, size } = useDragPanePrimitive(
     'stdout-pane',
     'up',
     { minSize: 100, maxSize: 500 },
@@ -25,7 +25,7 @@ export default function Stdout({ css }: { css: CSS }) {
       <DragHandle {...bind()} size={4} anchor="top" />
       <Content
         css={{
-          h: width,
+          h: size,
           ...rangeConstraint,
         }}
       >

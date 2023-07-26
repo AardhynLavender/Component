@@ -3,7 +3,7 @@ import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 import DragHandle from 'ui/DragHandle';
 
 export default function LeftSidebar({ css }: { css: CSS }) {
-  const { bind, rangeConstraint, width } = useDragPanePrimitive(
+  const { bind, rangeConstraint, size } = useDragPanePrimitive(
     'left-sidebar',
     'right',
     {
@@ -13,7 +13,7 @@ export default function LeftSidebar({ css }: { css: CSS }) {
   );
 
   return (
-    <Root css={{ width, ...rangeConstraint, ...css }}>
+    <Root css={{ w: size, ...rangeConstraint, ...css }}>
       <DragHandle {...bind()} size={4} anchor="right" />
     </Root>
   );

@@ -22,19 +22,23 @@ const tabs = [
     component: <Ast />,
   },
 ] as const;
-const DEFAULT_TAB: typeof tabs[number]['label'] = 'Components';
+const DEFAULT_TAB: (typeof tabs)[number]['label'] = 'Components';
 
 export default function RightSidebar({ css }: { css: CSS }) {
-  const { bind, width, rangeConstraint } = useDragPanePrimitive(
+  const { bind, size, rangeConstraint } = useDragPanePrimitive(
     'right-sidebar',
     'left',
-    { minSize: 256, maxSize: 512 },
+    {
+      minSize: 256,
+      maxSize: 512,
+      defaultSize: 512,
+    },
   );
 
   return (
     <Root
       css={{
-        width,
+        w: size,
         ...rangeConstraint,
         ...css,
       }}
