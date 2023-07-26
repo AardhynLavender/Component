@@ -37,6 +37,12 @@ const config = createStitches({
       medium: 600,
       bold: 700,
     },
+    fontSizes: {
+      1: '.5rem',
+      2: '1rem', // regular
+      3: '1.5rem',
+      4: '2.0',
+    },
   },
   utils: {
     // Layout
