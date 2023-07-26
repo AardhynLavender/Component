@@ -20,7 +20,7 @@ cp template.env .env
 vim .env
 ```
 
-The port default is `4096`.
+The default port is `4096`.
 
 > view the [`template.env`](./template.env) for more information.
 
@@ -34,7 +34,7 @@ Build and run everything in a docker container.
 make
 ```
 
-> View [`http://localhost:4096`](`http://localhost:4096`) in a web browser.
+> View [`http://localhost:<CLIENT_PORT>`](`http://localhost:<CLIENT_PORT>`) in a web browser.
 
 Remove the container and image when finished.
 
@@ -46,7 +46,7 @@ make clean
 
 #### non-containerized build
 
-> Requires [`GNU Make`](https://www.gnu.org/software/make/) (build tool), [`Node`](https://nodejs.org/en/docs) (Javascript Runtime), and [`Emscripten`](https://emscripten.org/docs/introducing_emscripten/index.html) (C and C++ WebAssembly compiler toolchain based on LLVM/Clang)
+> Requires [`GNU Make`](https://www.gnu.org/software/make/) (agnostic build tool), [`Node`](https://nodejs.org/en/docs) (JavaScript Runtime), and [`Emscripten`](https://emscripten.org/docs/introducing_emscripten/index.html) (C and C++ WebAssembly compiler toolchain based on LLVM/Clang)
 
 ```bash
 make install-editor # installs editor dependencies
