@@ -7,9 +7,6 @@ medium_optimization = -O2
 full_optimization = -O3 # use release builds
 
 # variables
-image_name = component
-container_name = component_container
-port = 5000
 optimization_level = $(no_optimization)
 cpp_std = c++20
 
