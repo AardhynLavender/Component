@@ -13,8 +13,8 @@ port = 5000
 optimization_level = $(no_optimization)
 cpp_std = c++20
 
-run:
-	docker compose up
+dev:
+	docker compose up --build -d
 
 build: 
 	docker compose build
