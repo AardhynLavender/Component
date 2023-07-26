@@ -8,6 +8,7 @@ import { ExpressionParent } from '../blocks/types';
 import { VariableExpression } from '../blocks/Variable';
 import { Component } from '../componentTypes';
 import { IsNumericVariable, IsLiteral } from '../../types/predicates';
+import { s } from 'theme/stitches.config';
 
 export function BinaryOperationBlock({
   parent,
@@ -33,17 +34,9 @@ export function BinaryOperationBlock({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
-      css={{
-        d: isDragging ? 'none' : 'flex',
-      }}
+      css={{ d: isDragging ? 'none' : 'flex' }}
     >
-      <DragHandle
-        css={{
-          d: 'flex',
-          items: 'center',
-          gap: 16,
-        }}
-      >
+      <DragHandle css={{ d: 'flex', items: 'center', gap: 16 }}>
         <Side
           expression={left}
           parent={{
@@ -52,7 +45,9 @@ export function BinaryOperationBlock({
             dropPredicate,
           }}
         />
-        <span>{NumericOperation(block.type)}</span>
+        <s.span css={{ d: 'flex', items: 'center' }}>
+          {NumericOperation(block.type)}
+        </s.span>
         <Side
           expression={right}
           // onChange={handleChange("rvalue")}
@@ -104,9 +99,9 @@ function NumericOperation(type: BinaryOperation['type']) {
     case 'subtract':
       return '-';
     case 'multiply':
-      return '*';
+      return '×';
     case 'divide':
-      return '/';
+      return '÷';
     case 'modulo':
       return '%';
     case 'exponent':

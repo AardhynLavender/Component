@@ -79,6 +79,7 @@ export const DEFAULT_BLOCK_MIN_WIDTH = 32;
 export function BlockRoot({
   block,
   children,
+  error = false,
   preview = false,
   width = DEFAULT_BLOCK_MIN_WIDTH,
   css,
@@ -86,6 +87,7 @@ export function BlockRoot({
   block: Block;
   children?: ReactElement | (ReactElement | null | undefined)[];
   preview?: boolean;
+  error?: boolean;
   width?: CSS['width'];
   css?: CSS;
 }) {
@@ -107,7 +109,9 @@ export function BlockRoot({
 
         p: 8,
         r: 4,
-        bg: '#eee',
+
+        bg: error ? '$error' : '$background',
+        outline: `2px solid ${error ? '$onError' : '$outline'}`,
 
         ...css,
       }}
@@ -189,12 +193,14 @@ export function ExpressionDropzone({
   locale,
   dropPredicate = (_) => true, // allow everything by default
   children,
+  error = false,
   enabled = true,
   css,
 }: {
   parentId: string | undefined;
   locale: string | undefined;
   dropPredicate?: (component: Component) => boolean;
+  error?: boolean;
   children?: ReactElement | (ReactElement | null)[] | null;
   enabled?: boolean;
   css?: CSS;
@@ -225,11 +231,11 @@ export function ExpressionDropzone({
         p: 4,
 
         d: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        items: 'center',
+        justify: 'center',
 
-        backgroundColor: isHovering ? '#ddd' : '#eee',
-        border: '1px solid #aaa',
+        bg: isHovering ? '$background3' : error ? '$error' : '$background',
+        b: `2px solid ${error ? '$onError' : '$outline'}`,
         whiteSpace: 'nowrap',
 
         ...css,

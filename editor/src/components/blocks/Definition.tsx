@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState, ChangeEvent } from 'react';
 import { useMutateComponent } from 'structures/program';
 import {
   Definition,
@@ -7,6 +7,7 @@ import {
   PrimitiveType,
 } from 'components/componentTypes';
 import { BlockRoot } from './generic';
+import { s, styled } from 'theme/stitches.config';
 
 const DEFAULT_VALUE = {
   string: '',
@@ -53,15 +54,12 @@ export function DefinitionBlock({
     <BlockRoot
       block={block}
       preview={preview}
-      css={{
-        fd: 'row',
-        items: 'center',
-        outline: error ? '2px solid $error' : 'none',
-      }}
+      error={error}
+      css={{ fd: 'row', items: 'center' }}
     >
       <PrimitiveDropdown
         primitive={primitive}
-        setType={setPrimitive}
+        setPrimitive={setPrimitive}
         onBlur={handleDefinitionChange}
       />
       <LValue value={key} setValue={setKey} onBlur={handleDefinitionChange} />
@@ -78,24 +76,22 @@ export function DefinitionBlock({
 
 function PrimitiveDropdown({
   primitive,
-  setType,
+  setPrimitive,
   onBlur,
 }: {
   primitive: PrimitiveType;
-  setType: (type: PrimitiveType) => void;
+  setPrimitive: (type: PrimitiveType) => void;
   onBlur: () => void;
 }) {
-  const handleChange = () => {
-    setType(primitive);
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPrimitive(e.target.value as PrimitiveType);
   };
 
   return (
     <select
       value={primitive}
       placeholder="type"
-      onChange={(e) => {
-        setType(e.target.value as PrimitiveType);
-      }}
+      onChange={handleChange}
       onBlur={onBlur}
     >
       {Primitives.map((p) => (
@@ -116,13 +112,10 @@ function LValue({
   setValue: (value: string) => void;
   onBlur: () => void;
 }) {
-  return (
-    <input
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onBlur}
-    />
-  );
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setValue(e.target.value);
+
+  return <ValueRoot value={value} onChange={handleChange} onBlur={onBlur} />;
 }
 
 function RValue({
@@ -138,7 +131,7 @@ function RValue({
 }) {
   if (type === 'string')
     return (
-      <input
+      <ValueRoot
         value={(value as string | null) ?? ''}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onBlur}
@@ -147,7 +140,7 @@ function RValue({
 
   if (type === 'number')
     return (
-      <input
+      <ValueRoot
         value={(value as number | null) ?? 0}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onBlur}
@@ -156,7 +149,7 @@ function RValue({
 
   if (type === 'boolean')
     return (
-      <select
+      <SelectRoot
         value={value?.toString() ?? 'false'}
         onBlur={onBlur}
         onChange={(e) => {
@@ -168,8 +161,12 @@ function RValue({
       >
         <option value={'true'}>true</option>
         <option value={'false'}>false</option>
-      </select>
+      </SelectRoot>
     );
 
   return null; // todo: add type inference...
 }
+
+// todo: tempoary fix until we impliment Radix ui components
+const ValueRoot = styled(s.input, { all: 'unset' });
+const SelectRoot = styled(s.select, { all: 'unset' });

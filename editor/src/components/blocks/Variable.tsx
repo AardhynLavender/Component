@@ -4,6 +4,7 @@ import { Variable } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
 import { useMutateComponent } from 'structures/program/store';
+import { styled, s } from 'theme/stitches.config';
 
 export function VariableExpression({
   expression,
@@ -35,7 +36,7 @@ export function VariableExpression({
           <code>
             <strong>{expression.primitive}</strong>
           </code>{' '}
-          <input
+          <Name
             value={key}
             onChange={(e) => setKey(e.target.value)}
             onBlur={handleBlur}
@@ -45,3 +46,5 @@ export function VariableExpression({
     </ExpressionDropzone>
   );
 }
+
+const Name = styled(s.input, { all: 'unset' });

@@ -1,4 +1,4 @@
-import { s } from 'theme/stitches.config';
+import { s, styled } from 'theme/stitches.config';
 import { ReactElement, FocusEvent, useState } from 'react';
 import { useMutateComponent } from 'structures/program';
 import { Literal, PrimitiveType } from 'types';
@@ -85,7 +85,7 @@ function PrimitiveInput<T extends PrimitiveType>({
   switch (type) {
     case 'string':
       return (
-        <s.input
+        <PrimitiveInputRoot
           value={value?.toString()}
           onChange={(e) => handleChange(e.target.value as T)}
           {...stdProps}
@@ -93,7 +93,7 @@ function PrimitiveInput<T extends PrimitiveType>({
       );
     case 'number':
       return (
-        <s.input
+        <PrimitiveInputRoot
           value={value?.toString()}
           onChange={(e) => {
             const { value } = e.target;
@@ -107,7 +107,7 @@ function PrimitiveInput<T extends PrimitiveType>({
       );
     case 'boolean':
       return (
-        <s.input
+        <PrimitiveInputRoot
           value={value?.toString()}
           onChange={(e) => {
             const bool = GetBoolFromString(e.target.value, { noExcept: false });
@@ -121,3 +121,5 @@ function PrimitiveInput<T extends PrimitiveType>({
       throw new Error('Invalid type for primitive');
   }
 }
+
+const PrimitiveInputRoot = styled(s.input, { all: 'unset' });
