@@ -30,6 +30,8 @@ The default port is `4096`.
 
 Build and run everything in a docker container.
 
+> Ensure the Docker daemon is running
+
 ```bash
 make
 ```
