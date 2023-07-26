@@ -55,6 +55,8 @@ export function BinaryOperationBlock({
         <span>{NumericOperation(block.type)}</span>
         <Side
           expression={right}
+          // onChange={handleChange("rvalue")}
+          // onBlur={handleBlur('rvalue')')}
           parent={{
             id: block.id,
             locale: 'left',
@@ -76,15 +78,22 @@ function Side({
   if (!expression)
     return (
       <LiteralExpression
+        type="number"
         parent={parent}
-        expression={{ id: uuid(), type: 'literal', expression: '' }}
+        expression={{ id: uuid(), type: 'literal', expression: null }}
       />
     );
 
   if (expression.type === 'variable')
     return <VariableExpression expression={expression} parent={parent} />;
   else if (expression.type === 'literal')
-    return <LiteralExpression expression={expression} parent={parent} />;
+    return (
+      <LiteralExpression
+        expression={expression}
+        parent={parent}
+        type="number"
+      />
+    );
   else return <BinaryOperationBlock block={expression} parent={parent} />;
 }
 

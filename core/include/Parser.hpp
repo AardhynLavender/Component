@@ -162,6 +162,42 @@ private:
         throw std::invalid_argument("'" + type + "' is not a valid TYPE for a UNARY conditional expression");
     }
 
+    template<Block::Arithmetic T = int>
+    T ParseOperation(Json& operation) {
+        const std::string type = operation["type"];
+        Json left = operation["expression"][0];
+        Json right = operation["expression"][1];
+
+        T lvalue, rvalue;
+
+        if (left["type"] == "variable") lvalue = ParseVariable<T>(left);
+        else if (left["type"] == "literal") lvalue = left["expression"].get<T>();
+        else lvalue = ParseOperation<T>(left);
+
+        if (right["type"] == "variable") rvalue = ParseVariable<T>(right);
+        else if (right["type"] == "literal") rvalue = right["expression"].get<T>();
+        else rvalue = ParseOperation<T>(right);
+
+        if (type == "add") return lvalue + rvalue;
+        if (type == "subtract") return lvalue - rvalue;
+        if (type == "multiply") return lvalue * rvalue;
+        if (type == "divide") return lvalue / rvalue;
+        if (type == "modulo") return lvalue % rvalue;
+        if (type == "exponent") return std::pow(lvalue, rvalue);
+        // todo: support more operations
+
+        else throw std::invalid_argument("Invalid operation TYPE provided!");
+    }
+
+    inline bool IsOperation(const std::string type) const {
+        return type == "add" 
+            || type == "subtract"
+            || type == "multiply"
+            || type == "divide"
+            || type == "modulo"
+            || type == "exponent";
+    }
+
     void ParsePrint(Json& expression) {
         const std::string type = expression["type"];
         if (type == "literal") {
@@ -173,19 +209,21 @@ private:
             const std::string primitive = expression["primitive"];
             if (primitive == "string") ClientPrint(ParseVariable<std::string>(expression));
             else if (primitive == "number") ClientPrint(std::to_string(ParseVariable<int>(expression)));
-            // else if (primitive == "double") ClientPrint(ParseVariable<double>(expression));
             else if (primitive == "boolean") ClientPrint(ParseVariable<bool>(expression));
+        } else if (IsOperation(type)) {
+            const int result = ParseOperation(expression);
+            ClientPrint(std::to_string(result));        
         }
         else throw std::invalid_argument("Invalid TYPE for STDOUT expression");
     }
 
     void ParseClear() {
 #ifdef __EMSCRIPTEN__
-		 JS_ClientClear();
+	    JS_ClientClear();
 #else
-		 // todo: some native clear
-#endif // __EMSCIPTION__
-	 }
+	    // todo: some native clear
+#endif // __EMSCRIPTEN__
+	}
 
     void ParseBranch(Json& expression) {
         Json& branches = expression["branches"];
@@ -207,7 +245,7 @@ public:
 
              if (type == "definition")          ParseDefinition(component);
         else if (type == "branch")              ParseBranch(component);
-        else if (type == "print")              ParsePrint(component["expression"]);
+        else if (type == "print")               ParsePrint(component["expression"]);
         else if (type == "stdclear")            ParseClear();
         else if (type == "increment")           ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component);
         else if (type == "decrement")           ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component);
@@ -219,12 +257,14 @@ public:
     Parser() : stackMachine(), store() { }
 
     void LoadProgram(const std::string& components) {
-        // establish invariant
         if (components.empty()) throw std::invalid_argument("Program must not be empty!");
         program = jsn::json::parse(components);
+
         if (!program.is_array()) throw std::invalid_argument("Program must be an array!");
-        if (program.empty()) Log("No components to parse");
-        else stackMachine.Push(program); // push our first stack
+        if (program.empty()) return;
+
+        // push the top stack
+        stackMachine.Push(program); 
     }
 
     bool Next() {

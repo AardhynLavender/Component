@@ -94,6 +94,7 @@ export namespace Drag {
       accept: 'component',
       drop: (item: DragItem, monitor) => {
         const { component, action } = item;
+
         if (destinationId === undefined) return;
         if (monitor.didDrop()) return; // check if the drop was handled by a child dropzone
         if (dropPredicate && !dropPredicate(component)) return; // check if the drop is allowed

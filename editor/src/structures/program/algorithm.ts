@@ -3,6 +3,7 @@ import { Block } from 'types';
 import { Expression } from 'components/componentTypes';
 import produce from 'immer';
 import { IsBlock, IsCondition, IsLiteral, IsVariable } from 'types/predicates';
+import { Primitive } from '../../components/componentTypes';
 
 /**
  * Program tree mutation algorithms and reducers
@@ -182,6 +183,12 @@ export namespace algorithm {
         case 'ge':
         case 'and':
         case 'or':
+        case 'add':
+        case 'subtract':
+        case 'multiply':
+        case 'divide':
+        case 'modulo':
+        case 'exponent':
           const [lvalue, rvalue] = draft.expression;
           draft.expression[0] = MutateExpression(id, lvalue, mutation); // expression lvalue
           if (rvalue)
@@ -241,8 +248,8 @@ export namespace algorithm {
                     draft.condition = component;
                   break;
                 case 'print':
-                  if (IsLiteral(component) || IsVariable(component))
-                    if (locale === 'expression') draft.expression = component;
+                  // @ts-ignore
+                  if (locale === 'expression') draft.expression = component;
               }
             });
         }

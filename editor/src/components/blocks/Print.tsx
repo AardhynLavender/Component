@@ -4,8 +4,10 @@ import { BlockRoot, ExpressionDropzone } from './generic';
 import { LiteralExpression } from './Literal';
 import { VariableExpression } from './Variable';
 import { Drag } from 'util/Drag';
-import { IsVariable } from 'types/predicates';
+import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
+import { Component } from '../componentTypes';
+import { BinaryOperationBlock } from 'components/expressions/Operation';
 
 export const MIN_PRINT_WIDTH = 48;
 
@@ -20,6 +22,11 @@ export function PrintBlock({
     block,
     preview,
   );
+
+  const predicate = (c: Component) => {
+    const res = IsVariable(c) || IsOperation(c);
+    return res;
+  };
 
   return (
     <BlockRoot
@@ -46,7 +53,7 @@ export function PrintBlock({
             <ExpressionDropzone
               parentId={block.id}
               locale="expression"
-              dropPredicate={(c) => IsVariable(c)}
+              dropPredicate={predicate}
             />
           ) : IsLiteral(block.expression) ? (
             <LiteralExpression
@@ -55,7 +62,17 @@ export function PrintBlock({
               parent={{
                 id: block.id,
                 locale: 'expression',
-                dropPredicate: (c) => IsVariable(c),
+                dropPredicate: predicate,
+              }}
+            />
+          ) : IsOperation(block.expression) ? (
+            <BinaryOperationBlock
+              block={block.expression}
+              preview={preview}
+              parent={{
+                id: block.id,
+                locale: 'expression',
+                dropPredicate: predicate,
               }}
             />
           ) : (
@@ -65,7 +82,7 @@ export function PrintBlock({
               parent={{
                 id: block.id,
                 locale: 'expression',
-                dropPredicate: (c) => IsVariable(c),
+                dropPredicate: predicate,
               }}
             />
           )}
