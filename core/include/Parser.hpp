@@ -1,4 +1,6 @@
 #pragma once
+#ifndef PARSER_HPP
+#define PARSER_HPP
 
 #include <string>
 #include <type_traits>
@@ -57,7 +59,7 @@ private:
         else if constexpr (O == Block::ArithmeticOperation::DEC) result = value - 1;
         else throw std::invalid_argument("Invalid arithmetic operation provided!");
 
-        store.Set(key, result);
+        store.Set<T>(key, result);
     }
 
     void ParseRepeatLoop(Json& repeatBlock) {
@@ -276,3 +278,5 @@ public:
         return false;
     }
 };
+
+#endif // PARSER_HPP

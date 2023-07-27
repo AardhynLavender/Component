@@ -1,4 +1,6 @@
 #pragma once
+#ifndef VARIABLE_STORE_HPP
+#define VARIABLE_STORE_HPP
 
 #include <array>
 #include <variant>
@@ -15,12 +17,13 @@ private:
     int stored;
 
     inline void WriteCheck() const { 
-        if (stored > MAX_VARIABLE_STORE) throw std::overflow_error("Variable store is full!");
+        if (stored > MAX_VARIABLE_STORE) 
+            throw std::overflow_error("Variable store is full!");
     }
 public:
-    VariableStore() : stored(0) {}
+    VariableStore();
 
-    template<typename T>
+    template<typename T> 
     void Add(const std::string key, T value) {
         if (stored > MAX_VARIABLE_STORE) throw std::overflow_error("Variable store is full!"); 
         store.try_emplace(key, value); // does not overwrite existing values... todo: catch this?
@@ -40,7 +43,10 @@ public:
         else return std::get<T>(store.at(key)); 
     } // may throw `std::out_of_range`
 
-    void Set(const std::string key, const Any value) {
+    template <typename T = Any>
+    inline void Set(const std::string key, const T value) { 
         store.at(key) = value; 
     } // may throw `std::out_of_range`
 };
+
+#endif // VARIABLE_STORE_HPP

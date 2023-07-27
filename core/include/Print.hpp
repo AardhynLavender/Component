@@ -1,6 +1,11 @@
 #pragma once
+#ifndef PRINT_HPP
+#define PRINT_HPP
 
 #include <iostream>
+
+#include "json.hpp"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 // locale is messed up when I use std::string. C char arrays seem to work fine.
@@ -8,7 +13,6 @@ EM_JS(void, JS_ClientPrint, (const char* message), { document.getElementById("co
 EM_JS(void, JS_ClientClear, (), { document.getElementById("component:stdout").innerHTML = ""; });
 #endif // __EMSCRIPTEN__
 
-#include "json.hpp"
 
 // Log a message to the console
 template<typename T>
@@ -34,3 +38,5 @@ void ClientPrint(T message) {
     #endif // __EMSCRIPTEN__
     Log(message);
 }
+
+#endif // PRINT_HPP

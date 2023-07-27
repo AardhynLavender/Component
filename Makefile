@@ -35,8 +35,12 @@ restart:
 
 build-core: core
 	mkdir -p editor/src/modules
-	emcc core/src/main.cpp \
-		-o editor/src/modules/core.mjs \
+	cd core/src/ && \
+	emcc \
+		variableStore.cpp \
+		stackMachine.cpp \
+		main.cpp \
+		-o ../../editor/src/modules/core.mjs \
 		$(optimization_level) \
 		-l embind \
 		-s LLD_REPORT_UNDEFINED \

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef STACK_HPP
+#define STACK_HPP
 
 #include "json.hpp"
 #include "print.hpp"
@@ -35,3 +37,5 @@ public:
     // Get the number of components in the stack
     [[nodiscard]] inline size_t Size() const { return components.size(); }
 };
+
+#endif // STACK_HPP
