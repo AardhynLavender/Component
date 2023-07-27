@@ -3,11 +3,11 @@
 #include <string>
 #include <type_traits>
 
-#include "VariableStore.hpp"
-#include "StackMachine.hpp"
-#include "Blocks.hpp"
-#include "Print.hpp"
-#include "Json.hpp"
+#include "variableStore.hpp"
+#include "stackMachine.hpp"
+#include "blocks.hpp"
+#include "print.hpp"
+#include "json.hpp"
 
 class Parser final {
 private:

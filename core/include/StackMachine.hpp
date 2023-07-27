@@ -1,7 +1,9 @@
 #pragma once
+
 #include <stack>
-#include "Stack.hpp"
-#include "Print.hpp"
+
+#include "stack.hpp"
+#include "print.hpp"
 
 class stack_overflow : public std::exception {
 private:

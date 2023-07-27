@@ -8,7 +8,7 @@ EM_JS(void, JS_ClientPrint, (const char* message), { document.getElementById("co
 EM_JS(void, JS_ClientClear, (), { document.getElementById("component:stdout").innerHTML = ""; });
 #endif // __EMSCRIPTEN__
 
-#include "Json.hpp"
+#include "json.hpp"
 
 // Log a message to the console
 template<typename T>

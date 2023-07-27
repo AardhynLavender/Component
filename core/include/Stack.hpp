@@ -1,6 +1,7 @@
 #pragma once
-#include "Json.hpp"
-#include "Print.hpp"
+
+#include "json.hpp"
+#include "print.hpp"
 
 class Stack final {
 private:

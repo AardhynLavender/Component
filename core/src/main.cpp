@@ -5,12 +5,15 @@
 #include <array>
 #include <string>
 #include <any>
-#include "../include/Timing.hpp"
-#include "../include/Parser.hpp"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #include <emscripten/bind.h>
 #endif // __EMSCRIPTEN__
+
+#include "../include/timing.hpp"
+#include "../include/parser.hpp"
+#include "../include/json.hpp"
 
 constexpr int USE_BROWSER_FPS = 0;
 constexpr int SIMULATE_INFINITE_LOOP = 1;
@@ -93,8 +96,11 @@ void Parse(const std::string& program) {
 int main() {
     Log("Core has initialized!"); // called when `LoadModule` resolves
 #ifndef __EMSCRIPTEN__
+
 	// todo: parse cmdline args
+    
 #endif // __EMSCRIPTEN__
+
     return EXIT_SUCCESS;
 }
 

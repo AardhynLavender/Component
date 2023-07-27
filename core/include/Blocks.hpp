@@ -1,7 +1,7 @@
 #pragma once
 #include <concepts>
 #include <type_traits>
-#include "Json.hpp"
+#include "json.hpp"
 
 // Internal blocks injected into the program by the Parser
 namespace Block {
