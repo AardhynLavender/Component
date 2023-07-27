@@ -13,9 +13,13 @@ const defaultProgram =
 
 type ProgramStore = {
   /**
-   * The current program AST
+   * The current program structure
    */
   program: Program | null;
+  /**
+   * Rename the program
+   */
+  rename(name: string): void;
   /**
    * Set the program AST
    * @param blocks The new program AST
@@ -65,6 +69,15 @@ const useComponentStore = create<ProgramStore>((set, get) => ({
   program: defaultProgram,
 
   setProgram: (program) => set((state) => (state = { ...state, program })),
+
+  rename(name) {
+    set((state) =>
+      produce(state, (draft) => {
+        if (!draft.program) return;
+        draft.program.name = name;
+      }),
+    );
+  },
 
   findComponent: (id) => algorithm.Find(id, get().program?.ast ?? []),
 
