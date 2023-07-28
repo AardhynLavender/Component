@@ -1,4 +1,4 @@
-#include "../include/variableStore.hpp"
+#include <variableStore.hpp>
 
 VariableStore::VariableStore()
 : stored(0) {

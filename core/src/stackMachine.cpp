@@ -1,4 +1,4 @@
-#include "../include/stackMachine.hpp"
+#include <stackMachine.hpp>
 
 [[nodiscard]] Json* StackMachine::Next() { // Get a pointer to the next component
   if (stacks.empty()) {
@@ -17,6 +17,6 @@
 }
 
 void StackMachine::Push(Json& components) { /// Push a new stack onto the stack machine
-  if (Size() + 1 > STACK_LIMIT) throw stack_overflow("component tree has exceeded the STACK_LIMIT");
+  if (Size() + 1 > MAX_STACK_SIZE) throw stack_overflow("component tree has exceeded MAX_STACK_SIZE");
   else stacks.emplace(components); 
 }

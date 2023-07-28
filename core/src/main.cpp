@@ -11,9 +11,9 @@
 #include <emscripten/bind.h>
 #endif // __EMSCRIPTEN__
 
-#include "../include/timing.hpp"
-#include "../include/parser.hpp"
-#include "../include/json.hpp"
+#include <timing.hpp>
+#include <parser.hpp>
+#include <json.hpp>
 
 constexpr int USE_BROWSER_FPS = 0;
 constexpr int SIMULATE_INFINITE_LOOP = 1;
