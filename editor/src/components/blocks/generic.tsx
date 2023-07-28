@@ -81,12 +81,14 @@ export function BlockRoot({
   children,
   error = false,
   preview = false,
+  overrideStyles = false,
   width = DEFAULT_BLOCK_MIN_WIDTH,
   css,
 }: {
   block: Block;
   children?: ReactElement | (ReactElement | null | undefined)[];
   preview?: boolean;
+  overrideStyles?: boolean;
   error?: boolean;
   width?: CSS['width'];
   css?: CSS;
@@ -96,12 +98,10 @@ export function BlockRoot({
     preview,
   );
 
-  return (
-    <DragHandle
-      key={block.id}
-      data-dragging={isDragging} // enables parents to select based on the dragging state of their children
-      css={{
-        d: isDragging ? 'none' : 'flex',
+  const styles: CSS = !overrideStyles
+    ? {
+        d: 'inline-flex',
+        align: 'flex-start',
         flexDirection: 'column',
         gap: 8,
 
@@ -112,7 +112,16 @@ export function BlockRoot({
 
         bg: error ? '$error' : '$background',
         outline: `2px solid ${error ? '$onError' : '$outline'}`,
+      }
+    : {};
 
+  return (
+    <DragHandle
+      key={block.id}
+      data-dragging={isDragging} // enables parents to select based on the dragging state of their children
+      css={{
+        opacity: isDragging ? 0 : 1,
+        ...styles,
         ...css,
       }}
     >
@@ -224,13 +233,11 @@ export function ExpressionDropzone({
       css={{
         minWidth: 24,
         minHeight: 24,
-        w: 'min-content',
-        h: 'min-content',
 
         r: 4,
-        p: 4,
+        p: 8,
 
-        d: 'flex',
+        d: 'inline-flex',
         items: 'center',
         justify: 'center',
 

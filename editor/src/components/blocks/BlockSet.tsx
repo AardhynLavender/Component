@@ -32,13 +32,8 @@ export default function GenericBlockSet({
   );
 }
 const Root = styled('div', {
-  mr: -8, // align with the right side of the block
-  borderRight: 'none',
-  r: '8px 0 0 8px',
   d: 'flex',
-  p: 4,
   fd: 'column',
-  alignItems: 'flex-start',
-  gap: 4,
-  bg: '#fff',
+  items: 'flex-start',
+  gap: 8,
 });
