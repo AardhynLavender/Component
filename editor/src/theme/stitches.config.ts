@@ -31,11 +31,8 @@ const config = createStitches({
       onError: '#e35557',
     },
     fontWeights: {
-      thin: 300,
-      light: 400,
       normal: 500,
-      medium: 600,
-      bold: 700,
+      bold: 900,
     },
     fontSizes: {
       1: '.5rem',
@@ -121,7 +118,14 @@ const config = createStitches({
 
 export const { styled, css, keyframes, globalCss } = config;
 
+const DEFAULT_FONT = 'heebo';
+const BACKUP_FONTS = `
+  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+`;
+
 const globalStyles = globalCss({
+  '@import':
+    "url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;900&display=swap')",
   '*': {
     boxSizing: 'border-box',
     m: 0,
@@ -131,8 +135,7 @@ const globalStyles = globalCss({
     color: '$text',
     lineHeight: 1.5,
     '-webkit-text-size-adjust': '100%',
-    fontFamily:
-      "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+    fontFamily: `${DEFAULT_FONT} !important`,
   },
 });
 
