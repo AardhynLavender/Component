@@ -164,7 +164,7 @@ void Parser::ParseComponent(Json& component) {
   if (type == "definition")             ParseDefinition(component);
   else if (type == "branch")            ParseBranch(component);
   else if (type == "print")             ParsePrint(component["expression"]);
-  else if (type == "stdclear")          ParseClear();
+  else if (type == "clear")             ParseClear();
   else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component);
   else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component);
   else if (type == "repeat")            ParseRepeat(component);

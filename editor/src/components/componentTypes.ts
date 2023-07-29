@@ -9,10 +9,10 @@ export const conditions = [
   'ge',
   'le',
 ] as const;
-export type ConditionType = typeof conditions[number];
+export type ConditionType = (typeof conditions)[number];
 
 export const loops = ['repeat'] as const;
-export type LoopType = typeof loops[number];
+export type LoopType = (typeof loops)[number];
 
 export const operators = [
   'add',
@@ -24,29 +24,29 @@ export const operators = [
   'increment',
   'decrement',
 ] as const;
-export type OperatorType = typeof operators[number];
+export type OperatorType = (typeof operators)[number];
 
 export const outputs = ['print'] as const;
-export type OutputType = typeof outputs[number];
+export type OutputType = (typeof outputs)[number];
 
 export const miscBlocks = ['branch', 'definition'] as const;
-export type MiscType = typeof miscBlocks[number];
+export type MiscType = (typeof miscBlocks)[number];
 
 export const miscExpressions = ['variable', 'literal'] as const;
-export type MiscExpressionType = typeof miscExpressions[number];
+export type MiscExpressionType = (typeof miscExpressions)[number];
 
 export const blockTypes = [...loops, ...outputs, ...miscBlocks] as const;
-export type BlockType = typeof blockTypes[number];
+export type BlockType = (typeof blockTypes)[number];
 
 export const expressionTypes = [
   ...conditions,
   ...operators,
   ...miscExpressions,
 ];
-export type ExpressionType = typeof expressionTypes[number];
+export type ExpressionType = (typeof expressionTypes)[number];
 
 export const componentTypes = [...blockTypes, ...expressionTypes] as const;
-export type ComponentType = typeof componentTypes[number];
+export type ComponentType = (typeof componentTypes)[number];
 
 export type ComponentPrimitive<T extends ComponentType, E = {}> = {
   id: string;
@@ -66,7 +66,7 @@ export type Literal<T extends Primitive = Primitive> = ComponentPrimitive<
 // Declarations and Variables
 
 export const Primitives = ['string', 'number', 'boolean'] as const;
-export type PrimitiveType = typeof Primitives[number];
+export type PrimitiveType = (typeof Primitives)[number];
 export type Primitive = string | number | boolean;
 
 export type Definition = ComponentPrimitive<
@@ -219,8 +219,8 @@ export type Print = ComponentPrimitive<
   'print',
   { expression: Literal | Variable | null }
 >;
-// export type Stdclear = ComponentPrimitive<'stdclear'>;
-export type Output = Print; // | Stdclear;
+// export type Clear = ComponentPrimitive<'clear'>;
+export type Output = Print; // | clear;
 
 // Loops
 
@@ -236,7 +236,7 @@ export type Loop = Repeat;
 
 // General
 
-export type Block = Output | Loop | Definition | Branch; // | Stdclear;
+export type Block = Output | Loop | Definition | Branch; // | Clear;
 
 export type Expression =
   | Literal<Primitive>

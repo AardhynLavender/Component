@@ -74,7 +74,7 @@ export function CreateComponent(type: ComponentType): Component {
         },
       };
       break;
-    // case 'stdclear':
+    // case 'clear':
     //   component = base(type);
     //   break;
 
