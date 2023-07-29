@@ -4,6 +4,11 @@ import {
   CSSProperties as CssProp,
 } from '@stitches/react';
 
+const DEFAULT_FONT = 'heebo';
+const BACKUP_FONTS = `
+  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+`;
+
 // See https://stitches.dev/docs/introduction
 
 const config = createStitches({
@@ -24,6 +29,7 @@ const config = createStitches({
       tonal: '#576069',
       tonal2: '#24292e',
       outline: '#d0d7de',
+      outline2: '#e6edf5',
       background: '#fff',
       background2: '#f6f8fa',
       background3: '#e1e4e8',
@@ -35,10 +41,14 @@ const config = createStitches({
       bold: 900,
     },
     fontSizes: {
-      1: '.5rem',
+      1: '.8rem',
       2: '1rem', // regular
       3: '1.5rem',
       4: '2.0',
+    },
+    fonts: {
+      main: `${DEFAULT_FONT}, ${BACKUP_FONTS}`,
+      mono: `Martian Mono, monospace`,
     },
   },
   utils: {
@@ -118,14 +128,9 @@ const config = createStitches({
 
 export const { styled, css, keyframes, globalCss } = config;
 
-const DEFAULT_FONT = 'heebo';
-const BACKUP_FONTS = `
-  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
-`;
-
 const globalStyles = globalCss({
   '@import':
-    "url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;900&display=swap')",
+    "url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;900&family=Martian+Mono&display=swap')",
   '*': {
     boxSizing: 'border-box',
     m: 0,
@@ -135,7 +140,8 @@ const globalStyles = globalCss({
     color: '$text',
     lineHeight: 1.5,
     '-webkit-text-size-adjust': '100%',
-    fontFamily: `${DEFAULT_FONT} !important`,
+    fontFamily: `$main`,
+    fontSize: 16,
   },
 });
 

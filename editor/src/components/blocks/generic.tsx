@@ -105,10 +105,13 @@ export function BlockRoot({
         flexDirection: 'column',
         gap: 8,
 
+        fontFamily: '$mono',
+        fontSize: '$1',
+
         minWidth: width,
 
-        p: 8,
         r: 4,
+        p: '4px 8px',
 
         bg: error ? '$error' : '$background',
         outline: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -235,7 +238,7 @@ export function ExpressionDropzone({
         minHeight: 24,
 
         r: 4,
-        p: 8,
+        p: 4,
 
         d: 'inline-flex',
         items: 'center',

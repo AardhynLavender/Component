@@ -21,21 +21,17 @@ export function BranchBlock({
         id={block.id}
         preview={preview}
       />
-      <s.div css={{ ml: 16, mb: 16 }}>
-        <GenericBlockSet
-          parentId={block.id}
-          blocks={trueBranch ?? []}
-          locale="true"
-        />
-      </s.div>
+      <GenericBlockSet
+        parentId={block.id}
+        blocks={trueBranch ?? []}
+        locale="true"
+      />
       <ElseSection>else</ElseSection>
-      <s.div css={{ ml: 16 }}>
-        <GenericBlockSet
-          parentId={block.id}
-          blocks={falseBranch ?? []}
-          locale="false"
-        />
-      </s.div>
+      <GenericBlockSet
+        parentId={block.id}
+        blocks={falseBranch ?? []}
+        locale="false"
+      />
     </BlockRoot>
   );
 }
@@ -55,8 +51,10 @@ function ConditionSection({
         d: 'inline-flex',
         gap: 16,
         items: 'center',
-        p: 8,
-        r: 8,
+        p: '4px 8px',
+        r: 4,
+        fontFamily: '$mono',
+        fontSize: '$1',
         outline: '2px solid $outline',
         bg: '$background',
       }}
@@ -85,9 +83,11 @@ function ConditionSection({
 
 const ElseSection = styled(s.div, {
   d: 'inline-flex',
-  justify: 'flex-start',
-  p: 8,
-  r: 8,
+  justify: 'lex-start',
+  p: '4px 8px',
+  r: 4,
+  fontFamily: '$mono',
+  fontSize: '$1',
   outline: '2px solid $outline',
   bg: '$background',
 });

@@ -23,6 +23,7 @@ export default function Main({ css }: { css?: CSS }) {
         parentId={null}
         locale={undefined}
         blocks={program.ast ?? []}
+        noIndent
       />
     </Root>
   );
