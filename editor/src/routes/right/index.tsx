@@ -65,17 +65,18 @@ export default function RightSidebar({ css }: { css: CSS }) {
 const Root = styled('section', {
   pos: 'relative',
   overflowY: 'auto',
-  h: '100%',
   w: '100%',
   bl: '2px solid $outline',
   background: '$background2',
 });
 
+const TAB_BOTTOM_BORDER = 2;
+
 const Tabs = styled(TabsList, {
-  borderBottom: '2px solid $outline',
+  borderBottom: `${TAB_BOTTOM_BORDER}px solid $outline`,
 });
 
 const Content = styled(TabsContent, {
   w: '100%',
-  h: `calc(100% - ${TAB_HEIGHT}px)`,
+  h: `calc(100% - ${TAB_HEIGHT}px - ${TAB_BOTTOM_BORDER}px)`,
 });
