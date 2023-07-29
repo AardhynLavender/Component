@@ -28,7 +28,13 @@ export default function Main({ css }: { css?: CSS }) {
   );
 }
 
-const Root = styled('section', { p: 16, d: 'flex', gap: 16, fd: 'column' });
+const Root = styled('section', {
+  p: 16,
+  d: 'flex',
+  items: 'flex-start',
+  gap: 16,
+  fd: 'column',
+});
 
 function ProgramName() {
   const [name, setName] = useComponentStore((state) => [
@@ -43,10 +49,11 @@ function ProgramName() {
   return (
     <s.input
       css={{
-        fontSize: 18,
-        fontWeight: 600,
         outline: 'none',
+        bg: '$background2',
         border: 'none',
+        p: 8,
+        r: 8,
       }}
       value={name}
       onChange={handleChange}
