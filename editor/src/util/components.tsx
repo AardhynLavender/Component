@@ -60,7 +60,10 @@ export function CreateComponent(type: ComponentType): Component {
     case 'repeat':
       component = {
         ...base(type),
-        times: 1,
+        repetition: {
+          ...base('literal'),
+          expression: 1,
+        },
         components: [],
       };
       break;

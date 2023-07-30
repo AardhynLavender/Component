@@ -227,7 +227,7 @@ export type Output = Print; // | clear;
 export type Repeat = ComponentPrimitive<
   'repeat',
   {
-    times: number;
+    repetition: Variable<'number'> | Literal<number> | null;
     components: Block[] | null;
   }
 >;

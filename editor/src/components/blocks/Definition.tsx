@@ -142,7 +142,8 @@ function RValue({
     return (
       <ValueRoot
         value={(value as number | null) ?? 0}
-        onChange={(e) => setValue(e.target.value)}
+        type="number"
+        onChange={(e) => setValue(parseInt(e.target.value) ?? 0)}
         onBlur={onBlur}
       />
     );

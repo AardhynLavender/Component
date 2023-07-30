@@ -1,9 +1,12 @@
-import { Repeat } from 'types';
+import { Component, IsLiteral, IsNumericVariable, Repeat } from 'types';
 import { BlockRoot } from './generic';
 import GenericBlockSet from './BlockSet';
 import { useState } from 'react';
-import { s, CSS } from 'theme/stitches.config';
+import { s, CSS, styled } from 'theme/stitches.config';
 import { useMutateComponent } from 'structures/program';
+import { LiteralExpression } from './Literal';
+import { VariableExpression } from './Variable';
+import { uuid } from 'util/uuid';
 
 export const MIN_REPEAT_WIDTH = 48;
 
@@ -17,39 +20,36 @@ export function RepeatBlock({
   block: Repeat;
   preview?: boolean;
 }) {
-  const [times, setTimes] = useState(block.times);
-  const handleTimesChange = (value: string) => {
-    const newTimes = parseInt(value);
-    if (
-      times !== newTimes &&
-      newTimes > MIN_REPEAT_TIMES &&
-      newTimes < MAX_REPEAT_TIMES
-    )
-      setTimes(newTimes);
-  };
-
-  const mutate = useMutateComponent();
-  const handleTimesBlur = () => mutate(block.id, { times });
+  const dropPredicate = (c: Component) =>
+    IsNumericVariable(c) || IsLiteral<number>(c);
 
   return (
-    <BlockRoot block={block} preview={preview} width={MIN_REPEAT_WIDTH}>
-      <span>
-        repeat{' '}
-        <s.input
-          type="number"
-          step={undefined}
-          min={MIN_REPEAT_TIMES}
-          max={MAX_REPEAT_TIMES}
-          value={times}
-          onChange={(e) => handleTimesChange(e.target.value)}
-          onBlur={handleTimesBlur}
-          css={{
-            w: `${times.toString().length + 1}ch`,
-            ...hideArrows,
-          }}
-        />{' '}
-        time{times !== 1 && 's'}
-      </span>
+    <BlockRoot block={block} preview={preview} overrideStyles>
+      <RepeatSection>
+        <span>repeat </span>
+        {!block.repetition || block.repetition?.type === 'literal' ? (
+          <LiteralExpression
+            expression={
+              block.repetition ?? { id: uuid(), type: 'literal', expression: 1 }
+            }
+            type="number"
+            parent={{
+              id: block.id,
+              locale: 'repetition',
+              dropPredicate,
+            }}
+          />
+        ) : block.repetition?.type === 'variable' ? (
+          <VariableExpression
+            expression={block.repetition}
+            parent={{
+              id: block.id,
+              locale: 'repetition',
+              dropPredicate,
+            }}
+          />
+        ) : null}
+      </RepeatSection>
       <GenericBlockSet
         blocks={block.components ?? []}
         locale="components"
@@ -58,6 +58,19 @@ export function RepeatBlock({
     </BlockRoot>
   );
 }
+
+const RepeatSection = styled('div', {
+  d: 'inline-flex',
+  items: 'center',
+  gap: 8,
+  p: '4px 8px',
+  r: 4,
+  fontFamily: '$mono',
+  fontSize: '$1',
+
+  bg: '$background',
+  outline: '2px solid $outline',
+});
 
 // https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp
 const hideArrows: CSS = {

@@ -14,11 +14,22 @@ void Parser::ParseDefinition(Json& definition) {
 }
 
 void Parser::ParseRepeat(Json& repeat) {
-  const int repetitions = repeat["times"];
+  Json& repetition = repeat["repetition"];
+
+  // todo:  If `times` is a variable, modifing it within the repeat block 
+  //        will not update the number of iterations as it is read at the 
+  //        start of the loop. Probably should read it each iteration...
+  // todo:  support `operators` for times
+  int times;
+  const std::string repetitionType = repetition["type"];
+  if (repetitionType == "literal") times = repetition["expression"].get<int>();
+  else if (repetitionType == "variable") times = ParseVariable<int>(repetition);
+  else throw std::invalid_argument("Invalid expression TYPE provided for REPEAT!");
+
   Json& components = repeat["components"];
 
   // establish invariant
-  if (repetitions < 0 || repetitions > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
+  if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
   if (!components.is_array()) throw std::invalid_argument("Repeat components must be an array!");
 
   stackMachine.Push(components); // create a new stack for the repeat block body
@@ -29,7 +40,7 @@ void Parser::ParseRepeat(Json& repeat) {
   // create incrementor and conditional jump statements
   constexpr int EXTRA_INSTRUCTIONS = 2; // `incrementor` and `conditional jump`
   Json incrementor = Block::Incrementor<Block::ArithmeticOperation::INC, int>(i); // ++i
-  Json repeatCondition = Block::Conditional<Block::BooleanOperation::LT, true, false>(i, repetitions); // counter < repetitions
+  Json repeatCondition = Block::Conditional<Block::BooleanOperation::LT, true, false>(i, times); // counter < times
   Json jumpIf = Block::ConditionalJump(-(instructions + EXTRA_INSTRUCTIONS), repeatCondition); // jump to the start of the repeat loop
 
   // push statements into the repeat loops stack

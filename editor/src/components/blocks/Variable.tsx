@@ -5,6 +5,8 @@ import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
 import { useMutateComponent } from 'structures/program/store';
 import { styled, s } from 'theme/stitches.config';
+import { Primitives } from '../componentTypes';
+import { Capitalize } from 'util/string';
 
 export function VariableExpression({
   expression,
@@ -22,7 +24,17 @@ export function VariableExpression({
 
   const mutate = useMutateComponent();
   const [key, setKey] = useState(expression.key);
-  const handleBlur = () => mutate(expression.id, { key });
+  const [primitive, setPrimitive] = useState(expression.primitive);
+  const handleKeyBlur = () =>
+    key !== expression.key && mutate(expression.id, { key });
+
+  const handlePrimitiveChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    if (value !== expression.primitive && Primitives.includes(value as any)) {
+      setPrimitive(value as any);
+      mutate(expression.id, { primitive: value });
+    }
+  };
 
   return (
     <ExpressionDropzone
@@ -33,13 +45,17 @@ export function VariableExpression({
     >
       <DragHandle>
         <span>
-          <code>
-            <strong>{expression.primitive}</strong>
-          </code>{' '}
-          <Name
+          <select value={primitive} onChange={handlePrimitiveChange}>
+            {Primitives.map((p) => (
+              <option key={p} value={p}>
+                {Capitalize(p)}
+              </option>
+            ))}
+          </select>
+          <Input
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            onBlur={handleBlur}
+            onBlur={handleKeyBlur}
           />
         </span>
       </DragHandle>
@@ -47,4 +63,4 @@ export function VariableExpression({
   );
 }
 
-const Name = styled(s.input, { all: 'unset' });
+const Input = styled(s.input, { all: 'unset' });

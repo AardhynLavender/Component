@@ -2,8 +2,15 @@ import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
 import { Expression } from 'components/componentTypes';
 import produce from 'immer';
-import { IsBlock, IsCondition, IsLiteral, IsVariable } from 'types/predicates';
+import {
+  IsBlock,
+  IsCondition,
+  IsLiteral,
+  IsNumericVariable,
+  IsVariable,
+} from 'types/predicates';
 import { Primitive } from '../../components/componentTypes';
+import { IsExpression } from '../../types/predicates';
 
 /**
  * Program tree mutation algorithms and reducers
@@ -28,6 +35,7 @@ export namespace algorithm {
           found ??= FindExpression(id, block.condition); // search condition
           break;
         case 'repeat':
+          found ??= FindExpression(id, block.repetition); // search repeat condition
           found ??= Find(id, block.components); // search repeat body
           break;
         case 'print':
@@ -88,6 +96,7 @@ export namespace algorithm {
 
             break;
           case 'repeat':
+            draft.repetition = RemoveExpression(id, draft.repetition);
             draft.components = Remove(id, draft.components); // repeat body
             break;
           case 'print':
@@ -148,6 +157,7 @@ export namespace algorithm {
 
             break;
           case 'repeat':
+            draft.repetition = MutateExpression(id, draft.repetition, mutation);
             draft.components = Mutate(id, draft.components, mutation); // repeat body
             break;
           case 'print':
@@ -236,6 +246,8 @@ export namespace algorithm {
               switch (draft.type) {
                 // Blocks
                 case 'repeat':
+                  if (locale === 'repetition' && IsNumericVariable(component))
+                    draft.repetition = component;
                   if (locale === 'components' && isBlock)
                     draft.components = [component];
                   break;
