@@ -36,7 +36,7 @@ export default function GenericBlockSet({
 const Root = styled('div', {
   d: 'flex',
   fd: 'column',
-  items: 'flex-start',
+  alignItems: 'start',
   gap: 8,
 
   variants: {

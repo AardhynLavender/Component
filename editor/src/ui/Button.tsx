@@ -28,7 +28,7 @@ const ButtonRoot = styled('button', {
   justify: 'center',
   cursor: 'pointer',
   userSelect: 'none',
-  r: 2,
+  r: 4,
   variants: {
     color: {
       primary: {

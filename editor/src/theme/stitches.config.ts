@@ -136,12 +136,13 @@ const globalStyles = globalCss({
     m: 0,
     p: 0,
   },
+  code: { fontFamily: `$mono` },
   body: {
     color: '$text',
     lineHeight: 1.5,
     '-webkit-text-size-adjust': '100%',
     fontFamily: `$main`,
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 

@@ -82,7 +82,6 @@ export function BlockRoot({
   error = false,
   preview = false,
   overrideStyles = false,
-  width = DEFAULT_BLOCK_MIN_WIDTH,
   css,
 }: {
   block: Block;
@@ -90,7 +89,6 @@ export function BlockRoot({
   preview?: boolean;
   overrideStyles?: boolean;
   error?: boolean;
-  width?: CSS['width'];
   css?: CSS;
 }) {
   const { isDragging, DragHandle } = Drag.useComponentDragHandle(
@@ -108,10 +106,8 @@ export function BlockRoot({
         fontFamily: '$mono',
         fontSize: '$1',
 
-        minWidth: width,
-
         r: 4,
-        p: '4px 8px',
+        p: 4,
 
         bg: error ? '$error' : '$background',
         outline: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -160,7 +156,7 @@ export function BlockDropzone({
   dropPredicate?: (component: Component) => boolean;
   css?: CSS;
 }) {
-  const { Dropzone } = Drag.useComponentDropzone(
+  const { Dropzone, isHovering } = Drag.useComponentDropzone(
     action,
     parentId,
     locale,
@@ -180,8 +176,9 @@ export function BlockDropzone({
           top: -DROPZONE_HEIGHT / 2,
           pos: 'absolute',
           h: DROPZONE_HEIGHT,
+          bg: isHovering ? '$background2' : '$transparent',
           // border: '1px solid #f00',
-          ...css,
+          // r: 4,
         }}
       >
         {children}

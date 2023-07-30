@@ -9,8 +9,6 @@ import { s } from 'theme/stitches.config';
 import { Component } from '../componentTypes';
 import { BinaryOperationBlock } from 'components/expressions/Operation';
 
-export const MIN_PRINT_WIDTH = 48;
-
 export function PrintBlock({
   block,
   preview = false,
@@ -32,7 +30,6 @@ export function PrintBlock({
     <BlockRoot
       preview={preview}
       block={block}
-      width={MIN_PRINT_WIDTH}
       css={{
         items: 'center',
         direction: 'row',

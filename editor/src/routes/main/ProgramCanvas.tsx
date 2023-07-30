@@ -4,8 +4,6 @@ import GenericBlockSet from 'components/blocks/BlockSet';
 import { useEffect, ChangeEvent } from 'react';
 import { LOCAL_STORAGE_KEY } from 'constants/program';
 import { WritePersistent } from 'hooks/usePersistent';
-import { H3 } from 'theme/Typography';
-import { PROGRAM_NAME_REGEX } from '../../constants/program';
 
 export default function Main({ css }: { css?: CSS }) {
   const [program] = useComponentStore((state) => [state.program]);
@@ -18,7 +16,9 @@ export default function Main({ css }: { css?: CSS }) {
 
   return (
     <Root css={css}>
-      <ProgramName />
+      <Ribbon>
+        <ProgramName />
+      </Ribbon>
       <GenericBlockSet
         parentId={null}
         locale={undefined}
@@ -32,9 +32,14 @@ export default function Main({ css }: { css?: CSS }) {
 const Root = styled('section', {
   p: 16,
   d: 'flex',
-  items: 'flex-start',
   gap: 16,
   fd: 'column',
+});
+
+const Ribbon = styled('div', {
+  d: 'flex',
+  gap: 16,
+  items: 'start',
 });
 
 function ProgramName() {
