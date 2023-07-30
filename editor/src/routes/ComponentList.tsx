@@ -4,6 +4,7 @@ import { blockTypes, conditions, operators } from 'components/componentTypes';
 import { CreateComponent } from 'util/components';
 import { GetJsxComponent } from 'components/blocks/generic';
 import useComponentStore from 'structures/program/store';
+import { Capitalize } from '../util/string';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -41,6 +42,9 @@ export default function ComponentList() {
   );
 }
 
+const HIDDEN_COMPONENTS: readonly ComponentType[] = ['increment', 'decrement'];
+const hidden = (type: ComponentType) => !HIDDEN_COMPONENTS.includes(type);
+
 function ComponentListCategory({
   category,
   components,
@@ -50,16 +54,11 @@ function ComponentListCategory({
 }) {
   return (
     <s.div css={{ d: 'flex', fd: 'column', gap: 8, p: 8 }}>
-      <strong>{category[0].toUpperCase() + category.slice(1)}</strong>
+      <strong>{Capitalize(category)}</strong>
       <s.div
-        css={{
-          d: 'flex',
-          fd: 'column',
-          alignItems: 'flex-start',
-          gap: 8,
-        }}
+        css={{ d: 'flex', fd: 'column', alignItems: 'flex-start', gap: 8 }}
       >
-        {components.map((type) => {
+        {components.filter(hidden).map((type) => {
           const component = CreateComponent(type);
           const parent = undefined;
           const preview = true;
