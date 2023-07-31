@@ -17,17 +17,15 @@ export function VariableExpression({
   parent?: ExpressionParent;
   preview?: boolean;
 }): ReactElement | null {
-  const { isDragging, DragHandle } = Drag.useComponentDragHandle(
-    expression,
-    preview,
-  );
+  const { DragHandle } = Drag.useComponentDragHandle(expression, preview);
 
   const mutate = useMutateComponent();
+
   const [key, setKey] = useState(expression.key);
-  const [primitive, setPrimitive] = useState(expression.primitive);
   const handleKeyBlur = () =>
     key !== expression.key && mutate(expression.id, { key });
 
+  const [primitive, setPrimitive] = useState(expression.primitive);
   const handlePrimitiveChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     if (value !== expression.primitive && Primitives.includes(value as any)) {
