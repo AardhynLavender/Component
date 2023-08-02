@@ -41,6 +41,7 @@ const config = createStitches({
       bold: 900,
     },
     fontSizes: {
+      0: '.6rem',
       1: '.8rem',
       2: '1rem', // regular
       3: '1.5rem',

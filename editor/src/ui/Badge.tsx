@@ -18,7 +18,8 @@ const Root = styled(s.span, {
 
   variants: {
     color: {
-      neutral: { bg: '$background3', c: '$primary' },
+      neutral: { bg: '$background3', c: '$text' },
+      primary: { bg: '$background3', c: '$primary' },
       error: { bg: '$error', c: '$onError' },
     },
     shape: {
@@ -27,9 +28,8 @@ const Root = styled(s.span, {
     },
     size: {
       small: {
-        h: 12,
-        fontSize: '$1',
-        px: 4,
+        fontSize: '$0',
+        p: '2px 4px',
       },
       regular: { h: 24, px: 16, fontWeight: '$medium' },
       large: {
@@ -45,7 +45,7 @@ const Root = styled(s.span, {
   },
 
   defaultVariants: {
-    color: 'neutral',
+    color: 'primary',
     size: 'regular',
     shape: 'pill',
   },
