@@ -113,7 +113,7 @@ function Side({
     );
 
   if (expression.type === 'variable')
-    return <VariableExpression expression={expression} parent={parent} />;
+    return <VariableExpression variable={expression} parent={parent} />;
   if (expression.type === 'literal')
     return <LiteralExpression expression={expression} parent={parent} />;
 

@@ -1,21 +1,36 @@
 import { create } from 'zustand';
 import produce from 'immer';
-import { Component } from 'types';
+import { Component, Variable } from 'types';
 import { algorithm } from './algorithm';
 import { EmplacementAction, Mutation, Program } from './types';
 import { BLANK_PROGRAM } from 'constants/program';
 import { LOCAL_STORAGE_KEY } from '../../constants/program';
 import { ReadPersistent } from 'hooks/usePersistent';
+import { Definition } from '../../components/componentTypes';
 
 // read any existing program from disk
 const defaultProgram =
   ReadPersistent<Program>(LOCAL_STORAGE_KEY) ?? BLANK_PROGRAM;
+
+// Stores? Zustand? See https://docs.pmnd.rs/zustand/getting-started/introduction
+
+// What does `produce()` do? See https://immerjs.github.io/immer/*
+
+type VariableStore = Record<string, Definition>;
 
 type ProgramStore = {
   /**
    * The current program structure
    */
   program: Program | null;
+  /**
+   * Variables used in the program
+   */
+  variables: VariableStore;
+  /**
+   * Declare a new variable
+   */
+  declare(id: string, variable: Definition | undefined): void;
   /**
    * Rename the program
    */
@@ -67,8 +82,16 @@ type ProgramStore = {
 
 const useComponentStore = create<ProgramStore>((set, get) => ({
   program: defaultProgram,
-
   setProgram: (program) => set((state) => (state = { ...state, program })),
+
+  variables: {},
+  declare: (id: string, variable: Definition | undefined) =>
+    set((state) =>
+      produce(state, (draft) => {
+        if (!!variable) draft.variables[id] = variable;
+        else delete draft.variables[id];
+      }),
+    ),
 
   rename(name) {
     set((state) =>
@@ -139,44 +162,34 @@ const useComponentStore = create<ProgramStore>((set, get) => ({
 // Expose store functions in stand-alone hooks for convenience
 
 export function useRemoveComponent() {
-  return useComponentStore((state) => (id: string) => state.removeBlock(id));
-}
-
-export function useFindComponent() {
-  return useComponentStore((state) => (id: string) => state.findComponent(id));
+  return useComponentStore((state) => state.removeBlock);
 }
 
 export function useAddComponent() {
-  return useComponentStore(
-    (state) =>
-      (
-        component: Component,
-        destinationId: string | null,
-        action: EmplacementAction,
-        locale?: string,
-      ) =>
-        state.addBlock(component, destinationId, action, locale),
-  );
+  return useComponentStore((state) => state.addBlock);
 }
-
-export function useMutateComponent() {
-  return useComponentStore(
-    (state) => (id: string, component: Mutation) =>
-      state.mutateBlock(id, component),
-  );
-}
-
 export function useMoveComponent() {
-  return useComponentStore(
-    (state) =>
-      (
-        sourceId: string,
-        destinationId: string | null,
-        action: EmplacementAction,
-        locale?: string,
-      ) =>
-        state.moveBlock(sourceId, destinationId, action, locale),
-  );
+  return useComponentStore((state) => state.moveBlock);
+}
+export function useMutateComponent() {
+  return useComponentStore((state) => state.mutateBlock);
+}
+
+export function useVariableStore() {
+  return useComponentStore((state) => ({
+    variables: state.variables,
+    declare: state.declare,
+  }));
+}
+/**
+ * Get a variable by its definition id
+ * @param definitionId id of the component that declares this variable
+ * @returns the variable definition
+ */
+export function useVariableDefinition(definitionId: string) {
+  const { variables } = useVariableStore();
+  const variable = definitionId in variables ? variables[definitionId] : null;
+  return variable;
 }
 
 export default useComponentStore;

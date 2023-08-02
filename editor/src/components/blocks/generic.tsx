@@ -238,6 +238,7 @@ export function ExpressionDropzone({
         p: 4,
 
         d: 'inline-flex',
+        fontFamily: '$mono',
         items: 'center',
         justify: 'center',
 
@@ -275,7 +276,7 @@ export function GetJsxComponent(
     case 'definition':
       return <DefinitionBlock block={component} {...stdProps} />;
     case 'variable':
-      return <VariableExpression expression={component} {...stdProps} />;
+      return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
     case 'repeat':

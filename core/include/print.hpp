@@ -53,6 +53,8 @@ void ClientPrint(T message) {
 #ifdef __EMSCRIPTEN__
     if constexpr (std::is_same_v<T, const char*>) js_client_print(message); 
     else if constexpr (std::is_same_v<T, std::string>) js_client_print(message.c_str()); 
+    else if constexpr (std::is_arithmetic_v<T>) js_client_print(std::to_string(message).c_str());
+    else if constexpr (std::is_same_v<T, bool>) js_client_print(message ? "true" : "false");
     else if constexpr (std::is_same_v<T, Json>) {
         if (message.is_string()) js_client_print(message.template get<std::string>().c_str());
         else js_client_print(message.dump().c_str());

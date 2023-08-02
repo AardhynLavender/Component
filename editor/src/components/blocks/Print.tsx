@@ -74,7 +74,7 @@ export function PrintBlock({
             />
           ) : (
             <VariableExpression
-              expression={block.expression}
+              variable={block.expression}
               preview={preview}
               parent={{
                 id: block.id,

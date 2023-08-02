@@ -72,20 +72,13 @@ export type Primitive = string | number | boolean;
 export type Definition = ComponentPrimitive<
   'definition',
   {
-    key: string;
+    name: string;
     primitive: PrimitiveType;
     value: Primitive;
   }
 >;
 
-export type Variable<T extends PrimitiveType = PrimitiveType> =
-  ComponentPrimitive<
-    'variable',
-    {
-      primitive: T;
-      key: string;
-    }
-  >;
+export type Variable = ComponentPrimitive<'variable', { definitionId: string }>;
 
 // Control Flow
 
@@ -100,11 +93,11 @@ export type Branch = ComponentPrimitive<
 >;
 
 export type UnaryBooleanComparison = [
-  Condition | Literal<boolean> | Variable<'boolean'> | null,
+  Condition | Literal<boolean> | Variable | null,
 ];
 export type BinaryBooleanComparison = [
-  Condition | Literal<boolean> | Variable<'boolean'> | null,
-  Condition | Literal<boolean> | Variable<'boolean'> | null,
+  Condition | Literal<boolean> | Variable | null,
+  Condition | Literal<boolean> | Variable | null,
 ];
 
 export type EqualityComparison = [
@@ -113,8 +106,8 @@ export type EqualityComparison = [
 ];
 
 export type NumericComparison = [
-  Literal<number> | Variable<'number'> | null,
-  Literal<number> | Variable<'number'> | null,
+  Literal<number> | Variable | null,
+  Literal<number> | Variable | null,
 ];
 
 // boolean conditions
@@ -227,7 +220,7 @@ export type Output = Print; // | clear;
 export type Repeat = ComponentPrimitive<
   'repeat',
   {
-    repetition: Variable<'number'> | Literal<number> | null;
+    repetition: Variable | Literal<number> | null;
     components: Block[] | null;
   }
 >;

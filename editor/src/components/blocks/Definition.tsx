@@ -1,5 +1,5 @@
-import { ReactElement, useEffect, useState, ChangeEvent } from 'react';
-import { useMutateComponent } from 'structures/program';
+import { ReactElement, useMemo, useEffect, useState, ChangeEvent } from 'react';
+import { useMutateComponent, useVariableStore } from 'structures/program';
 import {
   Definition,
   Primitive,
@@ -26,12 +26,10 @@ export function DefinitionBlock({
   block: Definition;
   preview?: boolean;
 }): ReactElement | null {
-  const [primitive, setPrimitive] = useState<PrimitiveType>(block.primitive);
-  const [key, setKey] = useState<string>(block.key);
-  const [value, setValue] = useState<Primitive | null>(block.value ?? null);
-  const [error, setError] = useState<boolean>(false);
-
   // apply mutation
+  const [primitive, setPrimitive] = useState<PrimitiveType>(block.primitive);
+  const [name, setName] = useState<string>(block.name);
+  const [value, setValue] = useState<Primitive | null>(block.value ?? null);
   const mutate = useMutateComponent();
   const handleDefinitionChange = () => {
     if (primitive !== block.primitive) {
@@ -40,15 +38,18 @@ export function DefinitionBlock({
       setValue(newValue);
       mutate(block.id, { primitive, value: newValue });
     }
-    // key or value changed
-    else mutate(block.id, { key, value });
+    // name or value changed
+    else mutate(block.id, { name, value });
   };
 
+  const [error, setError] = useState<boolean>(false);
   useEffect(() => {
     // check for errors
-    if (key === '' && !preview) setError(true);
+    if (name === '' && !preview) setError(true);
     else setError(false);
-  }, [key]);
+  }, [name]);
+
+  useVariableDefinition(block, !preview);
 
   return (
     <BlockRoot
@@ -62,7 +63,7 @@ export function DefinitionBlock({
         setPrimitive={setPrimitive}
         onBlur={handleDefinitionChange}
       />
-      <LValue value={key} setValue={setKey} onBlur={handleDefinitionChange} />
+      <LValue value={name} setValue={setName} onBlur={handleDefinitionChange} />
       <span>{'='}</span>
       <RValue
         type={primitive}
@@ -168,6 +169,16 @@ function RValue({
   return null; // todo: add type inference...
 }
 
-// todo: tempoary fix until we impliment Radix ui components
+// todo: temporary fix until we implement Radix ui components
 const ValueRoot = styled(s.input, { all: 'unset' });
 const SelectRoot = styled(s.select, { all: 'unset' });
+
+function useVariableDefinition(block: Definition, enabled: boolean = true) {
+  const { declare } = useVariableStore();
+
+  useEffect(() => {
+    if (enabled) declare(block.id, block); // declare the variable
+
+    return () => declare(block.id, undefined); // un-declare the variable
+  }, [block.id, block.name, block.primitive, enabled]);
+}

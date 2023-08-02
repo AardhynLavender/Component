@@ -1,13 +1,24 @@
-import { s } from 'theme/stitches.config';
+import { s, styled } from 'theme/stitches.config';
 import { ComponentType } from 'types';
-import { blockTypes, conditions, operators } from 'components/componentTypes';
+import {
+  blockTypes,
+  conditions,
+  operators,
+  Variable,
+} from 'components/componentTypes';
 import { CreateComponent } from 'util/components';
 import { GetJsxComponent } from 'components/blocks/generic';
 import useComponentStore from 'structures/program/store';
+import { useVariableStore } from '../structures/program/store';
+import { H5 } from 'theme/Typography';
+import { Capitalize } from 'util/string';
+import { uuid } from 'util/uuid';
+import { useMemo } from 'react';
+import { Definition } from '../components/componentTypes';
 
 const ComponentCategories = {
   blocks: blockTypes,
-  variable: ['variable'],
+  variables: [], // loops variable store instead
   operators,
   conditions,
 } as const;
@@ -49,23 +60,60 @@ function ComponentListCategory({
   components: readonly ComponentType[];
 }) {
   return (
-    <s.div css={{ d: 'flex', fd: 'column', gap: 8, p: 8 }}>
-      <strong>{category[0].toUpperCase() + category.slice(1)}</strong>
-      <s.div
-        css={{
-          d: 'flex',
-          fd: 'column',
-          alignItems: 'flex-start',
-          gap: 8,
-        }}
-      >
-        {components.map((type) => {
-          const component = CreateComponent(type);
-          const parent = undefined;
-          const preview = true;
-          return GetJsxComponent(component, parent, preview);
-        })}
-      </s.div>
-    </s.div>
+    <CategoryRoot>
+      <H5>{Capitalize(category)}</H5>
+      {category === 'variables' ? (
+        <VariableStoreList />
+      ) : (
+        <ComponentListRoot>
+          {components.map((type) => {
+            const component = CreateComponent(type);
+            const parent = undefined;
+            const preview = true;
+            return GetJsxComponent(component, parent, preview);
+          })}
+        </ComponentListRoot>
+      )}
+    </CategoryRoot>
   );
+}
+const CategoryRoot = styled('div', {
+  d: 'flex',
+  fd: 'column',
+  gap: 8,
+  p: 8,
+});
+const ComponentListRoot = styled('div', {
+  d: 'flex',
+  fd: 'column',
+  alignItems: 'flex-start',
+  gap: 8,
+});
+
+function VariableStoreList() {
+  const { variables } = useVariableStore();
+
+  return (
+    <ComponentListRoot>
+      {Object.keys(variables).map((definitionId) => (
+        <VariableStoreItem key={definitionId} definitionId={definitionId} />
+      ))}
+    </ComponentListRoot>
+  );
+}
+
+const parent = undefined;
+const preview = true;
+function VariableStoreItem({ definitionId }: { definitionId: string }) {
+  const expression: Variable = {
+    id: uuid(), // assign a new uuid
+    type: 'variable',
+    definitionId,
+  };
+
+  const component = useMemo(() => {
+    return GetJsxComponent(expression, parent, preview);
+  }, [expression, parent, preview]);
+
+  return component;
 }

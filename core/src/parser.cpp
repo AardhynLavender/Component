@@ -1,16 +1,20 @@
 #include <parser.hpp>
 
 void Parser::ParseDefinition(Json& definition) {
-  const std::string key = definition["key"];
+  const std::string key = definition["id"];
+  const std::string name = definition["name"];
   const std::string primitive = definition["primitive"];
   Json value = definition["value"];
 
   using namespace std::string_literals;
-  Log("Pushing variable `"s + key + "` of type `"s + primitive + "` with value `"s + value.dump() + "`"s);
+  Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive + "` with value `"s + value.dump() + "`"s);
 
-  if (primitive == "string") store.Add<std::string>(key, value);
-  if (primitive == "number") store.Add<int>(key, value);
-  if (primitive == "boolean") store.Add<bool>(key, value);
+
+  if (primitive == "string") store.Add(key, { name, primitive, value.get<std::string>() });
+  else if (primitive == "number") store.Add(key, { name, primitive, value.get<int>() });
+  else if (primitive == "boolean") store.Add(key, Variable{name, primitive, value.get<bool>()});
+  else if (primitive == "double") store.Add(key, { name, primitive, value.get<double>() });
+  else throw std::invalid_argument("Invalid TYPE provided for definition!");
 }
 
 void Parser::ParseRepeat(Json& repeat) {
@@ -23,7 +27,7 @@ void Parser::ParseRepeat(Json& repeat) {
   int times;
   const std::string repetitionType = repetition["type"];
   if (repetitionType == "literal") times = repetition["expression"].get<int>();
-  else if (repetitionType == "variable") times = ParseVariable<int>(repetition);
+  else if (repetitionType == "variable") times = ParseVariable(repetition).Get<int>();
   else throw std::invalid_argument("Invalid expression TYPE provided for REPEAT!");
 
   Json& components = repeat["components"];
@@ -55,7 +59,7 @@ void Parser::ParseJump(Json& jump) {
   const std::string type = jump["expression"]["type"];
 
   if (type == "literal") instructions = jump["expression"]["value"];
-  else if (type == "variable") instructions = ParseVariable<int>(jump["expression"]);
+  else if (type == "variable") instructions = ParseVariable(jump["expression"]).Get<int>();
   else throw std::invalid_argument("Invalid expression TYPE provided for JUMP!");
 
   if (DEBUG) Log("Jumping `"s + std::to_string(instructions) + "` instructions"s);
@@ -82,10 +86,12 @@ void Parser::ParseConditionJump(Json& jump) {
   Json& left = expression.at(0);
   if (left["type"] == "literal") lvalue = left["expression"];
   else if (left["type"] == "variable") {
-    const auto primitive = left["primitive"];
-    if (primitive == "string") lvalue = ParseVariable<std::string>(left);
-    else if (primitive == "number") lvalue = ParseVariable<int>(left);
-    else if (primitive == "boolean") lvalue = ParseVariable<bool>(left);
+    const auto& variable = ParseVariable(left);
+    const auto primitive = variable.GetPrimitive();
+
+    if (primitive == "string") lvalue = ParseVariable(left).Get<std::string>();
+    else if (primitive == "number") lvalue = ParseVariable(left).Get<int>();
+    else if (primitive == "boolean") lvalue = ParseVariable(left).Get<bool>();
     else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
   }
   else lvalue = ParseCondition(left);
@@ -97,15 +103,19 @@ void Parser::ParseConditionJump(Json& jump) {
     Json& right = expression.at(1);
     if (right["type"] == "literal") rvalue = right["expression"];
     else if (right["type"] == "variable") {
-        const auto primitive = right["primitive"];
-        if (primitive == "string") rvalue = ParseVariable<std::string>(right);
-        else if (primitive == "number") lvalue = ParseVariable<int>(right);
-        else if (primitive == "boolean") lvalue = ParseVariable<bool>(right);
-        else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
+      const auto& variable = ParseVariable(right);
+      const auto primitive = variable.GetPrimitive();
+
+      if (primitive == "string") rvalue = ParseVariable(right).Get<std::string>();
+      else if (primitive == "number") rvalue = ParseVariable(right).Get<int>();
+      else if (primitive == "boolean") rvalue = ParseVariable(right).Get<bool>();
+      else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
     }
     else rvalue = ParseCondition(right);
 
     // perform binary conditional operation
+    using namespace std::string_literals;
+    Log("Performing '"s + type + "' on `"s + lvalue.dump() + "` and `"s + rvalue.dump() + "`"s);
     if (type == "and") return lvalue && rvalue;
     if (type == "or") return lvalue && rvalue;
     if (type == "xor") return (lvalue || rvalue) && (lvalue != rvalue);
@@ -134,10 +144,13 @@ void Parser::ParsePrint(Json& print) {
     else if (value.is_number()) ClientPrint(value.get<double>());
     else if (value.is_boolean()) ClientPrint(value.get<bool>());
   } else if (type == "variable") {
-    const std::string primitive = print["primitive"];
-    if (primitive == "string") ClientPrint(ParseVariable<std::string>(print));
-    else if (primitive == "number") ClientPrint(std::to_string(ParseVariable<int>(print)));
-    else if (primitive == "boolean") ClientPrint(ParseVariable<bool>(print));
+    const auto& variable = ParseVariable(print);
+    const auto primitive = variable.GetPrimitive();
+
+    if (primitive == "string") ClientPrint(variable.Get<std::string>());
+    else if (primitive == "number") ClientPrint(variable.Get<int>());
+    else if (primitive == "boolean") ClientPrint(variable.Get<bool>() ? "true" : "false");
+    else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
   } else if (IsOperation(type)) {
     const int result = ParseOperation(print);
     ClientPrint(std::to_string(result));        
