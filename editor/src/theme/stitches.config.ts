@@ -175,6 +175,7 @@ export const s = {
   label: styled('label'),
   li: styled('li'),
   ol: styled('ol'),
+  option: styled('option'),
   p: styled('p'),
   pre: styled('pre'),
   section: styled('section'),
