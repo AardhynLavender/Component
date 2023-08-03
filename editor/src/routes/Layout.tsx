@@ -3,7 +3,7 @@ import { CoreApi } from 'types';
 import Ribbon from './header/Ribbon';
 import Title from './header/Title';
 import LeftSidebar from './left';
-import Main from './main/ProgramCanvas';
+import Main from './main/Main';
 import RightSidebar from './right';
 import Stdout from './Stdout';
 

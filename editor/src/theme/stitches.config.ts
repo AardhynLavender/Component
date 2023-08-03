@@ -23,6 +23,7 @@ const config = createStitches({
   theme: {
     colors: {
       text: '#24292e',
+      text2: '#6a737c',
       primary: '#117dff',
       primary2: '#0f69d5',
       onPrimary: '#fff',

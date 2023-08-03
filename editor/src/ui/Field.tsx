@@ -8,21 +8,28 @@ export default function Field({
   onValueChange,
   onBlur,
   dynamicSize = false,
+  readOnly = false,
+  disabled = false,
+  css,
 }: {
   value: string;
-  onValueChange: (value: string) => void;
-  onBlur: (value: string) => void;
+  onValueChange?: (value: string) => void;
+  onBlur?: (value: string) => void;
   defaultValue?: string;
   dynamicSize?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
   css?: CSS;
 }) {
   return (
     <FieldRoot
-      css={{ w: dynamicSize ? `${value?.length}ch` : undefined }}
+      css={{ w: dynamicSize ? `${value?.length}ch` : undefined, ...css }}
       value={value}
+      readOnly={readOnly}
+      disabled={disabled}
       defaultValue={defaultValue}
-      onBlur={(e) => onBlur(e.target.value)}
-      onChange={(e) => onValueChange(e.target.value)}
+      onBlur={(e) => onBlur?.(e.target.value)}
+      onChange={(e) => onValueChange?.(e.target.value)}
     />
   );
 }
