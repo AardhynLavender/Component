@@ -1,0 +1,33 @@
+import { s, CSS, styled } from 'theme/stitches.config';
+
+export default function Field({
+  value,
+  defaultValue = '',
+  onValueChange,
+  onBlur,
+  dynamicSize = false,
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  onBlur: (value: string) => void;
+  defaultValue?: string;
+  dynamicSize?: boolean;
+  css?: CSS;
+}) {
+  return (
+    <FieldRoot
+      css={{ w: dynamicSize ? `${value?.length}ch` : undefined }}
+      value={value}
+      defaultValue={defaultValue}
+      onBlur={(e) => onBlur(e.target.value)}
+      onChange={(e) => onValueChange(e.target.value)}
+    />
+  );
+}
+const FieldRoot = styled(s.input, {
+  all: 'unset',
+  minW: 32,
+  p: 4,
+  r: 4,
+  bg: '$background2',
+});
