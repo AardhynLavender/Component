@@ -101,8 +101,8 @@ function NumericOperation(type: BinaryOperation['type']) {
     case 'divide':
       return '÷';
     case 'modulo':
-      return '%';
+      return 'mod';
     case 'exponent':
-      return '**'; // option for `^`?
+      return '^';
   }
 }
