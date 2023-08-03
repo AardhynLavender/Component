@@ -16,7 +16,7 @@ import {
 import { BlockRoot } from './generic';
 import { Select, SelectItem } from 'ui/Select';
 import { s, CSS, styled } from 'theme/stitches.config';
-import Field from 'ui/Field';
+import Field, { FIELD_HEIGHT } from 'ui/Field';
 
 const DEFAULT_VALUE = {
   string: '',
@@ -35,28 +35,21 @@ export function DefinitionBlock({
   block: Definition;
   preview?: boolean;
 }): ReactElement | null {
-  // apply mutation
-  const [primitive, setPrimitive] = useState<PrimitiveType>(block.primitive);
   const [name, setName] = useState<string>(block.name);
+  const [primitive, setPrimitive] = useState<PrimitiveType>(block.primitive);
   const [value, setValue] = useState<Primitive | null>(block.value ?? null);
+
   const mutate = useMutateComponent();
   const handleDefinitionChange = () => {
-    if (primitive !== block.primitive) {
-      // type changed, the value must be reset
-      const newValue = getDefaultValue(primitive, value);
-      setValue(newValue);
-      mutate(block.id, { primitive, value: newValue });
-    }
-
-    // name or value changed
-    else mutate(block.id, { name, value });
+    mutate(block.id, { name, primitive, value });
   };
 
-  const [error, setError] = useState<boolean>(false);
   useEffect(() => {
-    if (name === '' && !preview) setError(true);
-    else setError(false);
-  }, [name]);
+    if (block.primitive === primitive) return;
+    const newValue = getDefaultValue(primitive, value);
+    setValue(newValue);
+    mutate(block.id, { primitive, value: newValue });
+  }, [primitive]);
 
   useVariableDefinition(block, !preview);
 
@@ -64,18 +57,19 @@ export function DefinitionBlock({
     <BlockRoot
       block={block}
       preview={preview}
-      error={error}
       css={{ fd: 'row', items: 'center' }}
     >
-      <PrimitiveDropdown primitive={primitive} setPrimitive={setPrimitive} />
+      <span>{'let'}</span>
       <Field
         value={name}
         onValueChange={(value) => setName(value.replace(/\s/g, '-'))}
         onBlur={handleDefinitionChange}
         dynamicSize
       />
+      <span>{':'}</span>
+      <PrimitiveDropdown primitive={primitive} setPrimitive={setPrimitive} />
       <span>{'='}</span>
-      <RValue
+      <InitialValue
         type={primitive}
         value={value}
         setValue={setValue}
@@ -93,7 +87,13 @@ function PrimitiveDropdown({
   setPrimitive: (type: PrimitiveType) => void;
 }) {
   return (
-    <Select value={primitive} placeholder="type" onValueChange={setPrimitive}>
+    <Select
+      fontFamily="$mono"
+      height={FIELD_HEIGHT}
+      value={primitive}
+      placeholder="type"
+      onValueChange={setPrimitive}
+    >
       {Primitives.map((p) => (
         <SelectItem key={p} value={p}>
           {p}
@@ -103,7 +103,9 @@ function PrimitiveDropdown({
   );
 }
 
-function RValue({
+const BOOLEANS = ['true', 'false'] as const;
+
+function InitialValue({
   type,
   value,
   setValue,
@@ -117,6 +119,8 @@ function RValue({
   if (type === 'boolean')
     return (
       <Select
+        fontFamily="$mono"
+        height={FIELD_HEIGHT}
         value={value?.toString() ?? 'false'}
         onValueChange={(value) => {
           if (value === 'true') setValue(true);
@@ -124,8 +128,11 @@ function RValue({
           else setValue(null);
         }}
       >
-        <SelectItem value="true">true</SelectItem>
-        <SelectItem value="false">false</SelectItem>
+        {BOOLEANS.map((b) => (
+          <SelectItem key={b} value={b}>
+            {b}
+          </SelectItem>
+        ))}
       </Select>
     );
   else
@@ -140,8 +147,6 @@ function RValue({
         dynamicSize
       />
     );
-
-  return null; // todo: add type inference...
 }
 function useVariableDefinition(block: Definition, enabled: boolean = true) {
   const { declare } = useVariableStore();
