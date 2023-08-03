@@ -1,5 +1,7 @@
 import { s, CSS, styled } from 'theme/stitches.config';
 
+export const FIELD_HEIGHT = 16;
+
 export default function Field({
   value,
   defaultValue = '',
@@ -26,6 +28,7 @@ export default function Field({
 }
 const FieldRoot = styled(s.input, {
   all: 'unset',
+  h: FIELD_HEIGHT,
   minW: 32,
   p: 4,
   r: 4,
