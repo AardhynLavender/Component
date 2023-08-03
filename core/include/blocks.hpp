@@ -55,8 +55,7 @@ namespace Block {
     // Determine if the arguments are variables or literals
     if constexpr (variableA) {
       block["expression"][LEFT]["type"] = "variable";
-      block["expression"][LEFT]["key"] = a; // if `variable`, this will be the key
-      block["expression"][LEFT]["primitive"] = "number"; // todo: not a good assumption... true in all current cases, but not future-proof
+      block["expression"][LEFT]["definitionId"] = a; // if `variable`, this will be the key
     } else {
       block["expression"][LEFT]["type"] = "literal";
       block["expression"][LEFT]["expression"] = a; // if `variable`, this will be the key
@@ -64,11 +63,10 @@ namespace Block {
 
     if constexpr (variableB) {
       block["expression"][RIGHT]["type"] = "variable";
-      block["expression"][RIGHT]["key"] = b; // if `variable`, this will be the key
+      block["expression"][RIGHT]["definitionId"] = b; // if `variable`, this will be the key
     } else {
       block["expression"][RIGHT]["type"] = "literal";
       block["expression"][RIGHT]["expression"] = b; // if `variable`, this will be the key
-      block["expression"][RIGHT]["primitive"] = "number"; // todo: not a good assumption... true in all current cases, but not future-proof
     }
 
     return block;
@@ -85,7 +83,7 @@ namespace Block {
     // Determine if the conditional is a variable or literal
     if constexpr (variable) {
       block["expression"]["type"] = "variable";
-      block["expression"]["key"] = value;
+      block["expression"]["definitionId"] = value;
     } else {
       block["expression"]["type"] = "literal";
       block["expression"]["value"] = value;
@@ -112,10 +110,7 @@ namespace Block {
     if constexpr (O == ArithmeticOperation::INC) block["type"] = "increment";
     else if constexpr (O == ArithmeticOperation::DEC) block["type"] = "decrement";
     else throw std::invalid_argument("Invalid compile-time evaluated arithmetic operation!");
-
-    if constexpr (std::is_same<T, int>::value) block["primitive"] = "int";
-    else if constexpr (std::is_same<T, double>::value) block["primitive"] = "double";
-    block["key"] = key;
+    block["definitionId"] = key;
 
     return block;
   }

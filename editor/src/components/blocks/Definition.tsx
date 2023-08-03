@@ -1,5 +1,12 @@
-import { ReactElement, useEffect, useState, ChangeEvent } from 'react';
-import { useMutateComponent } from 'structures/program';
+import {
+  ReactElement,
+  useEffect,
+  useState,
+  ChangeEvent,
+  useRef,
+  useLayoutEffect,
+} from 'react';
+import { useMutateComponent, useVariableStore } from 'structures/program';
 import {
   Definition,
   Primitive,
@@ -7,7 +14,9 @@ import {
   PrimitiveType,
 } from 'components/componentTypes';
 import { BlockRoot } from './generic';
-import { s, styled } from 'theme/stitches.config';
+import { Select, SelectItem } from 'ui/Select';
+import { s, CSS, styled } from 'theme/stitches.config';
+import Field, { FIELD_HEIGHT } from 'ui/Field';
 
 const DEFAULT_VALUE = {
   string: '',
@@ -26,45 +35,41 @@ export function DefinitionBlock({
   block: Definition;
   preview?: boolean;
 }): ReactElement | null {
+  const [name, setName] = useState<string>(block.name);
   const [primitive, setPrimitive] = useState<PrimitiveType>(block.primitive);
-  const [key, setKey] = useState<string>(block.key);
   const [value, setValue] = useState<Primitive | null>(block.value ?? null);
-  const [error, setError] = useState<boolean>(false);
 
-  // apply mutation
   const mutate = useMutateComponent();
   const handleDefinitionChange = () => {
-    if (primitive !== block.primitive) {
-      // type changed, the value must be reset
-      const newValue = getDefaultValue(primitive, value);
-      setValue(newValue);
-      mutate(block.id, { primitive, value: newValue });
-    }
-    // key or value changed
-    else mutate(block.id, { key, value });
+    mutate(block.id, { name, primitive, value });
   };
 
   useEffect(() => {
-    // check for errors
-    if (key === '' && !preview) setError(true);
-    else setError(false);
-  }, [key]);
+    if (block.primitive === primitive) return;
+    const newValue = getDefaultValue(primitive, value);
+    setValue(newValue);
+    mutate(block.id, { primitive, value: newValue });
+  }, [primitive]);
+
+  useVariableDefinition(block, !preview);
 
   return (
     <BlockRoot
       block={block}
       preview={preview}
-      error={error}
       css={{ fd: 'row', items: 'center' }}
     >
-      <PrimitiveDropdown
-        primitive={primitive}
-        setPrimitive={setPrimitive}
+      <span>{'let'}</span>
+      <Field
+        value={name}
+        onValueChange={(value) => setName(value.replace(/\s/g, '-'))}
         onBlur={handleDefinitionChange}
+        dynamicSize
       />
-      <LValue value={key} setValue={setKey} onBlur={handleDefinitionChange} />
+      <span>{':'}</span>
+      <PrimitiveDropdown primitive={primitive} setPrimitive={setPrimitive} />
       <span>{'='}</span>
-      <RValue
+      <InitialValue
         type={primitive}
         value={value}
         setValue={setValue}
@@ -77,48 +82,30 @@ export function DefinitionBlock({
 function PrimitiveDropdown({
   primitive,
   setPrimitive,
-  onBlur,
 }: {
   primitive: PrimitiveType;
   setPrimitive: (type: PrimitiveType) => void;
-  onBlur: () => void;
 }) {
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPrimitive(e.target.value as PrimitiveType);
-  };
-
   return (
-    <select
+    <Select
+      fontFamily="$mono"
+      height={FIELD_HEIGHT}
       value={primitive}
       placeholder="type"
-      onChange={handleChange}
-      onBlur={onBlur}
+      onValueChange={setPrimitive}
     >
       {Primitives.map((p) => (
-        <option key={p} value={p}>
+        <SelectItem key={p} value={p}>
           {p}
-        </option>
+        </SelectItem>
       ))}
-    </select>
+    </Select>
   );
 }
 
-function LValue({
-  value,
-  setValue,
-  onBlur,
-}: {
-  value: string;
-  setValue: (value: string) => void;
-  onBlur: () => void;
-}) {
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
-    setValue(e.target.value);
+const BOOLEANS = ['true', 'false'] as const;
 
-  return <ValueRoot value={value} onChange={handleChange} onBlur={onBlur} />;
-}
-
-function RValue({
+function InitialValue({
   type,
   value,
   setValue,
@@ -129,45 +116,43 @@ function RValue({
   setValue: (value: Primitive | null) => void;
   onBlur: () => void;
 }) {
-  if (type === 'string')
-    return (
-      <ValueRoot
-        value={(value as string | null) ?? ''}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={onBlur}
-      />
-    );
-
-  if (type === 'number')
-    return (
-      <ValueRoot
-        value={(value as number | null) ?? 0}
-        type="number"
-        onChange={(e) => setValue(parseInt(e.target.value) ?? 0)}
-        onBlur={onBlur}
-      />
-    );
-
   if (type === 'boolean')
     return (
-      <SelectRoot
+      <Select
+        fontFamily="$mono"
+        height={FIELD_HEIGHT}
         value={value?.toString() ?? 'false'}
-        onBlur={onBlur}
-        onChange={(e) => {
-          const { value } = e.target;
+        onValueChange={(value) => {
           if (value === 'true') setValue(true);
           else if (value === 'false') setValue(false);
           else setValue(null);
         }}
       >
-        <option value={'true'}>true</option>
-        <option value={'false'}>false</option>
-      </SelectRoot>
+        {BOOLEANS.map((b) => (
+          <SelectItem key={b} value={b}>
+            {b}
+          </SelectItem>
+        ))}
+      </Select>
     );
-
-  return null; // todo: add type inference...
+  else
+    return (
+      <Field
+        value={value?.toLocaleString() ?? ''}
+        onValueChange={(value) => {
+          if (type === 'number') setValue(parseInt(value) ?? 0);
+          else setValue(value);
+        }}
+        onBlur={onBlur}
+        dynamicSize
+      />
+    );
 }
+function useVariableDefinition(block: Definition, enabled: boolean = true) {
+  const { declare } = useVariableStore();
 
-// todo: tempoary fix until we impliment Radix ui components
-const ValueRoot = styled(s.input, { all: 'unset' });
-const SelectRoot = styled(s.select, { all: 'unset' });
+  useEffect(() => {
+    if (enabled) declare(block.id, block); // declare the variable
+    return () => declare(block.id, undefined); // un-declare the variable on unmount
+  }, [block.id, block.name, block.primitive, enabled]);
+}

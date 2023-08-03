@@ -1,6 +1,6 @@
 import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
-import { Expression } from 'components/componentTypes';
+import { Expression, Literal, Variable } from 'components/componentTypes';
 import produce from 'immer';
 import {
   IsBlock,
@@ -39,8 +39,7 @@ export namespace algorithm {
           found ??= Find(id, block.components); // search repeat body
           break;
         case 'print':
-          if (block.expression)
-            found ??= block.expression.id === id ? block.expression : null; // check variable|literal expression
+          if (block.expression) found ??= FindExpression(id, block.expression); // search expression
           break;
       }
     }
@@ -67,6 +66,12 @@ export namespace algorithm {
       case 'ge':
       case 'and':
       case 'or':
+      case 'add':
+      case 'subtract':
+      case 'multiply':
+      case 'divide':
+      case 'modulo':
+      case 'exponent':
         const [lvalue, rvalue] = state.expression;
         found ??= FindExpression(id, lvalue); // expression lvalue
         if (rvalue) found ??= FindExpression(id, rvalue); // optional expression rvalue
@@ -88,6 +93,10 @@ export namespace algorithm {
     return draft.map((block) =>
       produce(block, (draft) => {
         switch (draft.type) {
+          case 'print':
+            if (draft.expression)
+              draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
+            break;
           case 'branch':
             draft.condition = RemoveExpression(id, draft.condition); // condition
 
@@ -126,6 +135,12 @@ export namespace algorithm {
         case 'ge':
         case 'and':
         case 'or':
+        case 'add':
+        case 'subtract':
+        case 'multiply':
+        case 'divide':
+        case 'modulo':
+        case 'exponent':
           const [lvalue, rvalue] = draft.expression;
           draft.expression[0] = RemoveExpression(id, lvalue); // expression lvalue
           if (rvalue) draft.expression[1] = RemoveExpression(id, rvalue); // optional expression rvalue
@@ -270,6 +285,13 @@ export namespace algorithm {
       return state.map((block) =>
         produce(block, (draft) => {
           switch (draft.type) {
+            case 'print':
+              if (draft.expression)
+                draft.expression = EmplaceExpression(
+                  emplacement,
+                  draft.expression,
+                ); // variable|literal expression
+              break;
             case 'branch':
               // branches
               if (draft.branches)
@@ -304,6 +326,7 @@ export namespace algorithm {
     if (IsBlock(emplacement.component)) return state; // block cannot be emplaced into an expression
 
     const { component, destinationId, action, locale } = emplacement;
+    console.log(component, destinationId, action, locale);
 
     if (!destinationId) throw new Error('Cannot emplace expression without id');
 
@@ -323,24 +346,20 @@ export namespace algorithm {
         switch (draft.type) {
           case 'eq':
           case 'ne':
-            //@ts-ignore
-            if (locale === 'left') draft.expression[0] = component;
-            //@ts-ignore
-            else if (locale === 'right') draft.expression[1] = component;
-            break;
           case 'lt':
           case 'gt':
           case 'le':
           case 'ge':
-            //@ts-ignore
-            if (locale === 'right') draft.expression[0] = component;
-            //@ts-ignore
-            else if (locale === 'rvalue') draft.expression[1] = component;
-            break;
           case 'and':
           case 'or':
           case 'not':
-            //@ts-ignore
+          case 'add':
+          case 'subtract':
+          case 'multiply':
+          case 'divide':
+          case 'modulo':
+          case 'exponent':
+            // @ts-ignore
             if (locale === 'left') draft.expression[0] = component;
             //@ts-ignore
             else if (locale === 'right') draft.expression[1] = component;
@@ -359,6 +378,12 @@ export namespace algorithm {
           case 'ge':
           case 'and':
           case 'or':
+          case 'add':
+          case 'subtract':
+          case 'multiply':
+          case 'divide':
+          case 'modulo':
+          case 'exponent':
             const [lvalue, rvalue] = draft.expression;
             if (lvalue)
               draft.expression[0] = EmplaceExpression(emplacement, lvalue);
@@ -378,7 +403,6 @@ export namespace algorithm {
     locale: string | undefined,
     state: Block[],
   ): Block[] {
-    console.log(`Move ${sourceId} to ${destinationId} ${action} ${locale}`);
     if (sourceId === destinationId) return state;
 
     // find destination component

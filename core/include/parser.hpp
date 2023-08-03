@@ -19,31 +19,32 @@ private:
     StackMachine stackMachine;
     VariableStore store;
 
-    template<typename T>
-    T ParseVariable(Json& expression) {
-        const std::string key = expression["key"];
+    const Variable& ParseVariable(Json& expression) {
+        const std::string key = expression["definitionId"];
         using namespace std::string_literals;
-        Log("Parsing variable `"s + key + "` expression"s);
-        return store.Get<T>(key);
+        Log("Parsing variable of definition id `"s + key + "`"s);
+        return store.Get(key);
     }
 
     template<Block::ArithmeticOperation O>
     void ParseUnaryArithmetic(Json& expression) {
-        const std::string type = expression["primitive"];
-        if (type == "int") ApplyUnaryArithmetic<int, O>(expression["key"]);
-        else if (type == "double") ApplyUnaryArithmetic<double, O>(expression["key"]);
-        else throw std::invalid_argument("Invalid type evaluation provided!");
+        const auto key = expression["definitionId"];
+        const auto& variable = store.Get(key);
+        const auto primitive = variable.GetPrimitive();
+
+        if (primitive == "number") ApplyUnaryArithmetic<O>(key, variable.Get<int>());
+        else if (primitive == "double") ApplyUnaryArithmetic<O>(key, variable.Get<double>());
+        else throw std::invalid_argument("Invalid TYPE for UNARY ARITHMETIC expression!");
     }
 
-    template<Block::Arithmetic T, Block::ArithmeticOperation O>
-    void ApplyUnaryArithmetic(const std::string key) {
-        const T value = store.Get<T>(key);
+    template<Block::ArithmeticOperation O, Block::Arithmetic T>
+    void ApplyUnaryArithmetic(const std::string key, const T& value) {
         T result;
         if constexpr (O == Block::ArithmeticOperation::INC) result = value + 1;
         else if constexpr (O == Block::ArithmeticOperation::DEC) result = value - 1;
         else throw std::invalid_argument("Invalid arithmetic operation provided!");
 
-        store.Set<T>(key, result);
+        store.Set(key, result);
     }
 
 
@@ -55,11 +56,11 @@ private:
 
         T lvalue, rvalue;
 
-        if (left["type"] == "variable") lvalue = ParseVariable<T>(left);
+        if (left["type"] == "variable") lvalue = ParseVariable(left).Get<T>();
         else if (left["type"] == "literal") lvalue = left["expression"].get<T>();
         else lvalue = ParseOperation<T>(left);
 
-        if (right["type"] == "variable") rvalue = ParseVariable<T>(right);
+        if (right["type"] == "variable") rvalue = ParseVariable(right).Get<T>();
         else if (right["type"] == "literal") rvalue = right["expression"].get<T>();
         else rvalue = ParseOperation<T>(right);
 

@@ -41,7 +41,7 @@ export function RepeatBlock({
           />
         ) : block.repetition?.type === 'variable' ? (
           <VariableExpression
-            expression={block.repetition}
+            variable={block.repetition}
             parent={{
               id: block.id,
               locale: 'repetition',

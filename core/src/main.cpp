@@ -54,6 +54,8 @@ void BrowserDaemon() {
         ClientPrint(e.what());
     } catch (const stack_overflow& e) { 
         ClientPrint(e.what());
+    } catch (const std::exception& e) {
+        ClientPrint(e.what());
     } catch (...) { 
         ClientPrint("An unhandled exception was thrown while parsing ast"); 
     }

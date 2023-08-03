@@ -50,11 +50,9 @@ export function BinaryOperationBlock({
         </s.span>
         <Side
           expression={right}
-          // onChange={handleChange("rvalue")}
-          // onBlur={handleBlur('rvalue')')}
           parent={{
             id: block.id,
-            locale: 'left',
+            locale: 'right',
             dropPredicate,
           }}
         />
@@ -80,7 +78,7 @@ function Side({
     );
 
   if (expression.type === 'variable')
-    return <VariableExpression expression={expression} parent={parent} />;
+    return <VariableExpression variable={expression} parent={parent} />;
   else if (expression.type === 'literal')
     return (
       <LiteralExpression
@@ -103,8 +101,8 @@ function NumericOperation(type: BinaryOperation['type']) {
     case 'divide':
       return '÷';
     case 'modulo':
-      return '%';
+      return 'mod';
     case 'exponent':
-      return '**'; // option for `^`?
+      return '^';
   }
 }

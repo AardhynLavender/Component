@@ -1,40 +1,24 @@
 import { Drag } from 'util/Drag';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { Variable } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
-import { useMutateComponent } from 'structures/program/store';
+import { useVariableDefinition } from 'structures/program/store';
 import { styled, s } from 'theme/stitches.config';
-import { Primitives } from '../componentTypes';
-import { Capitalize } from 'util/string';
+import Badge from 'ui/Badge';
 
 export function VariableExpression({
-  expression,
+  variable,
   parent,
   preview = false,
 }: {
-  expression: Variable;
+  variable: Variable;
   parent?: ExpressionParent;
   preview?: boolean;
 }): ReactElement | null {
-  const { isDragging, DragHandle } = Drag.useComponentDragHandle(
-    expression,
-    preview,
-  );
+  const definition = useVariableDefinition(variable.definitionId); // fetch variable from store
 
-  const mutate = useMutateComponent();
-  const [key, setKey] = useState(expression.key);
-  const [primitive, setPrimitive] = useState(expression.primitive);
-  const handleKeyBlur = () =>
-    key !== expression.key && mutate(expression.id, { key });
-
-  const handlePrimitiveChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    if (value !== expression.primitive && Primitives.includes(value as any)) {
-      setPrimitive(value as any);
-      mutate(expression.id, { primitive: value });
-    }
-  };
+  const { DragHandle } = Drag.useComponentDragHandle(variable, preview);
 
   return (
     <ExpressionDropzone
@@ -42,25 +26,27 @@ export function VariableExpression({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
+      error={!variable}
     >
-      <DragHandle>
-        <span>
-          <select value={primitive} onChange={handlePrimitiveChange}>
-            {Primitives.map((p) => (
-              <option key={p} value={p}>
-                {Capitalize(p)}
-              </option>
-            ))}
-          </select>
-          <Input
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-            onBlur={handleKeyBlur}
-          />
-        </span>
+      <DragHandle css={{ d: 'flex', items: 'center', gap: 4 }}>
+        {definition ? (
+          <>
+            <span>{definition.name}</span>
+            <span>:</span>
+            <Badge color="neutral" size="small">
+              {definition.primitive}
+            </Badge>
+          </>
+        ) : (
+          <>
+            <span>unknown</span>
+            <span>:</span>
+            <Badge color="neutral" size="small">
+              never
+            </Badge>
+          </>
+        )}
       </DragHandle>
     </ExpressionDropzone>
   );
 }
-
-const Input = styled(s.input, { all: 'unset' });

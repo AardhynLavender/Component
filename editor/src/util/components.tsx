@@ -29,7 +29,7 @@ export function MapBlocks(blocks: Block[] | null): ReactElement[] {
  * @param type type of component to create
  * @returns a component object of `type`
  */
-export function CreateComponent(type: ComponentType): Component {
+export function CreateComponent<T extends Component>(type: ComponentType): T {
   const base = <T extends ComponentType>(type: T) => ({
     id: uuid(),
     type,
@@ -42,16 +42,9 @@ export function CreateComponent(type: ComponentType): Component {
     case 'definition':
       component = {
         ...base(type),
-        key: '',
+        name: 'var',
         primitive: 'string',
         value: '',
-      };
-      break;
-    case 'variable':
-      component = {
-        ...base(type),
-        key: '',
-        primitive: 'string', // lookup key to get the primitive
       };
       break;
 
@@ -177,5 +170,5 @@ export function CreateComponent(type: ComponentType): Component {
       throw new Error(`Unknown block type '${type}'`);
   }
 
-  return component;
+  return component as T;
 }

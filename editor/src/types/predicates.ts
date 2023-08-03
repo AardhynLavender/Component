@@ -66,20 +66,14 @@ export function IsBoolean(value: unknown): value is boolean {
 export function IsVariable(component: Component): component is Variable {
   return component.type === 'variable';
 }
-export function IsNumericVariable(
-  component: Component,
-): component is Variable<'number'> {
-  return IsVariable(component) && component.primitive === 'number';
+export function IsNumericVariable(component: Component): component is Variable {
+  return IsVariable(component); //&& component.primitive === 'number';
 }
-export function IsBooleanVariable(
-  component: Component,
-): component is Variable<'boolean'> {
-  return IsVariable(component) && component.primitive === 'boolean';
+export function IsBooleanVariable(component: Component): component is Variable {
+  return IsVariable(component); //&& component.primitive === 'boolean';
 }
-export function IsStringVariable(
-  component: Component,
-): component is Variable<'string'> {
-  return IsVariable(component) && component.primitive === 'string';
+export function IsStringVariable(component: Component): component is Variable {
+  return IsVariable(component); //&& component.primitive === 'string';
 }
 
 // Expressions //

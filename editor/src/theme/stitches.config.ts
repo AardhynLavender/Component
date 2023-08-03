@@ -23,6 +23,7 @@ const config = createStitches({
   theme: {
     colors: {
       text: '#24292e',
+      text2: '#6a737c',
       primary: '#117dff',
       primary2: '#0f69d5',
       onPrimary: '#fff',
@@ -41,6 +42,7 @@ const config = createStitches({
       bold: 900,
     },
     fontSizes: {
+      0: '.6rem',
       1: '.8rem',
       2: '1rem', // regular
       3: '1.5rem',
@@ -174,6 +176,7 @@ export const s = {
   label: styled('label'),
   li: styled('li'),
   ol: styled('ol'),
+  option: styled('option'),
   p: styled('p'),
   pre: styled('pre'),
   section: styled('section'),
