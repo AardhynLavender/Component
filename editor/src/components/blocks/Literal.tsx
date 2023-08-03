@@ -5,6 +5,7 @@ import { Literal, PrimitiveType } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
 import { GetBoolFromString } from 'util/string';
+import Field from 'ui/Field';
 
 export function LiteralExpression({
   expression,
@@ -39,7 +40,12 @@ export function LiteralExpression({
       locale={parent.locale}
       dropPredicate={parent.dropPredicate}
       enabled={!preview}
-      css={{ pos: 'relative', background: error ? '$onError' : undefined }}
+      css={{
+        p: 0,
+        b: 'none',
+        pos: 'relative',
+        background: error ? '$onError' : undefined,
+      }}
     >
       <PrimitiveInput
         setError={setError}
@@ -85,18 +91,19 @@ function PrimitiveInput<T extends PrimitiveType>({
   switch (type) {
     case 'string':
       return (
-        <PrimitiveInputRoot
-          value={value?.toString()}
-          onChange={(e) => handleChange(e.target.value as T)}
+        <Field
+          value={value?.toString() ?? ''}
+          onValueChange={(value) => handleChange(value as T)}
+          dynamicSize
           {...stdProps}
         />
       );
     case 'number':
       return (
-        <PrimitiveInputRoot
-          value={value?.toString()}
-          onChange={(e) => {
-            const { value } = e.target;
+        <Field
+          value={value?.toString() ?? ''}
+          dynamicSize
+          onValueChange={(value) => {
             const int = parseInt(value);
             setError(Number.isNaN(int) || int === null);
 
@@ -107,10 +114,11 @@ function PrimitiveInput<T extends PrimitiveType>({
       );
     case 'boolean':
       return (
-        <PrimitiveInputRoot
-          value={value?.toString()}
-          onChange={(e) => {
-            const bool = GetBoolFromString(e.target.value, { noExcept: false });
+        <Field
+          value={value?.toString() ?? ''}
+          dynamicSize
+          onValueChange={(value) => {
+            const bool = GetBoolFromString(value, { noExcept: false });
             setError(bool === null);
             handleChange(bool as unknown as T); // even nastier type casting
           }}
@@ -121,5 +129,3 @@ function PrimitiveInput<T extends PrimitiveType>({
       throw new Error('Invalid type for primitive');
   }
 }
-
-const PrimitiveInputRoot = styled(s.input, { all: 'unset' });

@@ -1,4 +1,11 @@
-import { ReactElement, useMemo, useEffect, useState, ChangeEvent } from 'react';
+import {
+  ReactElement,
+  useEffect,
+  useState,
+  ChangeEvent,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 import { useMutateComponent, useVariableStore } from 'structures/program';
 import {
   Definition,
@@ -7,7 +14,9 @@ import {
   PrimitiveType,
 } from 'components/componentTypes';
 import { BlockRoot } from './generic';
-import { s, styled } from 'theme/stitches.config';
+import { Select, SelectItem } from 'ui/Select';
+import { s, CSS, styled } from 'theme/stitches.config';
+import Field from 'ui/Field';
 
 const DEFAULT_VALUE = {
   string: '',
@@ -38,13 +47,13 @@ export function DefinitionBlock({
       setValue(newValue);
       mutate(block.id, { primitive, value: newValue });
     }
+
     // name or value changed
     else mutate(block.id, { name, value });
   };
 
   const [error, setError] = useState<boolean>(false);
   useEffect(() => {
-    // check for errors
     if (name === '' && !preview) setError(true);
     else setError(false);
   }, [name]);
@@ -58,12 +67,13 @@ export function DefinitionBlock({
       error={error}
       css={{ fd: 'row', items: 'center' }}
     >
-      <PrimitiveDropdown
-        primitive={primitive}
-        setPrimitive={setPrimitive}
+      <PrimitiveDropdown primitive={primitive} setPrimitive={setPrimitive} />
+      <Field
+        value={name}
+        onValueChange={(value) => setName(value.replace(/\s/g, '-'))}
         onBlur={handleDefinitionChange}
+        dynamicSize
       />
-      <LValue value={name} setValue={setName} onBlur={handleDefinitionChange} />
       <span>{'='}</span>
       <RValue
         type={primitive}
@@ -78,45 +88,19 @@ export function DefinitionBlock({
 function PrimitiveDropdown({
   primitive,
   setPrimitive,
-  onBlur,
 }: {
   primitive: PrimitiveType;
   setPrimitive: (type: PrimitiveType) => void;
-  onBlur: () => void;
 }) {
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPrimitive(e.target.value as PrimitiveType);
-  };
-
   return (
-    <select
-      value={primitive}
-      placeholder="type"
-      onChange={handleChange}
-      onBlur={onBlur}
-    >
+    <Select value={primitive} placeholder="type" onValueChange={setPrimitive}>
       {Primitives.map((p) => (
-        <option key={p} value={p}>
+        <SelectItem key={p} value={p}>
           {p}
-        </option>
+        </SelectItem>
       ))}
-    </select>
+    </Select>
   );
-}
-
-function LValue({
-  value,
-  setValue,
-  onBlur,
-}: {
-  value: string;
-  setValue: (value: string) => void;
-  onBlur: () => void;
-}) {
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
-    setValue(e.target.value);
-
-  return <ValueRoot value={value} onChange={handleChange} onBlur={onBlur} />;
 }
 
 function RValue({
@@ -130,55 +114,40 @@ function RValue({
   setValue: (value: Primitive | null) => void;
   onBlur: () => void;
 }) {
-  if (type === 'string')
-    return (
-      <ValueRoot
-        value={(value as string | null) ?? ''}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={onBlur}
-      />
-    );
-
-  if (type === 'number')
-    return (
-      <ValueRoot
-        value={(value as number | null) ?? 0}
-        type="number"
-        onChange={(e) => setValue(parseInt(e.target.value) ?? 0)}
-        onBlur={onBlur}
-      />
-    );
-
   if (type === 'boolean')
     return (
-      <SelectRoot
+      <Select
         value={value?.toString() ?? 'false'}
-        onBlur={onBlur}
-        onChange={(e) => {
-          const { value } = e.target;
+        onValueChange={(value) => {
           if (value === 'true') setValue(true);
           else if (value === 'false') setValue(false);
           else setValue(null);
         }}
       >
-        <option value={'true'}>true</option>
-        <option value={'false'}>false</option>
-      </SelectRoot>
+        <SelectItem value="true">true</SelectItem>
+        <SelectItem value="false">false</SelectItem>
+      </Select>
+    );
+  else
+    return (
+      <Field
+        value={value?.toLocaleString() ?? ''}
+        onValueChange={(value) => {
+          if (type === 'number') setValue(parseInt(value) ?? 0);
+          else setValue(value);
+        }}
+        onBlur={onBlur}
+        dynamicSize
+      />
     );
 
   return null; // todo: add type inference...
 }
-
-// todo: temporary fix until we implement Radix ui components
-const ValueRoot = styled(s.input, { all: 'unset' });
-const SelectRoot = styled(s.select, { all: 'unset' });
-
 function useVariableDefinition(block: Definition, enabled: boolean = true) {
   const { declare } = useVariableStore();
 
   useEffect(() => {
     if (enabled) declare(block.id, block); // declare the variable
-
-    return () => declare(block.id, undefined); // un-declare the variable
+    return () => declare(block.id, undefined); // un-declare the variable on unmount
   }, [block.id, block.name, block.primitive, enabled]);
 }
