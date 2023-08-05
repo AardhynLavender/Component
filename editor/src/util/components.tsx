@@ -70,9 +70,9 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         },
       };
       break;
-    // case 'clear':
-    //   component = base(type);
-    //   break;
+    case 'clear':
+      component = base(type);
+      break;
 
     // Control Flow //
 

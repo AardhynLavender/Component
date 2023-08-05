@@ -26,7 +26,7 @@ export const operators = [
 ] as const;
 export type OperatorType = (typeof operators)[number];
 
-export const outputs = ['print'] as const;
+export const outputs = ['print', 'clear'] as const;
 export type OutputType = (typeof outputs)[number];
 
 export const miscBlocks = ['branch', 'definition'] as const;
@@ -212,7 +212,7 @@ export type Print = ComponentPrimitive<
   'print',
   { expression: Literal | Variable | null }
 >;
-// export type Clear = ComponentPrimitive<'clear'>;
+export type Clear = ComponentPrimitive<'clear'>;
 export type Output = Print; // | clear;
 
 // Loops
@@ -229,7 +229,7 @@ export type Loop = Repeat;
 
 // General
 
-export type Block = Output | Loop | Definition | Branch; // | Clear;
+export type Block = Output | Loop | Definition | Branch | Clear;
 
 export type Expression =
   | Literal<Primitive>
