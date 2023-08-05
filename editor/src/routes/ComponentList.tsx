@@ -93,9 +93,14 @@ const ComponentListRoot = styled('div', {
 function VariableStoreList() {
   const { variables } = useVariableStore();
 
+  const keys = Object.keys(variables);
+
   return (
     <ComponentListRoot>
-      {Object.keys(variables).map((definitionId) => (
+      {!keys.length && (
+        <s.span css={{ c: '$text2' }}>you have no variables</s.span>
+      )}
+      {keys.map((definitionId) => (
         <VariableStoreItem key={definitionId} definitionId={definitionId} />
       ))}
     </ComponentListRoot>
