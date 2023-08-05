@@ -14,7 +14,6 @@ import { H5 } from 'theme/Typography';
 import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
-import { Definition } from '../components/componentTypes';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -32,15 +31,7 @@ export default function ComponentList() {
   const _ = useComponentStore((store) => store.program);
 
   return (
-    <s.div
-      css={{
-        h: '100%',
-        overflowY: 'auto',
-        d: 'flex',
-        fd: 'column',
-        gap: 32,
-      }}
-    >
+    <Root>
       {Object.entries(ComponentCategories).map(([category, types]) => (
         <ComponentListCategory
           key={category}
@@ -48,9 +39,16 @@ export default function ComponentList() {
           components={types}
         />
       ))}
-    </s.div>
+    </Root>
   );
 }
+const Root = styled('div', {
+  h: '100%',
+  overflowY: 'auto',
+  d: 'flex',
+  fd: 'column',
+  gap: 32,
+});
 
 function ComponentListCategory({
   category,
