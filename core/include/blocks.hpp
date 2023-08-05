@@ -110,7 +110,7 @@ namespace Block {
     if constexpr (O == ArithmeticOperation::INC) block["type"] = "increment";
     else if constexpr (O == ArithmeticOperation::DEC) block["type"] = "decrement";
     else throw std::invalid_argument("Invalid compile-time evaluated arithmetic operation!");
-    block["definitionId"] = key;
+    block["expression"]["definitionId"] = key;
 
     return block;
   }

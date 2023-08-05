@@ -189,8 +189,8 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "branch")            ParseBranch(component);
   else if (type == "print")             ParsePrint(component["expression"]);
   else if (type == "clear")             ParseClear();
-  else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component);
-  else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component);
+  else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
+  else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
   else if (type == "repeat")            ParseRepeat(component);
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);

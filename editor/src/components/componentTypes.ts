@@ -167,11 +167,11 @@ export type Condition =
 
 export type Increment = ComponentPrimitive<
   'increment',
-  { primitive: 'number'; key: number }
+  { expression: Variable | null }
 >;
 export type Decrement = ComponentPrimitive<
   'decrement',
-  { primitive: 'number'; key: number }
+  { expression: Variable | null }
 >;
 export type UnaryOperation = Increment | Decrement;
 
@@ -229,7 +229,13 @@ export type Loop = Repeat;
 
 // General
 
-export type Block = Output | Loop | Definition | Branch | Clear;
+export type Block =
+  | Output
+  | Loop
+  | Definition
+  | Branch
+  | Clear
+  | UnaryOperation;
 
 export type Expression =
   | Literal<Primitive>

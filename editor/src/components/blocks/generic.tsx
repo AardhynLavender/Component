@@ -9,6 +9,7 @@ import {
   UnaryOperationBlock,
   RepeatBlock,
   VariableExpression,
+  ClearBlock,
 } from '.';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from '../../util/Drag';
@@ -107,7 +108,7 @@ export function BlockRoot({
         fontSize: '$1',
 
         r: 4,
-        p: 4,
+        p: '4px 8px',
 
         bg: error ? '$error' : '$background',
         outline: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -279,6 +280,8 @@ export function GetJsxComponent(
       return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
+    case 'clear':
+      return <ClearBlock block={component} {...stdProps} />;
     case 'repeat':
       return <RepeatBlock block={component} {...stdProps} />;
     case 'branch':
