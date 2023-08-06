@@ -44,11 +44,12 @@ build-core: core
 			--js-library lib/print.js \
 			$(optimization_level) \
 			-l embind \
+			-s ENVIRONMENT='web' \
 			-s LLD_REPORT_UNDEFINED \
 			-s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR \
 			-s NO_DISABLE_EXCEPTION_CATCHING \
-			-s ENVIRONMENT='web' \
 			-s EXPORT_NAME=$(module_name) \
+			-s USE_SDL=2 \
 			-s USE_ES6_IMPORT_META=0 \
 			-std=$(cpp_std)
 

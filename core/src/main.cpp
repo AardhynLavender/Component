@@ -11,6 +11,8 @@
 #include <emscripten/bind.h>
 #endif // __EMSCRIPTEN__
 
+#include <SDL2.hpp>
+
 #include <timing.hpp>
 #include <parser.hpp>
 #include <json.hpp>
@@ -97,6 +99,9 @@ void Parse(const std::string& program) {
 
 int main() {
     Log("Core has initialized!"); // called when `LoadModule` resolves
+
+    initializeSDL2();
+    
 #ifndef __EMSCRIPTEN__
 
 	// todo: parse cmdline args
