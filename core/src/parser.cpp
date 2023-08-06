@@ -155,7 +155,7 @@ void Parser::ParsePrint(Json& print) {
     const int result = ParseOperation(print);
     ClientPrint(std::to_string(result));        
   } else
-    throw std::invalid_argument("Invalid TYPE for STDOUT expression");
+    throw std::invalid_argument("Invalid TYPE for PRINT expression");
 }
 
 

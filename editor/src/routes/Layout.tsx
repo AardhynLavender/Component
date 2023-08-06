@@ -5,7 +5,7 @@ import Title from './header/Title';
 import LeftSidebar from './left';
 import Main from './main/Main';
 import RightSidebar from './right';
-import Stdout from './Stdout';
+import BottomPane from './bottom/Bottom';
 
 export default function Layout({ core }: { core: CoreApi }) {
   return (
@@ -15,7 +15,7 @@ export default function Layout({ core }: { core: CoreApi }) {
       <LeftSidebar css={{ gridArea: 'left' }} />
       <Main css={{ gridArea: 'main' }} />
       <RightSidebar css={{ gridArea: 'right' }} />
-      <Stdout css={{ gridArea: 'stdout' }} />
+      <BottomPane css={{ gridArea: 'bottom' }} />
     </Root>
   );
 }
@@ -30,6 +30,6 @@ const Root = styled('div', {
   gridTemplateAreas: `
     "header ribbon ribbon"
     "left main right"
-    "left stdout right"
+    "left bottom right"
     `,
 });
