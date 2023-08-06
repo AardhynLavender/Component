@@ -22,6 +22,8 @@ const config = createStitches({
   },
   theme: {
     colors: {
+      light: '#fff',
+      dark: '#24292e',
       text: '#24292e',
       text2: '#6a737c',
       primary: '#117dff',

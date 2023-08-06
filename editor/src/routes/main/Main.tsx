@@ -28,6 +28,7 @@ const Root = styled('section', {
 const Ribbon = styled('div', {
   d: 'flex',
   gap: 8,
+  h: 48,
   p: 8,
   items: 'start',
   bb: '2px solid $outline',

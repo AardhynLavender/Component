@@ -74,6 +74,10 @@ const TAB_BOTTOM_BORDER = 2;
 
 const Tabs = styled(TabsList, {
   borderBottom: `${TAB_BOTTOM_BORDER}px solid $outline`,
+  d: 'flex',
+  gap: 8,
+  items: 'center',
+  h: 48,
 });
 
 const Content = styled(TabsContent, {

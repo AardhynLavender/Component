@@ -19,7 +19,8 @@ export default function Ribbon({ core, css }: { core: CoreApi; css: CSS }) {
 const Root = styled('section', {
   p: 8,
   d: 'grid',
-  justifyContent: 'end',
+  justify: 'end',
+  items: 'center',
   gap: 16,
   bb: '2px solid $outline',
 });

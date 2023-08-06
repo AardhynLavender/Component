@@ -1,6 +1,7 @@
 import { CSS, styled } from 'theme/stitches.config';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 import DragHandle from 'ui/DragHandle';
+import GameScreen from './Screen';
 
 export default function LeftSidebar({ css }: { css: CSS }) {
   const { bind, rangeConstraint, size } = useDragPanePrimitive(
@@ -15,6 +16,7 @@ export default function LeftSidebar({ css }: { css: CSS }) {
   return (
     <Root css={{ w: size, ...rangeConstraint, ...css }}>
       <DragHandle {...bind()} size={4} anchor="right" />
+      <GameScreen />
     </Root>
   );
 }
