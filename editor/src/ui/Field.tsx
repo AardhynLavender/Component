@@ -4,7 +4,6 @@ export const FIELD_HEIGHT = 16;
 
 export default function Field({
   value,
-  defaultValue = '',
   onValueChange,
   onBlur,
   dynamicSize = false,
@@ -15,7 +14,6 @@ export default function Field({
   value: string;
   onValueChange?: (value: string) => void;
   onBlur?: (value: string) => void;
-  defaultValue?: string;
   dynamicSize?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
@@ -24,10 +22,9 @@ export default function Field({
   return (
     <FieldRoot
       css={{ w: dynamicSize ? `${value?.length}ch` : undefined, ...css }}
-      value={value}
+      value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}
-      defaultValue={defaultValue}
       onBlur={(e) => onBlur?.(e.target.value)}
       onChange={(e) => onValueChange?.(e.target.value)}
     />
