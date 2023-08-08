@@ -9,7 +9,7 @@ export default function LeftSidebar({ css }: { css: CSS }) {
     'right',
     {
       minSize: 256,
-      maxSize: 512,
+      maxSize: 1024,
     },
   );
 
