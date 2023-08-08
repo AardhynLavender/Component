@@ -10,13 +10,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <CoreModuleConsumer
-        onLoaded={(core) => {
-          return <Layout core={core} />;
-        }}
-        onError={(error) => <p>{`Error: ${error}`}</p>}
-        onLoading={<p>loading core module...</p>}
-      />
+      <Layout />
     </div>
   );
 }

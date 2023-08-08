@@ -7,11 +7,11 @@ import Main from './main/Main';
 import RightSidebar from './right';
 import BottomPane from './bottom/Bottom';
 
-export default function Layout({ core }: { core: CoreApi }) {
+export default function Layout() {
   return (
     <Root>
-      <Title core={core} css={{ gridArea: 'header' }} />
-      <Ribbon core={core} css={{ gridArea: 'ribbon' }} />
+      <Title css={{ gridArea: 'header' }} />
+      <Ribbon css={{ gridArea: 'ribbon' }} />
       <LeftSidebar css={{ gridArea: 'left' }} />
       <Main css={{ gridArea: 'main' }} />
       <RightSidebar css={{ gridArea: 'right' }} />
