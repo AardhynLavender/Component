@@ -66,11 +66,11 @@ const Root = styled('section', {
   pos: 'relative',
   overflowY: 'auto',
   w: '100%',
-  bl: '2px solid $outline',
+  bl: '1px solid $outline',
   background: '$background2',
 });
 
-const TAB_BOTTOM_BORDER = 2;
+const TAB_BOTTOM_BORDER = 1;
 
 const Tabs = styled(TabsList, {
   borderBottom: `${TAB_BOTTOM_BORDER}px solid $outline`,

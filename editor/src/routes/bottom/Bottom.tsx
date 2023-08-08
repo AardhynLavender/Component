@@ -44,7 +44,7 @@ export default function BottomPane({ css }: { css: CSS }) {
 const Root = styled('section', {
   pos: 'relative',
   p: 8,
-  bt: '2px solid $outline',
+  bt: '1px solid $outline',
 });
 
 const Content = styled('div', {

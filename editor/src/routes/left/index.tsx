@@ -25,5 +25,5 @@ const Root = styled('section', {
   pos: 'relative',
   p: 8,
   background: '$background2',
-  br: '2px solid $outline',
+  br: '1px solid $outline',
 });

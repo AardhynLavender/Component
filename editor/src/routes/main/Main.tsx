@@ -31,7 +31,7 @@ const Ribbon = styled('div', {
   h: 48,
   p: 8,
   items: 'start',
-  bb: '2px solid $outline',
+  bb: '1px solid $outline',
 });
 
 function Canvas() {

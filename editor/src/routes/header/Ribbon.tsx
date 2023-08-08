@@ -36,5 +36,5 @@ const Root = styled('section', {
   justify: 'end',
   items: 'center',
   gap: 16,
-  bb: '2px solid $outline',
+  bb: '1px solid $outline',
 });

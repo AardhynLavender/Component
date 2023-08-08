@@ -17,5 +17,5 @@ const Root = styled('section', {
   d: 'flex',
   items: 'center',
   gap: 8,
-  bb: '2px solid $outline',
+  bb: '1px solid $outline',
 });
