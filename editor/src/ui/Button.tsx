@@ -7,7 +7,7 @@ export default function Button({
   children,
   ...buttonProps
 }: {
-  color?: 'primary' | 'transparent' | 'tonal';
+  color?: 'primary' | 'transparent' | 'neutral';
   size?: 'small' | 'medium' | 'large' | 'expand';
   children: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -32,18 +32,17 @@ const ButtonRoot = styled('button', {
   variants: {
     color: {
       primary: {
-        background: '$primary',
-        color: '$onPrimary',
+        bg: '$primary',
+        c: '$onPrimary',
         '&:hover': { background: '$primary2' },
       },
       transparent: {
-        background: 'transparent',
+        bg: 'transparent',
         '&:hover': { background: '$primary2' },
       },
-      tonal: {
-        background: '$tonal',
-        color: '$onTonal',
-        '&:hover': { background: '$tonal2' },
+      neutral: {
+        bg: '$background3',
+        '&:hover': { background: '$background4' },
       },
     },
     size: {

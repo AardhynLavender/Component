@@ -4,4 +4,5 @@
  */
 export type CoreApi = {
   readonly Parse: (program: string) => void;
+  readonly Terminate: () => void;
 };

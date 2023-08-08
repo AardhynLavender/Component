@@ -36,6 +36,7 @@ const config = createStitches({
       background: '#fff',
       background2: '#f6f8fa',
       background3: '#e1e4e8',
+      background4: '#d1d5da',
       error: '#f2e1e3',
       onError: '#e35557',
     },
