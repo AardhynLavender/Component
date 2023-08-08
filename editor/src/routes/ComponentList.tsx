@@ -96,7 +96,7 @@ function VariableStoreList() {
   return (
     <ComponentListRoot>
       {!keys.length && (
-        <s.span css={{ c: '$text2' }}>you have no variables</s.span>
+        <s.span css={{ c: '$text2' }}>You have no variables</s.span>
       )}
       {keys.map((definitionId) => (
         <VariableStoreItem key={definitionId} definitionId={definitionId} />
