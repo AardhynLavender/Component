@@ -140,14 +140,19 @@ function InitialValue({
       <Field
         value={value?.toLocaleString() ?? ''}
         onValueChange={(value) => {
-          if (type === 'number') setValue(parseInt(value) ?? 0);
-          else setValue(value);
+          if (type === 'number') {
+            const rawString = value.replace(/[^0-9.-]/g, '');
+            const number = Number(rawString);
+            if (isNaN(number)) setValue(0);
+            else setValue(number);
+          } else setValue(value);
         }}
         onBlur={onBlur}
         dynamicSize
       />
     );
 }
+
 function useVariableDefinition(block: Definition, enabled: boolean = true) {
   const { declare } = useVariableStore();
 
