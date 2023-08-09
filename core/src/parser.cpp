@@ -194,6 +194,7 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "repeat")            ParseRepeat(component);
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
+  else throw std::invalid_argument("Invalid TYPE provided for component");
 }
 
 // API //

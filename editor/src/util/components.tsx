@@ -61,6 +61,15 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    case 'forever':
+      component = {
+        ...base(type),
+        components: [],
+      };
+      break;
+
+    // Output  //
+
     case 'print':
       component = {
         ...base(type),
@@ -70,6 +79,7 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         },
       };
       break;
+
     case 'clear':
       component = base(type);
       break;

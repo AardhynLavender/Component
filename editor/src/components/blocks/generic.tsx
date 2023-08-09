@@ -17,6 +17,7 @@ import { EmplacementAction } from '../../structures/program/types';
 import { BinaryOperationBlock } from '../expressions/Operation';
 import { ExpressionParent } from './types';
 import { s } from '../../theme/stitches.config';
+import { ForeverBlock } from './Forever';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -284,6 +285,8 @@ export function GetJsxComponent(
       return <ClearBlock block={component} {...stdProps} />;
     case 'repeat':
       return <RepeatBlock block={component} {...stdProps} />;
+    case 'forever':
+      return <ForeverBlock block={component} {...stdProps} />;
     case 'branch':
       return <BranchBlock block={component} {...stdProps} />;
     case 'not':

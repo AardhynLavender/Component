@@ -34,6 +34,9 @@ export namespace algorithm {
           found ??= FindExpression(id, block.repetition); // search repeat condition
           found ??= Find(id, block.components); // search repeat body
           break;
+        case 'forever':
+          found ??= Find(id, block.components); // search forever body
+          break;
         case 'print':
           if (block.expression) found ??= FindExpression(id, block.expression); // search expression
           break;
@@ -109,6 +112,9 @@ export namespace algorithm {
             draft.repetition = RemoveExpression(id, draft.repetition);
             draft.components = Remove(id, draft.components); // repeat body
             break;
+          case 'forever':
+            draft.components = Remove(id, draft.components); // forever body
+            break;
           case 'print':
             if (draft.expression)
               draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
@@ -177,6 +183,9 @@ export namespace algorithm {
           case 'repeat':
             draft.repetition = MutateExpression(id, draft.repetition, mutation);
             draft.components = Mutate(id, draft.components, mutation); // repeat body
+            break;
+          case 'forever':
+            draft.components = Mutate(id, draft.components, mutation); // forever body
             break;
           case 'increment':
           case 'decrement':
@@ -271,6 +280,8 @@ export namespace algorithm {
                 case 'repeat':
                   if (locale === 'repetition' && IsNumericVariable(component))
                     draft.repetition = component;
+                case 'repeat':
+                case 'forever':
                   if (locale === 'components' && isBlock)
                     draft.components = [component];
                   break;
@@ -312,6 +323,7 @@ export namespace algorithm {
 
               break;
             case 'repeat':
+            case 'forever':
               if (draft.components)
                 draft.components = Emplace(emplacement, draft.components); // repeat body
               break;

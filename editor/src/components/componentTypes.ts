@@ -11,7 +11,7 @@ export const conditions = [
 ] as const;
 export type ConditionType = (typeof conditions)[number];
 
-export const loops = ['repeat'] as const;
+export const loops = ['repeat', 'forever'] as const;
 export type LoopType = (typeof loops)[number];
 
 export const operators = [
@@ -225,7 +225,12 @@ export type Repeat = ComponentPrimitive<
   }
 >;
 
-export type Loop = Repeat;
+export type Forever = ComponentPrimitive<
+  'forever',
+  { components: Block[] | null }
+>;
+
+export type Loop = Repeat | Forever;
 
 // General
 
