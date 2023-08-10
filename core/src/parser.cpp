@@ -31,8 +31,6 @@ void Parser::ParseRepeat(Json& repeat) {
   else throw std::invalid_argument("Invalid expression TYPE provided for REPEAT!");
 
   Json& components = repeat["components"];
-
-  // establish invariant
   if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
   if (!components.is_array()) throw std::invalid_argument("Repeat components must be an array!");
 
@@ -50,6 +48,18 @@ void Parser::ParseRepeat(Json& repeat) {
   // push statements into the repeat loops stack
   stackMachine.PushBlock(incrementor);
   stackMachine.PushBlock(jumpIf); 
+}
+
+void Parser::ParseForever(Json& forever) {
+  Json& components = forever["components"];
+  if (!components.is_array()) throw std::invalid_argument("Forever components must be an array!");
+
+  stackMachine.Push(components); // create a new stack for the repeat block body
+
+  const auto instructions = components.size(); 
+  constexpr int EXTRA_INSTRUCTIONS = 1; // `jump`
+  Json jump = Block::Jump(-(instructions + EXTRA_INSTRUCTIONS)); // jump to the start of the forever loop
+  stackMachine.PushBlock(jump);
 }
 
 void Parser::ParseJump(Json& jump) {
@@ -192,6 +202,7 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
   else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
   else if (type == "repeat")            ParseRepeat(component);
+  else if (type == "forever")           ParseForever(component);
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
   else throw std::invalid_argument("Invalid TYPE provided for component");
