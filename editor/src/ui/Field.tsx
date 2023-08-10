@@ -5,7 +5,13 @@ export const FIELD_HEIGHT = 16;
 export type KeyEventOptions = {
   shift: boolean;
   value: string;
+  blur: () => void;
 };
+export type FieldKeyEventHandler = (
+  key: string,
+  options: KeyEventOptions,
+) => void;
+export type FieldBlurHandler = (value: string) => void;
 
 export default function Field({
   value,
@@ -19,8 +25,8 @@ export default function Field({
 }: {
   value: string;
   onValueChange?: (value: string) => void;
-  onBlur?: (value: string) => void;
-  onKeyDown?: (key: string, options: KeyEventOptions) => void;
+  onBlur?: FieldBlurHandler;
+  onKeyDown?: FieldKeyEventHandler;
   dynamicSize?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
@@ -33,7 +39,11 @@ export default function Field({
       readOnly={readOnly}
       disabled={disabled}
       onKeyDown={(e) =>
-        onKeyDown?.(e.key, { shift: e.shiftKey, value: e.currentTarget.value })
+        onKeyDown?.(e.key, {
+          shift: e.shiftKey,
+          value: e.currentTarget.value,
+          blur: e.currentTarget.blur,
+        })
       }
       onBlur={(e) => onBlur?.(e.target.value)}
       onChange={(e) => onValueChange?.(e.target.value)}
