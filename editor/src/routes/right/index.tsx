@@ -1,4 +1,4 @@
-import { styled, CSS } from 'theme/stitches.config';
+import { styled, CSS, s } from 'theme/stitches.config';
 import {
   TabRoot,
   TabsContent,
@@ -62,25 +62,22 @@ export default function RightSidebar({ css }: { css: CSS }) {
   );
 }
 
-const Root = styled('section', {
+const Root = styled(s.div, {
   pos: 'relative',
-  overflowY: 'auto',
   w: '100%',
   bl: '1px solid $outline',
   background: '$background2',
 });
 
-const TAB_BOTTOM_BORDER = 1;
-
 const Tabs = styled(TabsList, {
-  borderBottom: `${TAB_BOTTOM_BORDER}px solid $outline`,
+  bb: `1px solid $outline`,
   d: 'flex',
   gap: 8,
   items: 'center',
-  h: 48,
+  h: TAB_HEIGHT,
 });
 
 const Content = styled(TabsContent, {
   w: '100%',
-  h: `calc(100% - ${TAB_HEIGHT}px - ${TAB_BOTTOM_BORDER}px)`,
+  h: `calc(100% - ${TAB_HEIGHT}px)`,
 });

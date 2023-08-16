@@ -14,6 +14,7 @@ import { H5 } from 'theme/Typography';
 import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
+import Scroll from 'ui/Scroll';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -42,13 +43,7 @@ export default function ComponentList() {
     </Root>
   );
 }
-const Root = styled('div', {
-  h: '100%',
-  overflowY: 'auto',
-  d: 'flex',
-  fd: 'column',
-  gap: 32,
-});
+const Root = styled(Scroll, {});
 
 function ComponentListCategory({
   category,

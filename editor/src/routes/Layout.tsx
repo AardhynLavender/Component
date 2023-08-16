@@ -15,14 +15,15 @@ export default function Layout() {
       <LeftSidebar css={{ gridArea: 'left' }} />
       <Main css={{ gridArea: 'main' }} />
       <RightSidebar css={{ gridArea: 'right' }} />
-      <BottomPane css={{ gridArea: 'bottom' }} />
     </Root>
   );
 }
 
 const Root = styled('div', {
-  h: '100vh',
-  w: '100vw',
+  maxH: '100vh',
+  maxW: '100vw',
+  minH: '100vh',
+  minW: '100vw',
 
   d: 'grid',
   gridTemplateColumns: 'auto 1fr auto',
@@ -30,6 +31,6 @@ const Root = styled('div', {
   gridTemplateAreas: `
     "header ribbon ribbon"
     "left main right"
-    "left bottom right"
+    "left main right"
     `,
 });

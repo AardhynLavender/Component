@@ -1,6 +1,7 @@
 import useAbstractSyntaxTree from 'hooks/useAbstractSyntaxTree';
 import { ChangeEvent } from 'react';
-import { styled } from 'theme/stitches.config';
+import { s, styled } from 'theme/stitches.config';
+import Scroll from 'ui/Scroll';
 
 export default function Ast() {
   const { astString, error, loadAst } = useAbstractSyntaxTree();
@@ -14,17 +15,17 @@ export default function Ast() {
   );
 }
 
-const Root = styled('section', {
-  h: '100%',
-  overflowY: 'auto',
-});
+const Root = styled(Scroll, { p: 4 });
 
-const Editor = styled('textarea', {
+const Editor = styled(s.textarea, {
+  d: 'block',
   resize: 'none',
   h: '100%',
   w: '100%',
   b: 'none',
-  p: 8,
+  r: 8,
+  p: 4,
+  outline: 'none',
   background: 'transparent',
 
   variants: {
@@ -35,7 +36,5 @@ const Editor = styled('textarea', {
       },
     },
   },
-  defaultVariants: {
-    error: 'false',
-  },
+  defaultVariants: { error: 'false' },
 });

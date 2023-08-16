@@ -5,6 +5,8 @@ import { useEffect, ChangeEvent } from 'react';
 import { LOCAL_STORAGE_KEY } from 'constants/program';
 import { WritePersistent } from 'hooks/usePersistent';
 import Field from 'ui/Field';
+import Scroll from 'ui/Scroll';
+import BottomPane from 'routes/bottom/Bottom';
 
 export default function Main({ css }: { css?: CSS }) {
   // write changes persistently
@@ -13,19 +15,21 @@ export default function Main({ css }: { css?: CSS }) {
       <Ribbon>
         <ProgramName />
         <FakeNewProgramComponent />
-        {/* tabs... */}
       </Ribbon>
-      <Canvas />
+      <Scroll>
+        <Canvas />
+      </Scroll>
+      <BottomPane />
     </Root>
   );
 }
 
-const Root = styled('section', {
+const Root = styled(s.section, {
   d: 'flex',
   fd: 'column',
 });
 
-const Ribbon = styled('div', {
+const Ribbon = styled(s.div, {
   d: 'flex',
   gap: 8,
   h: 48,
@@ -52,11 +56,10 @@ function Canvas() {
     </CanvasRoot>
   );
 }
-const CanvasRoot = styled('div', {
+const CanvasRoot = styled(s.div, {
   d: 'flex',
   fd: 'column',
   flex: 1,
-  overflow: 'auto',
   p: 16,
 });
 
@@ -68,10 +71,7 @@ function ProgramName() {
 
   return (
     <Field
-      css={{
-        bg: '$background2',
-        p: 8,
-      }}
+      css={{ bg: '$background2', p: 8 }}
       value={name ?? 'untitled program'}
       onValueChange={(value) => {
         if (value !== name) {

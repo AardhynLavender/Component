@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import Button from 'ui/Button';
 import { H5 } from 'theme/Typography';
 
-export default function BottomPane({ css }: { css: CSS }) {
+export default function BottomPane() {
   const { bind, rangeConstraint, size } = useDragPanePrimitive(
     'console-pane',
     'up',
@@ -21,7 +21,7 @@ export default function BottomPane({ css }: { css: CSS }) {
   };
 
   return (
-    <Root css={css}>
+    <Root>
       <DragHandle {...bind()} size={4} anchor="top" />
       <Content
         css={{
