@@ -29,7 +29,7 @@ public:
     Variable(const std::string name, const std::string primitive);
     Variable(const std::string name, const std::string primitive, const Any value);
 
-    constexpr void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
+    void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
 
     [[nodiscard]] inline constexpr std::string GetName() const { return name; }
     [[nodiscard]] inline constexpr std::string GetPrimitive() const { return primitive; }
