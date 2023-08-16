@@ -35,6 +35,7 @@ build-core: core
 		&& mkdir -p out \
 		&& emcc \
 			src/vec2.cpp \
+			src/rec2.cpp \
 			src/main.cpp \
 			src/parser.cpp \
 			src/stack.cpp \
