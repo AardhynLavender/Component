@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vec2.hpp>
+#include <SDL2.hpp>
 
 struct Rec2 {
   Vec2 position;
@@ -22,3 +23,5 @@ struct Rec2 {
 
   friend std::ostream& operator<<(std::ostream& os, const Rec2& rec); // pass `Rec2` to standard stdout
 };
+
+SDL_Rect toSDLRect(const Rec2& rec);

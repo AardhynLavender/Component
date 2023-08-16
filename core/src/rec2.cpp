@@ -40,3 +40,7 @@ bool Rec2::operator>=(const Rec2& other) const {
 std::ostream& operator<<(std::ostream& os, const Rec2& rec) {
   return os << rec.position << ", " << rec.size << "\n";
 }
+
+SDL_Rect toSDLRect(const Rec2& rec) {
+  return { (int)rec.position.x, (int)rec.position.y, (int)rec.size.x, (int)rec.size.y };
+}

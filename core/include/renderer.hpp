@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2.hpp>
+#include <rec2.hpp>
 #include <window.hpp>
 
 struct Color {
@@ -67,5 +68,6 @@ public:
     if (SDL_RenderClear(renderer)) throw SDL2Exception(SDL_GetError());
   }
 
-  void DrawLine(const Vec2 a, const Vec2 b, const Color color = { 255, 255, 255, 255 });
+  void DrawLine(const Vec2 a, const Vec2 b, const Color color = Colors::white);
+  void DrawRect(const Rec2 rect, const Color color = Colors::white, const Color fill = Colors::transparent);
 };

@@ -25,3 +25,18 @@ void Renderer::DrawLine(const Vec2 a, const Vec2 b, const Color color) {
   if (SDL_RenderDrawLine(renderer, (int)a.x, (int)a.y, (int)b.x, (int)b.y))
     throw SDL2Exception(SDL_GetError());
 }
+
+void Renderer::DrawRect(const Rec2 rect, const Color color, const Color fill) {
+  if (color.alpha) {
+    SetColor(color);
+    const auto r = toSDLRect(rect);
+    if (SDL_RenderDrawRect(renderer, &r))
+      throw SDL2Exception(SDL_GetError());
+  }
+  if (fill.alpha) {
+    SetColor(fill);
+    const auto r = toSDLRect(rect);
+    if (SDL_RenderFillRect(renderer, &r))
+      throw SDL2Exception(SDL_GetError());
+  }
+}
