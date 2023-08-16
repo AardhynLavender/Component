@@ -86,6 +86,7 @@ private:
 
     void ParseDefinition(Json& definition);
     void ParseRepeat(Json& repeat);
+    void ParseForever(Json& forever);
     void ParseJump(Json& jump);
     void ParseConditionJump(Json& condition);
     void ParsePrint(Json& print);

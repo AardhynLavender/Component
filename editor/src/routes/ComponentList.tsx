@@ -13,6 +13,7 @@ import { H5 } from 'theme/Typography';
 import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
+import Scroll from 'ui/Scroll';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -30,15 +31,7 @@ export default function ComponentList() {
   const _ = useComponentStore((store) => store.program);
 
   return (
-    <s.div
-      css={{
-        h: '100%',
-        overflowY: 'auto',
-        d: 'flex',
-        fd: 'column',
-        gap: 32,
-      }}
-    >
+    <Root>
       {Object.entries(ComponentCategories).map(([category, types]) => (
         <ComponentListCategory
           key={category}
@@ -46,9 +39,10 @@ export default function ComponentList() {
           components={types}
         />
       ))}
-    </s.div>
+    </Root>
   );
 }
+const Root = styled(Scroll, {});
 
 const HIDDEN_COMPONENTS: readonly ComponentType[] = ['increment', 'decrement'];
 const hidden = (type: ComponentType) => !HIDDEN_COMPONENTS.includes(type);
@@ -94,9 +88,14 @@ const ComponentListRoot = styled('div', {
 function VariableStoreList() {
   const { variables } = useVariableStore();
 
+  const keys = Object.keys(variables);
+
   return (
     <ComponentListRoot>
-      {Object.keys(variables).map((definitionId) => (
+      {!keys.length && (
+        <s.span css={{ c: '$text2' }}>You have no variables</s.span>
+      )}
+      {keys.map((definitionId) => (
         <VariableStoreItem key={definitionId} definitionId={definitionId} />
       ))}
     </ComponentListRoot>

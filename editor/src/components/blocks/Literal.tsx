@@ -5,7 +5,11 @@ import { Literal, PrimitiveType } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
 import { GetBoolFromString } from 'util/string';
-import Field from 'ui/Field';
+import Field, {
+  FieldBlurHandler,
+  FieldKeyEventHandler,
+  KeyEventOptions,
+} from 'ui/Field';
 
 export function LiteralExpression({
   expression,
@@ -76,12 +80,14 @@ function PrimitiveInput<T extends PrimitiveType>({
   handleApplyMutation: () => void;
 }) {
   // apply mutation on enter and blur
-  const stdProps = {
-    type,
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key !== 'Enter') return;
+  const stdProps: {
+    onKeyDown: FieldKeyEventHandler;
+    onBlur: FieldBlurHandler;
+  } = {
+    onKeyDown: (key, { blur }) => {
+      if (key !== 'Enter') return;
       handleApplyMutation();
-      e.currentTarget.blur();
+      blur();
     },
     onBlur: handleApplyMutation,
   };

@@ -5,23 +5,23 @@ import { useRef } from 'react';
 import Button from 'ui/Button';
 import { H5 } from 'theme/Typography';
 
-export default function Stdout({ css }: { css: CSS }) {
+export default function BottomPane() {
   const { bind, rangeConstraint, size } = useDragPanePrimitive(
-    'stdout-pane',
+    'console-pane',
     'up',
     { minSize: 100, maxSize: 500 },
   );
 
-  const stdoutRef = useRef<HTMLDivElement>(null);
+  const consoleRef = useRef<HTMLDivElement>(null);
   const handleClear = () => {
-    if (stdoutRef.current)
+    if (consoleRef.current)
       // todo: fix security vulnerability... `innerHTML` enables JavaScript injection
-      stdoutRef.current.innerHTML = '';
-    else console.error('stdoutRef.current is null');
+      consoleRef.current.innerHTML = '';
+    else console.error('console reference was `null`!');
   };
 
   return (
-    <Root css={css}>
+    <Root>
       <DragHandle {...bind()} size={4} anchor="top" />
       <Content
         css={{
@@ -35,7 +35,7 @@ export default function Stdout({ css }: { css: CSS }) {
             Clear
           </Button>
         </Ribbon>
-        <Console ref={stdoutRef} id="component:stdout" />
+        <Console ref={consoleRef} id="component:console" />
       </Content>
     </Root>
   );
@@ -44,7 +44,7 @@ export default function Stdout({ css }: { css: CSS }) {
 const Root = styled('section', {
   pos: 'relative',
   p: 8,
-  bt: '2px solid $outline',
+  bt: '1px solid $outline',
 });
 
 const Content = styled('div', {

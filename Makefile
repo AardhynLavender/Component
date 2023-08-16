@@ -34,21 +34,25 @@ build-core: core
 	cd core \
 		&& mkdir -p out \
 		&& emcc \
+			src/vec2.cpp \
 			src/main.cpp \
 			src/parser.cpp \
 			src/stack.cpp \
 			src/stackMachine.cpp \
 			src/variableStore.cpp \
+			src/window.cpp \
+			src/renderer.cpp \
+			src/runtime.cpp \
 			-o out/core.mjs \
 			-I include \
+			--pre-js pre/pre.js \
 			--js-library lib/print.js \
 			$(optimization_level) \
 			-l embind \
-			-s LLD_REPORT_UNDEFINED \
-			-s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR \
-			-s NO_DISABLE_EXCEPTION_CATCHING \
 			-s ENVIRONMENT='web' \
+			-s NO_DISABLE_EXCEPTION_CATCHING \
 			-s EXPORT_NAME=$(module_name) \
+			-s USE_SDL=2 \
 			-s USE_ES6_IMPORT_META=0 \
 			-std=$(cpp_std)
 

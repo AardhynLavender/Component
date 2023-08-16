@@ -5,24 +5,25 @@ import Title from './header/Title';
 import LeftSidebar from './left';
 import Main from './main/Main';
 import RightSidebar from './right';
-import Stdout from './Stdout';
+import BottomPane from './bottom/Bottom';
 
-export default function Layout({ core }: { core: CoreApi }) {
+export default function Layout() {
   return (
     <Root>
-      <Title core={core} css={{ gridArea: 'header' }} />
-      <Ribbon core={core} css={{ gridArea: 'ribbon' }} />
+      <Title css={{ gridArea: 'header' }} />
+      <Ribbon css={{ gridArea: 'ribbon' }} />
       <LeftSidebar css={{ gridArea: 'left' }} />
       <Main css={{ gridArea: 'main' }} />
       <RightSidebar css={{ gridArea: 'right' }} />
-      <Stdout css={{ gridArea: 'stdout' }} />
     </Root>
   );
 }
 
 const Root = styled('div', {
-  h: '100vh',
-  w: '100vw',
+  maxH: '100vh',
+  maxW: '100vw',
+  minH: '100vh',
+  minW: '100vw',
 
   d: 'grid',
   gridTemplateColumns: 'auto 1fr auto',
@@ -30,6 +31,6 @@ const Root = styled('div', {
   gridTemplateAreas: `
     "header ribbon ribbon"
     "left main right"
-    "left stdout right"
+    "left main right"
     `,
 });

@@ -2,24 +2,39 @@ import { CoreApi } from 'types/api';
 import useComponentStore from 'structures/program/store';
 import { CSS, styled } from 'theme/stitches.config';
 import Button from 'ui/Button';
+import useCoreModule from '../../hooks/useCoreModule';
 
-export default function Ribbon({ core, css }: { core: CoreApi; css: CSS }) {
+export default function Ribbon({ css }: { css: CSS }) {
   const program = useComponentStore((state) => state.program);
-  const handleRun = (core: CoreApi) => {
-    core.Parse(JSON.stringify(program?.ast));
+
+  const { module: core, error } = useCoreModule();
+  const handleRun = () => {
+    const ast = JSON.stringify(program?.ast);
+    core?.Parse(ast);
   };
+  const handleTerminate = () => core?.Terminate();
+
+  error && console.error(error);
 
   return (
     <Root css={css}>
-      <Button onClick={() => handleRun(core)}>Run</Button>
+      {core && (
+        <>
+          <Button color="neutral" onClick={() => handleTerminate()}>
+            Stop
+          </Button>
+          <Button onClick={() => handleRun()}>Run</Button>
+        </>
+      )}
     </Root>
   );
 }
 
 const Root = styled('section', {
   p: 8,
-  d: 'grid',
-  justifyContent: 'end',
+  display: 'flex',
+  justify: 'end',
+  items: 'center',
   gap: 16,
-  bb: '2px solid $outline',
+  bb: '1px solid $outline',
 });

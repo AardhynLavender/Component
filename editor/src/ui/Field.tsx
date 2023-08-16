@@ -2,11 +2,22 @@ import { s, CSS, styled } from 'theme/stitches.config';
 
 export const FIELD_HEIGHT = 16;
 
+export type KeyEventOptions = {
+  shift: boolean;
+  value: string;
+  blur: () => void;
+};
+export type FieldKeyEventHandler = (
+  key: string,
+  options: KeyEventOptions,
+) => void;
+export type FieldBlurHandler = (value: string) => void;
+
 export default function Field({
   value,
-  defaultValue = '',
   onValueChange,
   onBlur,
+  onKeyDown,
   dynamicSize = false,
   readOnly = false,
   disabled = false,
@@ -14,8 +25,8 @@ export default function Field({
 }: {
   value: string;
   onValueChange?: (value: string) => void;
-  onBlur?: (value: string) => void;
-  defaultValue?: string;
+  onBlur?: FieldBlurHandler;
+  onKeyDown?: FieldKeyEventHandler;
   dynamicSize?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
@@ -24,10 +35,16 @@ export default function Field({
   return (
     <FieldRoot
       css={{ w: dynamicSize ? `${value?.length}ch` : undefined, ...css }}
-      value={value}
+      value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}
-      defaultValue={defaultValue}
+      onKeyDown={(e) =>
+        onKeyDown?.(e.key, {
+          shift: e.shiftKey,
+          value: e.currentTarget.value,
+          blur: e.currentTarget.blur,
+        })
+      }
       onBlur={(e) => onBlur?.(e.target.value)}
       onChange={(e) => onValueChange?.(e.target.value)}
     />

@@ -9,6 +9,7 @@ import {
   UnaryOperationBlock,
   RepeatBlock,
   VariableExpression,
+  ClearBlock,
 } from '.';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from '../../util/Drag';
@@ -16,6 +17,7 @@ import { EmplacementAction } from '../../structures/program/types';
 import { BinaryOperationBlock } from '../expressions/Operation';
 import { ExpressionParent } from './types';
 import { s } from '../../theme/stitches.config';
+import { ForeverBlock } from './Forever';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -107,7 +109,7 @@ export function BlockRoot({
         fontSize: '$1',
 
         r: 4,
-        p: 4,
+        p: '4px 8px',
 
         bg: error ? '$error' : '$background',
         outline: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -279,8 +281,12 @@ export function GetJsxComponent(
       return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
+    case 'clear':
+      return <ClearBlock block={component} {...stdProps} />;
     case 'repeat':
       return <RepeatBlock block={component} {...stdProps} />;
+    case 'forever':
+      return <ForeverBlock block={component} {...stdProps} />;
     case 'branch':
       return <BranchBlock block={component} {...stdProps} />;
     case 'not':

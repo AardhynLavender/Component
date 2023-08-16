@@ -1,7 +1,7 @@
 import { styled } from 'theme/stitches.config';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
-export const TAB_HEIGHT = 32;
+export const TAB_HEIGHT = 48;
 
 export const TabRoot = styled(TabsPrimitive.Root, {
   d: 'flex',
