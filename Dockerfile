@@ -16,5 +16,11 @@ RUN make build-editor
 
 EXPOSE $CLIENT_PORT
 
-RUN echo "cd editor && npm run dev" > run.sh
+# push compiled code into host machine
+RUN echo "cp editor/src/modules/*.mjs /opt/modules" > run.sh
+RUN echo "cp editor/public/*.wasm /opt/public" >> run.sh
+
+# start server
+RUN echo "cd editor && npm run dev" >> run.sh
+
 ENTRYPOINT ["sh", "run.sh"]
