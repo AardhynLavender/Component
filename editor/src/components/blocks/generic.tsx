@@ -18,7 +18,7 @@ import { BinaryOperationBlock } from '../expressions/Operation';
 import { ExpressionParent } from './types';
 import { s } from '../../theme/stitches.config';
 import { ForeverBlock } from './Forever';
-import DrawLineBlock from './DrawLineBlock';
+import DrawLineBlock from './DrawLine';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
