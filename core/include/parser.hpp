@@ -6,6 +6,7 @@
 #include <print.hpp>
 #include <variableStore.hpp>
 #include <stackMachine.hpp>
+#include <renderer.hpp>
 #include <blocks.hpp>
 #include <json.hpp>
 
@@ -15,6 +16,8 @@ private:
     static constexpr int MAX_REPEAT_LENGTH = 2048;
     static constexpr int MAX_BRANCHES = 2;
 
+    Renderer& renderer;
+    
     Json program;
     StackMachine stackMachine;
     VariableStore store;
@@ -85,16 +88,22 @@ private:
     }
 
     void ParseDefinition(Json& definition);
+
     void ParseRepeat(Json& repeat);
     void ParseForever(Json& forever);
+
     void ParseJump(Json& jump);
     void ParseConditionJump(Json& condition);
+
+    void ParseDrawLine(Json& line);
+
     void ParsePrint(Json& print);
     void ParseClear();
+
     void ParseBranch(Json& branch) ;
     [[nodiscard]] bool ParseCondition(Json& conditional);
 public:
-    Parser();
+    Parser(Renderer& renderer);
 
     void ParseComponent(Json& component);
     void LoadProgram(const std::string components);

@@ -1,4 +1,5 @@
 #include <parser.hpp>
+#include <vec2.hpp>
 
 void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
@@ -80,6 +81,18 @@ void Parser::ParseConditionJump(Json& jump) {
   Json& condition = jump["condition"];
   bool result = ParseCondition(condition);
   if (result) ParseJump(jump);
+}
+
+void Parser::ParseDrawLine(Json & line) {
+  const auto x1 = line["x1"].get<double>();
+  const auto y1 = line["y1"].get<double>();
+  const auto x2 = line["x2"].get<double>();
+  const auto y2 = line["y2"].get<double>();
+
+  const Vec2 start{ x1, y1 };
+  const Vec2 end{ x2, y2 };
+
+  renderer.DrawLine(start, end);
 }
 
 [[nodiscard]] bool Parser::ParseCondition(Json& condition) {
@@ -205,6 +218,7 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "forever")           ParseForever(component);
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
+  else if (type == "draw_line")         ParseDrawLine(component);
   else throw std::invalid_argument("Invalid TYPE provided for component");
 }
 
@@ -232,4 +246,4 @@ bool Parser::Next() {
 
 // Construction //
 
-Parser::Parser() : stackMachine(), store() { }
+Parser::Parser(Renderer& renderer) : stackMachine(), store(), renderer(renderer) { }

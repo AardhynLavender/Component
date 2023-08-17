@@ -144,6 +144,18 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    // Rendering //
+
+    case 'draw_line':
+      component = {
+        ...base(type),
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
+      };
+      break;
+
     // Numeric Operations //
 
     case 'increment':

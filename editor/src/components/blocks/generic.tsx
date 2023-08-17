@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { PrintBlock } from './Print';
-import { Block, ComponentType } from '../componentTypes';
+import { Block, ComponentType, DrawLine } from '../componentTypes';
 import { IsBlock, Component } from 'types';
 import {
   BranchBlock,
@@ -18,6 +18,7 @@ import { BinaryOperationBlock } from '../expressions/Operation';
 import { ExpressionParent } from './types';
 import { s } from '../../theme/stitches.config';
 import { ForeverBlock } from './Forever';
+import DrawLineBlock from './DrawLineBlock';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -289,6 +290,8 @@ export function GetJsxComponent(
       return <ForeverBlock block={component} {...stdProps} />;
     case 'branch':
       return <BranchBlock block={component} {...stdProps} />;
+    case 'draw_line':
+      return <DrawLineBlock block={component} {...stdProps} />;
     case 'not':
     case 'and':
     case 'or':

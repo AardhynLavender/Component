@@ -8,7 +8,7 @@
 Runtime::Runtime()
 : window{ "Component", { }, { DEFAULT_RESOLUTION, DEFAULT_RESOLUTION / DEFAULT_ASPECT_RATIO }, { .opengl = true } },
   renderer{ window, { } }, 
-  parser{ },
+  parser{ renderer },
   running{ false } {
   Log("Constructed runtime");
 }

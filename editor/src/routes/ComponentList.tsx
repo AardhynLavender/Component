@@ -15,6 +15,7 @@ import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
 import Scroll from 'ui/Scroll';
+import { renderers } from '../components/componentTypes';
 
 const ComponentCategories = {
   blocks: blockTypes,
