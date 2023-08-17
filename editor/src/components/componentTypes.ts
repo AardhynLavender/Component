@@ -29,13 +29,21 @@ export type OperatorType = (typeof operators)[number];
 export const outputs = ['print', 'clear'] as const;
 export type OutputType = (typeof outputs)[number];
 
+export const renderers = ['draw_line'] as const;
+export type RenderType = (typeof renderers)[number];
+
 export const miscBlocks = ['branch', 'definition'] as const;
 export type MiscType = (typeof miscBlocks)[number];
 
 export const miscExpressions = ['variable', 'literal'] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
 
-export const blockTypes = [...loops, ...outputs, ...miscBlocks] as const;
+export const blockTypes = [
+  ...loops,
+  ...outputs,
+  ...renderers,
+  ...miscBlocks,
+] as const;
 export type BlockType = (typeof blockTypes)[number];
 
 export const expressionTypes = [
@@ -58,9 +66,7 @@ export type ComponentPrimitive<T extends ComponentType, E = {}> = {
 
 export type Literal<T extends Primitive = Primitive> = ComponentPrimitive<
   'literal',
-  {
-    expression: T | null;
-  }
+  { expression: T | null }
 >;
 
 // Declarations and Variables
@@ -213,7 +219,16 @@ export type Print = ComponentPrimitive<
   { expression: Literal | Variable | null }
 >;
 export type Clear = ComponentPrimitive<'clear'>;
-export type Output = Print; // | clear;
+export type Output = Print | Clear;
+
+// Renderers
+
+export type DrawLine = ComponentPrimitive<
+  'draw_line',
+  { x1: number; y1: number; x2: number; y2: number }
+>;
+
+export type Renderer = DrawLine;
 
 // Loops
 
@@ -238,6 +253,7 @@ export type Block =
   | Output
   | Loop
   | Definition
+  | Renderer
   | Branch
   | Clear
   | UnaryOperation;

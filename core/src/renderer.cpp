@@ -30,13 +30,11 @@ void Renderer::DrawRect(const Rec2 rect, const Color color, const Color fill) {
   if (color.alpha) {
     SetColor(color);
     const auto r = toSDLRect(rect);
-    if (SDL_RenderDrawRect(renderer, &r))
-      throw SDL2Exception(SDL_GetError());
+    if (SDL_RenderDrawRect(renderer, &r)) throw SDL2Exception(SDL_GetError());
   }
   if (fill.alpha) {
     SetColor(fill);
     const auto r = toSDLRect(rect);
-    if (SDL_RenderFillRect(renderer, &r))
-      throw SDL2Exception(SDL_GetError());
+    if (SDL_RenderFillRect(renderer, &r)) throw SDL2Exception(SDL_GetError());
   }
 }

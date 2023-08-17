@@ -1,6 +1,6 @@
 #include <variableStore.hpp>
 
-constexpr void Variable::Invariant(const std::string name, const std::string primitive) const {
+void Variable::Invariant(const std::string name, const std::string primitive) const {
   if (primitive != "string" && primitive != "number" && primitive != "boolean" || name.empty())
     throw BadDefinition(name, primitive);
 }
