@@ -1,6 +1,5 @@
 import { ReactElement, useState } from 'react';
 import { DrawLine } from 'types';
-import { Drag } from 'util/Drag';
 import { BlockRoot } from './generic';
 import Field from 'ui/Field';
 import { s } from 'theme/stitches.config';
