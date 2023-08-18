@@ -15,7 +15,7 @@ import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
 import Scroll from 'ui/Scroll';
-import { renderers } from '../components/componentTypes';
+import ErrorBoundary from 'exception/ErrorBoundary';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -34,13 +34,15 @@ export default function ComponentList() {
 
   return (
     <Root>
-      {Object.entries(ComponentCategories).map(([category, types]) => (
-        <ComponentListCategory
-          key={category}
-          category={category as ComponentCategory}
-          components={types}
-        />
-      ))}
+      <ErrorBoundary>
+        {Object.entries(ComponentCategories).map(([category, types]) => (
+          <ComponentListCategory
+            key={category}
+            category={category as ComponentCategory}
+            components={types}
+          />
+        ))}
+      </ErrorBoundary>
     </Root>
   );
 }

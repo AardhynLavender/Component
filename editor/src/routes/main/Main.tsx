@@ -1,12 +1,13 @@
 import { styled, CSS, s } from 'theme/stitches.config';
 import useComponentStore from 'structures/program/store';
 import GenericBlockSet from 'components/blocks/BlockSet';
-import { useEffect, ChangeEvent } from 'react';
+import { useEffect } from 'react';
 import { LOCAL_STORAGE_KEY } from 'constants/program';
 import { WritePersistent } from 'hooks/usePersistent';
 import Field from 'ui/Field';
 import Scroll from 'ui/Scroll';
 import BottomPane from 'routes/bottom/Bottom';
+import ErrorBoundary from 'exception/ErrorBoundary';
 
 export default function Main({ css }: { css?: CSS }) {
   // write changes persistently
@@ -46,14 +47,16 @@ function Canvas() {
   }, [program]);
 
   return (
-    <CanvasRoot>
-      <GenericBlockSet
-        parentId={null}
-        locale={undefined}
-        blocks={program.ast ?? []}
-        noIndent
-      />
-    </CanvasRoot>
+    <ErrorBoundary>
+      <CanvasRoot>
+        <GenericBlockSet
+          parentId={null}
+          locale={undefined}
+          blocks={program.ast ?? []}
+          noIndent
+        />
+      </CanvasRoot>
+    </ErrorBoundary>
   );
 }
 const CanvasRoot = styled(s.div, {
