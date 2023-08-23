@@ -24,13 +24,6 @@ void Runtime::Daemon() {
   try {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
     while (!Timing::Elapsed(start, CLOCK_SPEED)) {
-      // renderer.Clear();
-      // angle = (angle + 2) % 360;
-      // Vec2 v{ 128 * std::sin(angle * M_PI / 180), 128 * std::cos(angle * M_PI / 180) };
-      // Rec2 r{ { 256, 256 }, v += Vec2{ 256, 256 } };
-      // renderer.DrawRect(r, { 255, 255, 255, 255 });
-      // renderer.Present();
-
       if (parser.Next()) continue; // next instruction
 
       using namespace std::string_literals;
