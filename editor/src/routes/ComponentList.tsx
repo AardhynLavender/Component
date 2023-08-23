@@ -14,7 +14,6 @@ import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
 import Scroll from 'ui/Scroll';
-import ErrorBoundary from 'exception/ErrorBoundary';
 
 const ComponentCategories = {
   blocks: blockTypes,
