@@ -19,6 +19,7 @@ import { ExpressionParent } from './types';
 import { s } from '../../theme/stitches.config';
 import { ForeverBlock } from './Forever';
 import DrawLineBlock from './DrawLine';
+import { ClearScreenBlock } from './ClearScreen';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -292,6 +293,8 @@ export function GetJsxComponent(
       return <BranchBlock block={component} {...stdProps} />;
     case 'draw_line':
       return <DrawLineBlock block={component} {...stdProps} />;
+    case 'clear_screen':
+      return <ClearScreenBlock block={component} {...stdProps} />;
     case 'not':
     case 'and':
     case 'or':

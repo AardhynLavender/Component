@@ -191,6 +191,11 @@ void Parser::ParseClearOutput() {
 #endif // __EMSCRIPTEN__
 }
 
+void Parser::ParseClearScreen() {
+  renderer.Clear();
+  renderer.Present();
+}
+
 void Parser::ParseBranch(Json& branch) {
   Json& branches = branch["branches"];
   if (!branches.is_array()) throw std::invalid_argument("Branches must be an array!");
@@ -213,6 +218,7 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "branch")            ParseBranch(component);
   else if (type == "print")             ParsePrint(component["expression"]);
   else if (type == "clear_output")      ParseClearOutput();
+  else if (type == "clear_screen")      ParseClearScreen();
   else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
   else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
   else if (type == "repeat")            ParseRepeat(component);

@@ -168,6 +168,10 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    case 'clear_screen':
+      component = base(type);
+      break;
+
     // Numeric Operations //
 
     case 'increment':

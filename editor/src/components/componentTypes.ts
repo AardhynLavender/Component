@@ -29,7 +29,7 @@ export type OperatorType = (typeof operators)[number];
 export const outputs = ['print', 'clear_output'] as const;
 export type OutputType = (typeof outputs)[number];
 
-export const renderers = ['draw_line'] as const;
+export const renderers = ['draw_line', 'clear_screen'] as const;
 export type RenderType = (typeof renderers)[number];
 
 export const miscBlocks = ['branch', 'definition'] as const;
@@ -233,7 +233,9 @@ export type DrawLine = ComponentPrimitive<
   }
 >;
 
-export type Renderer = DrawLine;
+export type ClearScreen = ComponentPrimitive<'clear_screen'>;
+
+export type Renderer = DrawLine | ClearScreen;
 
 // Loops
 

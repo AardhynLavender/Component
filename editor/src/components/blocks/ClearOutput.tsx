@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import { s } from 'theme/stitches.config';
 import { ClearOutput as ClearOutput } from 'types';
 import { BlockRoot } from './generic';

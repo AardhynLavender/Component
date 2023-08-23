@@ -119,6 +119,7 @@ private:
 
     void ParsePrint(Json& print);
     void ParseClearOutput();
+    void ParseClearScreen();
 
     void ParseBranch(Json& branch) ;
     [[nodiscard]] bool ParseCondition(Json& conditional);
