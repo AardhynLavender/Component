@@ -133,7 +133,7 @@ function BooleanOperation({ type }: { type: ConditionType }) {
     case 'not':
       return <span>not</span>;
     case 'eq':
-      return <span>is</span>;
+      return <span>equals</span>;
     case 'ne':
       return <span>is not</span>;
     case 'gt':
