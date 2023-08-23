@@ -37,7 +37,7 @@ public:
     template<typename T = Any>
     [[nodiscard]] inline constexpr const T& Get() const { 
         if constexpr (std::is_same_v<T, Any>) return value; // user has not specified the type, return the variant
-        return std::get<T>(value); 
+        else return std::get<T>(value); 
     } // throws `std::bad_variant_access`
 
     template<typename T = Any>
