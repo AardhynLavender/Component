@@ -18,6 +18,17 @@ void Parser::ParseDefinition(Json& definition) {
   else throw std::invalid_argument("Invalid TYPE provided for definition!");
 }
 
+void Parser::ParseAssignment(Json& assignment) {
+  const std::string key = assignment["lvalue"]["definitionId"];
+  auto right = assignment["rvalue"];
+
+  using namespace std::string_literals;
+  Log("Parsing assignment of definition id `"s + key + "`"s);
+
+  const auto rvalue = ExtractValue(right); // todo: why is the 1st arg not const?
+  store.Set(key, rvalue);
+}
+
 void Parser::ParseRepeat(Json& repeat) {
   Json& repetition = repeat["repetition"];
 

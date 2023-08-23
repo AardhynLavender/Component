@@ -108,6 +108,7 @@ private:
     }
 
     void ParseDefinition(Json& definition);
+    void ParseAssignment(Json& assignment);
 
     void ParseRepeat(Json& repeat);
     void ParseForever(Json& forever);

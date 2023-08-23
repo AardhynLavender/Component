@@ -32,7 +32,7 @@ export type OutputType = (typeof outputs)[number];
 export const renderers = ['draw_line', 'clear_screen'] as const;
 export type RenderType = (typeof renderers)[number];
 
-export const miscBlocks = ['branch', 'definition'] as const;
+export const miscBlocks = ['branch', 'definition', 'assignment'] as const;
 export type MiscType = (typeof miscBlocks)[number];
 
 export const miscExpressions = ['variable', 'literal'] as const;
@@ -81,6 +81,14 @@ export type Definition = ComponentPrimitive<
     name: string;
     primitive: PrimitiveType;
     value: Primitive;
+  }
+>;
+
+export type Assignment = ComponentPrimitive<
+  'assignment',
+  {
+    lvalue: Variable | null;
+    rvalue: Literal | Variable | BinaryOperation | UnaryOperation | null;
   }
 >;
 
@@ -260,6 +268,7 @@ export type Block =
   | Output
   | Loop
   | Definition
+  | Assignment
   | Renderer
   | Branch
   | ClearOutput

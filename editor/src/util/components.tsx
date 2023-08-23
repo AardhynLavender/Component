@@ -47,6 +47,13 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         value: '',
       };
       break;
+    case 'assignment':
+      component = {
+        ...base(type),
+        lvalue: null,
+        rvalue: null,
+      };
+      break;
 
     // Loops //
 

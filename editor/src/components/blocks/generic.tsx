@@ -20,6 +20,7 @@ import { s } from '../../theme/stitches.config';
 import { ForeverBlock } from './Forever';
 import DrawLineBlock from './DrawLine';
 import { ClearScreenBlock } from './ClearScreen';
+import { AssignmentBlock } from './Assignment';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -279,6 +280,8 @@ export function GetJsxComponent(
   switch (component.type) {
     case 'definition':
       return <DefinitionBlock block={component} {...stdProps} />;
+    case 'assignment':
+      return <AssignmentBlock block={component} {...stdProps} />;
     case 'variable':
       return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
