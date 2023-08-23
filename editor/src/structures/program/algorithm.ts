@@ -2,7 +2,13 @@ import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
 import { Expression } from 'components/componentTypes';
 import produce from 'immer';
-import { IsBlock, IsCondition, IsNumericVariable } from 'types/predicates';
+import { IsOperation } from '../../types/predicates';
+import {
+  IsBlock,
+  IsCondition,
+  IsLiteral,
+  IsNumericVariable,
+} from 'types/predicates';
 
 /**
  * Program tree mutation algorithms and reducers
@@ -39,6 +45,12 @@ export namespace algorithm {
           break;
         case 'print':
           if (block.expression) found ??= FindExpression(id, block.expression); // search expression
+          break;
+        case 'draw_line':
+          found ??= FindExpression(id, block.x1); // search x1
+          found ??= FindExpression(id, block.y1); // search y1
+          found ??= FindExpression(id, block.x2); // search x2
+          found ??= FindExpression(id, block.y2); // search y2
           break;
       }
     }
@@ -118,6 +130,13 @@ export namespace algorithm {
           case 'print':
             if (draft.expression)
               draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
+            break;
+          case 'draw_line':
+            if (draft.x1) draft.x1 = RemoveExpression(id, draft.x1); // x1
+            if (draft.y1) draft.y1 = RemoveExpression(id, draft.y1); // y1
+            if (draft.x2) draft.x2 = RemoveExpression(id, draft.x2); // x2
+            if (draft.y2) draft.y2 = RemoveExpression(id, draft.y2); // y2
+            break;
         }
       }),
     );
@@ -198,6 +217,14 @@ export namespace algorithm {
                 draft.expression,
                 mutation,
               ); // variable|literal expression
+
+            break;
+          case 'draw_line':
+            if (draft.x1) draft.x1 = MutateExpression(id, draft.x1, mutation);
+            if (draft.y1) draft.y1 = MutateExpression(id, draft.y1, mutation);
+            if (draft.x2) draft.x2 = MutateExpression(id, draft.x2, mutation);
+            if (draft.y2) draft.y2 = MutateExpression(id, draft.y2, mutation);
+            break;
         }
       });
     });
@@ -246,6 +273,7 @@ export namespace algorithm {
    * Emplace a block|expression by id recursively into a block[] state
    */
   export function Emplace(emplacement: Emplacement, state: Block[]): Block[] {
+    console.log(`emplacing ${emplacement.component.id}`);
     const { component, destinationId, action, locale } = emplacement;
 
     // check for root emplacement
@@ -298,6 +326,28 @@ export namespace algorithm {
                 case 'decrement':
                   // @ts-ignore
                   if (locale === 'expression') draft.expression = component;
+                  break;
+                case 'draw_line':
+                  if (
+                    !IsNumericVariable(component) &&
+                    !IsLiteral(component) &&
+                    !IsOperation(component)
+                  )
+                    return;
+                  switch (locale) {
+                    case 'x1':
+                      draft.x1 = component;
+                      break;
+                    case 'y1':
+                      draft.y1 = component;
+                      break;
+                    case 'x2':
+                      draft.x2 = component;
+                      break;
+                    case 'y2':
+                      draft.y2 = component;
+                      break;
+                  }
               }
             });
         }
@@ -336,6 +386,11 @@ export namespace algorithm {
                   draft.expression,
                 ); // variable|literal expression
               break;
+            case 'draw_line':
+              if (draft.x1) draft.x1 = EmplaceExpression(emplacement, draft.x1);
+              if (draft.y1) draft.y1 = EmplaceExpression(emplacement, draft.y1);
+              if (draft.x2) draft.x2 = EmplaceExpression(emplacement, draft.x2);
+              if (draft.y2) draft.y2 = EmplaceExpression(emplacement, draft.y2);
           }
         }),
       );

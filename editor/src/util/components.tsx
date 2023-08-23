@@ -149,10 +149,22 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'draw_line':
       component = {
         ...base(type),
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
+        x1: {
+          ...base('literal'),
+          expression: null,
+        },
+        y1: {
+          ...base('literal'),
+          expression: null,
+        },
+        x2: {
+          ...base('literal'),
+          expression: null,
+        },
+        y2: {
+          ...base('literal'),
+          expression: null,
+        },
       };
       break;
 

@@ -225,7 +225,12 @@ export type Output = Print | Clear;
 
 export type DrawLine = ComponentPrimitive<
   'draw_line',
-  { x1: number; y1: number; x2: number; y2: number }
+  {
+    x1: Variable | BinaryOperation | Literal | null;
+    y1: Variable | BinaryOperation | Literal | null;
+    x2: Variable | BinaryOperation | Literal | null;
+    y2: Variable | BinaryOperation | Literal | null;
+  }
 >;
 
 export type Renderer = DrawLine;

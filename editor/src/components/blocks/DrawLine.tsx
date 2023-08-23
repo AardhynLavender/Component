@@ -1,9 +1,13 @@
 import { ReactElement, useState } from 'react';
-import { DrawLine } from 'types';
-import { BlockRoot } from './generic';
+import { DrawLine, Expression, Component, IsLiteral, IsOperation } from 'types';
+import { BlockRoot, ExpressionDropzone } from './generic';
 import Field from 'ui/Field';
 import { s } from 'theme/stitches.config';
 import { useMutateComponent } from 'structures/program';
+import { BinaryOperationBlock } from 'components/expressions/Operation';
+import { LiteralExpression } from './Literal';
+import { VariableExpression } from './Variable';
+import { IsNumericVariable, IsVariable } from 'types/predicates';
 
 export default function DrawLineBlock({
   block,
@@ -12,20 +16,8 @@ export default function DrawLineBlock({
   block: DrawLine;
   preview?: boolean;
 }): ReactElement | null {
-  const [x1, setX1] = useState(String(block.x1));
-  const [y1, setY1] = useState(String(block.y1));
-  const [x2, setX2] = useState(String(block.x2));
-  const [y2, setY2] = useState(String(block.y2));
-
-  const mutate = useMutateComponent();
-  const handleBlur = () => {
-    mutate(block.id, {
-      x1: Number(x1),
-      y1: Number(y1),
-      x2: Number(x2),
-      y2: Number(y2),
-    });
-  };
+  const predicate = (c: Component) =>
+    IsNumericVariable(c) || IsOperation(c) || IsLiteral(c);
 
   return (
     <BlockRoot
@@ -34,11 +26,87 @@ export default function DrawLineBlock({
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
       <s.span>Draw from</s.span>
-      <Field dynamicSize value={x1} onValueChange={setX1} onBlur={handleBlur} />
-      <Field dynamicSize value={y1} onValueChange={setY1} onBlur={handleBlur} />
+      <Parameter
+        preview={preview}
+        id={block.id}
+        dropPredicate={predicate}
+        expression={block.x1}
+        locale="x1"
+      />
+      <Parameter
+        preview={preview}
+        id={block.id}
+        dropPredicate={predicate}
+        expression={block.y1}
+        locale="y1"
+      />
       <s.span>to</s.span>
-      <Field dynamicSize value={x2} onValueChange={setX2} onBlur={handleBlur} />
-      <Field dynamicSize value={y2} onValueChange={setY2} onBlur={handleBlur} />
+      <Parameter
+        preview={preview}
+        id={block.id}
+        dropPredicate={predicate}
+        expression={block.x2}
+        locale="x2"
+      />
+      <Parameter
+        preview={preview}
+        id={block.id}
+        dropPredicate={predicate}
+        expression={block.y2}
+        locale="y2"
+      />
     </BlockRoot>
   );
+}
+
+function Parameter({
+  preview,
+  id,
+  dropPredicate,
+  expression,
+  locale,
+}: {
+  preview: boolean;
+  id: string;
+  dropPredicate: (c: Component) => boolean;
+  expression: Expression | null;
+  locale: string;
+}) {
+  if (!expression)
+    return (
+      <ExpressionDropzone
+        parentId={id}
+        locale={locale}
+        dropPredicate={dropPredicate}
+      />
+    );
+
+  const parent = { id, locale, dropPredicate };
+
+  if (IsLiteral(expression))
+    return (
+      <LiteralExpression
+        expression={expression}
+        preview={preview}
+        parent={parent}
+      />
+    );
+  if (IsOperation(expression))
+    return (
+      <BinaryOperationBlock
+        block={expression}
+        preview={preview}
+        parent={parent}
+      />
+    );
+  if (IsVariable(expression))
+    return (
+      <VariableExpression
+        variable={expression}
+        preview={preview}
+        parent={parent}
+      />
+    );
+
+  throw new Error(`Invalid expression type: ${expression}`);
 }

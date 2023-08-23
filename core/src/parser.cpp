@@ -83,11 +83,11 @@ void Parser::ParseConditionJump(Json& jump) {
   if (result) ParseJump(jump);
 }
 
-void Parser::ParseDrawLine(Json & line) {
-  const auto x1 = line["x1"].get<double>();
-  const auto y1 = line["y1"].get<double>();
-  const auto x2 = line["x2"].get<double>();
-  const auto y2 = line["y2"].get<double>();
+void Parser::ParseDrawLine(Json& line) {
+  const auto x1 = (double)ExtractValue<int>(line["x1"]);
+  const auto y1 = (double)ExtractValue<int>(line["y1"]);
+  const auto x2 = (double)ExtractValue<int>(line["x2"]);
+  const auto y2 = (double)ExtractValue<int>(line["y2"]);
 
   const Vec2 start{ x1, y1 };
   const Vec2 end{ x2, y2 };
