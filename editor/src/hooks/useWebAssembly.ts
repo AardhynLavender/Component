@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, RefObject } from 'react';
 
 export type GenericModule<T> = {
   module: T | null;
   error: unknown | null;
 };
 
-export type ModuleLoader<T> = () => Promise<T>;
+export type ModuleLoader<T> = ({
+  canvas,
+}: {
+  canvas: HTMLCanvasElement | null;
+}) => Promise<T>;
 
 export default function useWebAssembly<T>(
   moduleLoader: ModuleLoader<T>,
@@ -14,7 +18,11 @@ export default function useWebAssembly<T>(
   const [module, setModule] = useState<T | null>(null);
 
   useEffect(() => {
-    moduleLoader()
+    if (module) return; // don't load if already loaded
+
+    moduleLoader({
+      canvas: document.querySelector('#canvas'),
+    })
       .then((module: T) => {
         setModule(module);
       })

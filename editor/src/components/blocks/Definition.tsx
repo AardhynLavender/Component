@@ -140,14 +140,29 @@ function InitialValue({
       <Field
         value={value?.toLocaleString() ?? ''}
         onValueChange={(value) => {
-          if (type === 'number') setValue(parseInt(value) ?? 0);
-          else setValue(value);
+          if (type === 'number') {
+            const number = formatNumberPrimitive(value);
+            setValue(number);
+          } else setValue(value);
+        }}
+        onKeyDown={(key, { shift, value }) => {
+          if (key === 'Enter') onBlur();
+          if (type != 'number') return;
+
+          const number = formatNumberPrimitive(value);
+          const increment = shift ? SHIFT_INCREMENT : DEFAULT_INCREMENT;
+          if (key === 'ArrowUp') setValue(number + increment);
+          if (key === 'ArrowDown') setValue(number - increment);
         }}
         onBlur={onBlur}
         dynamicSize
       />
     );
 }
+
+const DEFAULT_INCREMENT = 1;
+const SHIFT_INCREMENT = 10;
+
 function useVariableDefinition(block: Definition, enabled: boolean = true) {
   const { declare } = useVariableStore();
 
@@ -155,4 +170,11 @@ function useVariableDefinition(block: Definition, enabled: boolean = true) {
     if (enabled) declare(block.id, block); // declare the variable
     return () => declare(block.id, undefined); // un-declare the variable on unmount
   }, [block.id, block.name, block.primitive, enabled]);
+}
+
+function formatNumberPrimitive(value: string) {
+  const rawString = value.replace(/[^0-9.-]/g, '');
+  const number = Number(rawString);
+  if (isNaN(number)) return 0;
+  return number;
 }

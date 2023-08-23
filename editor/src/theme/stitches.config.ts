@@ -4,7 +4,7 @@ import {
   CSSProperties as CssProp,
 } from '@stitches/react';
 
-const DEFAULT_FONT = 'heebo';
+const DEFAULT_FONT = 'Nimbus Sans';
 const BACKUP_FONTS = `
   system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
 `;
@@ -22,6 +22,8 @@ const config = createStitches({
   },
   theme: {
     colors: {
+      light: '#fff',
+      dark: '#24292e',
       text: '#24292e',
       text2: '#6a737c',
       primary: '#117dff',
@@ -34,6 +36,7 @@ const config = createStitches({
       background: '#fff',
       background2: '#f6f8fa',
       background3: '#e1e4e8',
+      background4: '#d1d5da',
       error: '#f2e1e3',
       onError: '#e35557',
     },
@@ -131,8 +134,20 @@ const config = createStitches({
 export const { styled, css, keyframes, globalCss } = config;
 
 const globalStyles = globalCss({
-  '@import':
-    "url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;900&family=Martian+Mono&display=swap')",
+  '@font-face': [
+    {
+      fontFamily: 'Nimbus Sans',
+      src: `url('/fonts/NimbusSans-Regular.otf') format('opentype')`,
+      fontWeight: 500,
+      fontDisplay: 'swap',
+    },
+    {
+      fontFamily: 'Nimbus Sans',
+      src: `url('/fonts/NimbusSans-Bold.otf') format('opentype')`,
+      fontWeight: 900,
+      fontDisplay: 'swap',
+    },
+  ],
   '*': {
     boxSizing: 'border-box',
     m: 0,

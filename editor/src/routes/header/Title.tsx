@@ -3,7 +3,7 @@ import { CSS, styled } from 'theme/stitches.config';
 import { H3 } from 'theme/Typography';
 import Badge from 'ui/Badge';
 
-export default function Header({ css }: { core: CoreApi; css: CSS }) {
+export default function Header({ css }: { css: CSS }) {
   return (
     <Root css={css}>
       <H3>Component</H3>
@@ -17,5 +17,5 @@ const Root = styled('section', {
   d: 'flex',
   items: 'center',
   gap: 8,
-  bb: '2px solid $outline',
+  bb: '1px solid $outline',
 });

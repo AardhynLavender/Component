@@ -61,6 +61,15 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    case 'forever':
+      component = {
+        ...base(type),
+        components: [],
+      };
+      break;
+
+    // Output  //
+
     case 'print':
       component = {
         ...base(type),
@@ -70,9 +79,10 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         },
       };
       break;
-    // case 'clear':
-    //   component = base(type);
-    //   break;
+
+    case 'clear_output':
+      component = base(type);
+      break;
 
     // Control Flow //
 
@@ -134,14 +144,41 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    // Rendering //
+
+    case 'draw_line':
+      component = {
+        ...base(type),
+        x1: {
+          ...base('literal'),
+          expression: null,
+        },
+        y1: {
+          ...base('literal'),
+          expression: null,
+        },
+        x2: {
+          ...base('literal'),
+          expression: null,
+        },
+        y2: {
+          ...base('literal'),
+          expression: null,
+        },
+      };
+      break;
+
+    case 'clear_screen':
+      component = base(type);
+      break;
+
     // Numeric Operations //
 
     case 'increment':
     case 'decrement':
       component = {
         ...base(type),
-        key: 0,
-        primitive: 'number', // todo: lookup key to get the primitive
+        expression: null,
       };
       break;
 

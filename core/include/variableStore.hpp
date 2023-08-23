@@ -29,7 +29,7 @@ public:
     Variable(const std::string name, const std::string primitive);
     Variable(const std::string name, const std::string primitive, const Any value);
 
-    constexpr void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
+    void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
 
     [[nodiscard]] inline constexpr std::string GetName() const { return name; }
     [[nodiscard]] inline constexpr std::string GetPrimitive() const { return primitive; }
@@ -37,8 +37,8 @@ public:
     template<typename T = Any>
     [[nodiscard]] inline constexpr const T& Get() const { 
         if constexpr (std::is_same_v<T, Any>) return value; // user has not specified the type, return the variant
-        return std::get<T>(value); 
-    }
+        else return std::get<T>(value); 
+    } // throws `std::bad_variant_access`
 
     template<typename T = Any>
     inline constexpr void Set(const T value) { Variable::value = value; }

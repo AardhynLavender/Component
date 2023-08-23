@@ -51,7 +51,7 @@ function ConditionSection({
         d: 'inline-flex',
         gap: 16,
         items: 'center',
-        p: 4,
+        p: '4px 8px',
         r: 4,
         fontFamily: '$mono',
         fontSize: '$1',
@@ -84,7 +84,7 @@ function ConditionSection({
 const ElseSection = styled(s.div, {
   d: 'inline-flex',
   justify: 'lex-start',
-  p: 4,
+  p: '4px 8px',
   r: 4,
   fontFamily: '$mono',
   fontSize: '$1',

@@ -6,6 +6,7 @@
 #include <print.hpp>
 #include <variableStore.hpp>
 #include <stackMachine.hpp>
+#include <renderer.hpp>
 #include <blocks.hpp>
 #include <json.hpp>
 
@@ -15,11 +16,13 @@ private:
     static constexpr int MAX_REPEAT_LENGTH = 2048;
     static constexpr int MAX_BRANCHES = 2;
 
+    Renderer& renderer;
+    
     Json program;
     StackMachine stackMachine;
     VariableStore store;
 
-    const Variable& ParseVariable(Json& expression) {
+    [[nodiscard]] const Variable& ParseVariable(Json& expression) {
         const std::string key = expression["definitionId"];
         using namespace std::string_literals;
         Log("Parsing variable of definition id `"s + key + "`"s);
@@ -49,7 +52,7 @@ private:
 
 
     template<Block::Arithmetic T = int>
-    T ParseOperation(Json& operation) {
+    [[nodiscard]] T ParseOperation(Json& operation) {
         const std::string type = operation["type"];
         Json left = operation["expression"][0];
         Json right = operation["expression"][1];
@@ -75,7 +78,27 @@ private:
         else throw std::invalid_argument("Invalid operation TYPE provided!");
     }
 
-    constexpr inline bool IsOperation(std::string_view type) const {
+    template<typename T = Any>
+    [[nodiscard]] T ExtractValue(Json& expression) {
+        const std::string type = expression["type"];
+        
+        if (type == "variable") {
+            const auto& variable = ParseVariable(expression);
+            if constexpr (std::is_same_v<T, Any>) return variable.Get();
+            else return ParseVariable(expression).Get<T>();
+            // todo: have some fun with `std::view`...
+        } else if (type == "literal") {
+            if constexpr (std::is_same_v<T, Any>) return expression["expression"].get<Any>();
+            else return expression["expression"].get<T>();
+        } else if (IsOperation(type)) {
+            if constexpr (std::is_arithmetic_v<T>) return ParseOperation<T>(expression);
+            else throw std::invalid_argument("unconstrained typename T is not arithmetic; Can't process operation!");
+        }
+
+        throw std::runtime_error("Expected variable or literal expression");
+    }
+
+    [[nodiscard]] constexpr inline bool IsOperation(std::string_view type) const {
         return type == "add" 
             || type == "subtract"
             || type == "multiply"
@@ -85,15 +108,23 @@ private:
     }
 
     void ParseDefinition(Json& definition);
+
     void ParseRepeat(Json& repeat);
+    void ParseForever(Json& forever);
+
     void ParseJump(Json& jump);
     void ParseConditionJump(Json& condition);
+
+    void ParseDrawLine(Json& line);
+
     void ParsePrint(Json& print);
-    void ParseClear();
+    void ParseClearOutput();
+    void ParseClearScreen();
+
     void ParseBranch(Json& branch) ;
     [[nodiscard]] bool ParseCondition(Json& conditional);
 public:
-    Parser();
+    Parser(Renderer& renderer);
 
     void ParseComponent(Json& component);
     void LoadProgram(const std::string components);

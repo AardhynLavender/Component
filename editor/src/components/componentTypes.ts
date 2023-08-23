@@ -11,7 +11,7 @@ export const conditions = [
 ] as const;
 export type ConditionType = (typeof conditions)[number];
 
-export const loops = ['repeat'] as const;
+export const loops = ['repeat', 'forever'] as const;
 export type LoopType = (typeof loops)[number];
 
 export const operators = [
@@ -26,8 +26,11 @@ export const operators = [
 ] as const;
 export type OperatorType = (typeof operators)[number];
 
-export const outputs = ['print'] as const;
+export const outputs = ['print', 'clear_output'] as const;
 export type OutputType = (typeof outputs)[number];
+
+export const renderers = ['draw_line', 'clear_screen'] as const;
+export type RenderType = (typeof renderers)[number];
 
 export const miscBlocks = ['branch', 'definition'] as const;
 export type MiscType = (typeof miscBlocks)[number];
@@ -35,7 +38,12 @@ export type MiscType = (typeof miscBlocks)[number];
 export const miscExpressions = ['variable', 'literal'] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
 
-export const blockTypes = [...loops, ...outputs, ...miscBlocks] as const;
+export const blockTypes = [
+  ...loops,
+  ...outputs,
+  ...renderers,
+  ...miscBlocks,
+] as const;
 export type BlockType = (typeof blockTypes)[number];
 
 export const expressionTypes = [
@@ -58,9 +66,7 @@ export type ComponentPrimitive<T extends ComponentType, E = {}> = {
 
 export type Literal<T extends Primitive = Primitive> = ComponentPrimitive<
   'literal',
-  {
-    expression: T | null;
-  }
+  { expression: T | null }
 >;
 
 // Declarations and Variables
@@ -167,11 +173,11 @@ export type Condition =
 
 export type Increment = ComponentPrimitive<
   'increment',
-  { primitive: 'number'; key: number }
+  { expression: Variable | null }
 >;
 export type Decrement = ComponentPrimitive<
   'decrement',
-  { primitive: 'number'; key: number }
+  { expression: Variable | null }
 >;
 export type UnaryOperation = Increment | Decrement;
 
@@ -212,8 +218,24 @@ export type Print = ComponentPrimitive<
   'print',
   { expression: Literal | Variable | null }
 >;
-// export type Clear = ComponentPrimitive<'clear'>;
-export type Output = Print; // | clear;
+export type ClearOutput = ComponentPrimitive<'clear_output'>;
+export type Output = Print | ClearOutput;
+
+// Renderers
+
+export type DrawLine = ComponentPrimitive<
+  'draw_line',
+  {
+    x1: Variable | BinaryOperation | Literal | null;
+    y1: Variable | BinaryOperation | Literal | null;
+    x2: Variable | BinaryOperation | Literal | null;
+    y2: Variable | BinaryOperation | Literal | null;
+  }
+>;
+
+export type ClearScreen = ComponentPrimitive<'clear_screen'>;
+
+export type Renderer = DrawLine | ClearScreen;
 
 // Loops
 
@@ -225,11 +247,23 @@ export type Repeat = ComponentPrimitive<
   }
 >;
 
-export type Loop = Repeat;
+export type Forever = ComponentPrimitive<
+  'forever',
+  { components: Block[] | null }
+>;
+
+export type Loop = Repeat | Forever;
 
 // General
 
-export type Block = Output | Loop | Definition | Branch; // | Clear;
+export type Block =
+  | Output
+  | Loop
+  | Definition
+  | Renderer
+  | Branch
+  | ClearOutput
+  | UnaryOperation;
 
 export type Expression =
   | Literal<Primitive>

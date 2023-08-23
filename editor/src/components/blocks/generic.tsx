@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { PrintBlock } from './Print';
-import { Block, ComponentType } from '../componentTypes';
+import { Block, ComponentType, DrawLine } from '../componentTypes';
 import { IsBlock, Component } from 'types';
 import {
   BranchBlock,
@@ -9,6 +9,7 @@ import {
   UnaryOperationBlock,
   RepeatBlock,
   VariableExpression,
+  ClearOutputBlock,
 } from '.';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from '../../util/Drag';
@@ -16,6 +17,9 @@ import { EmplacementAction } from '../../structures/program/types';
 import { BinaryOperationBlock } from '../expressions/Operation';
 import { ExpressionParent } from './types';
 import { s } from '../../theme/stitches.config';
+import { ForeverBlock } from './Forever';
+import DrawLineBlock from './DrawLine';
+import { ClearScreenBlock } from './ClearScreen';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -107,7 +111,7 @@ export function BlockRoot({
         fontSize: '$1',
 
         r: 4,
-        p: 4,
+        p: '4px 8px',
 
         bg: error ? '$error' : '$background',
         outline: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -279,10 +283,18 @@ export function GetJsxComponent(
       return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
+    case 'clear_output':
+      return <ClearOutputBlock block={component} {...stdProps} />;
     case 'repeat':
       return <RepeatBlock block={component} {...stdProps} />;
+    case 'forever':
+      return <ForeverBlock block={component} {...stdProps} />;
     case 'branch':
       return <BranchBlock block={component} {...stdProps} />;
+    case 'draw_line':
+      return <DrawLineBlock block={component} {...stdProps} />;
+    case 'clear_screen':
+      return <ClearScreenBlock block={component} {...stdProps} />;
     case 'not':
     case 'and':
     case 'or':

@@ -1,16 +1,17 @@
-import { ReactElement } from 'react';
+import { s } from 'theme/stitches.config';
+import { ClearScreen } from 'types';
 import { BlockRoot } from './generic';
 
-export function ClearBlock({
+export function ClearScreenBlock({
   block,
   preview = false,
 }: {
-  block: never;
+  block: ClearScreen;
   preview?: boolean;
-}): ReactElement | null {
+}) {
   return (
     <BlockRoot block={block} preview={preview}>
-      <h2>Clear Block</h2>
+      <s.span>clear screen</s.span>
     </BlockRoot>
   );
 }

@@ -1,3 +1,4 @@
+import { RenderType } from '../components/componentTypes';
 import {
   Loop,
   loops,
@@ -16,6 +17,7 @@ import {
   Variable,
   Expression,
   Component,
+  renderers,
 } from '.';
 
 export function IsLoop(component: Component): component is Loop {
@@ -26,7 +28,8 @@ export function IsBlock(component: Component): component is Block {
   return (
     loops.includes(component.type as LoopType) ||
     outputs.includes(component.type as OutputType) ||
-    ['branch', 'definition'].includes(component.type)
+    renderers.includes(component.type as RenderType) ||
+    ['branch', 'definition', 'increment', 'decrement'].includes(component.type)
   );
 }
 

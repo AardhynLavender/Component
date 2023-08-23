@@ -1,16 +1,14 @@
 import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
-import { Expression, Literal, Variable } from 'components/componentTypes';
+import { Expression } from 'components/componentTypes';
 import produce from 'immer';
+import { IsOperation } from '../../types/predicates';
 import {
   IsBlock,
   IsCondition,
   IsLiteral,
   IsNumericVariable,
-  IsVariable,
 } from 'types/predicates';
-import { Primitive } from '../../components/componentTypes';
-import { IsExpression } from '../../types/predicates';
 
 /**
  * Program tree mutation algorithms and reducers
@@ -34,12 +32,25 @@ export namespace algorithm {
           for (const branch of block.branches) found ??= Find(id, branch); // search branches
           found ??= FindExpression(id, block.condition); // search condition
           break;
+        case 'increment':
+        case 'decrement':
+          found ??= FindExpression(id, block.expression); // search variable
+          break;
         case 'repeat':
           found ??= FindExpression(id, block.repetition); // search repeat condition
           found ??= Find(id, block.components); // search repeat body
           break;
+        case 'forever':
+          found ??= Find(id, block.components); // search forever body
+          break;
         case 'print':
           if (block.expression) found ??= FindExpression(id, block.expression); // search expression
+          break;
+        case 'draw_line':
+          found ??= FindExpression(id, block.x1); // search x1
+          found ??= FindExpression(id, block.y1); // search y1
+          found ??= FindExpression(id, block.x2); // search x2
+          found ??= FindExpression(id, block.y2); // search y2
           break;
       }
     }
@@ -56,6 +67,7 @@ export namespace algorithm {
     if (!state) return null;
     if (state.id === id) return state;
 
+    // this is not the expression, search within
     let found: Expression | null = null;
     switch (state.type) {
       case 'eq':
@@ -97,6 +109,10 @@ export namespace algorithm {
             if (draft.expression)
               draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
             break;
+          case 'increment':
+          case 'decrement':
+            draft.expression = RemoveExpression(id, draft.expression); // variable
+            break;
           case 'branch':
             draft.condition = RemoveExpression(id, draft.condition); // condition
 
@@ -108,9 +124,19 @@ export namespace algorithm {
             draft.repetition = RemoveExpression(id, draft.repetition);
             draft.components = Remove(id, draft.components); // repeat body
             break;
+          case 'forever':
+            draft.components = Remove(id, draft.components); // forever body
+            break;
           case 'print':
             if (draft.expression)
               draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
+            break;
+          case 'draw_line':
+            if (draft.x1) draft.x1 = RemoveExpression(id, draft.x1); // x1
+            if (draft.y1) draft.y1 = RemoveExpression(id, draft.y1); // y1
+            if (draft.x2) draft.x2 = RemoveExpression(id, draft.x2); // x2
+            if (draft.y2) draft.y2 = RemoveExpression(id, draft.y2); // y2
+            break;
         }
       }),
     );
@@ -125,6 +151,8 @@ export namespace algorithm {
   ): T | null {
     if (!expression) return expression;
     if (expression.id === id) return null;
+
+    // this is not the expression, search within
     return produce(expression, (draft) => {
       switch (draft.type) {
         case 'eq':
@@ -175,6 +203,13 @@ export namespace algorithm {
             draft.repetition = MutateExpression(id, draft.repetition, mutation);
             draft.components = Mutate(id, draft.components, mutation); // repeat body
             break;
+          case 'forever':
+            draft.components = Mutate(id, draft.components, mutation); // forever body
+            break;
+          case 'increment':
+          case 'decrement':
+            draft.expression = MutateExpression(id, draft.expression, mutation); // variable
+            break;
           case 'print':
             if (draft.expression)
               draft.expression = MutateExpression(
@@ -182,6 +217,14 @@ export namespace algorithm {
                 draft.expression,
                 mutation,
               ); // variable|literal expression
+
+            break;
+          case 'draw_line':
+            if (draft.x1) draft.x1 = MutateExpression(id, draft.x1, mutation);
+            if (draft.y1) draft.y1 = MutateExpression(id, draft.y1, mutation);
+            if (draft.x2) draft.x2 = MutateExpression(id, draft.x2, mutation);
+            if (draft.y2) draft.y2 = MutateExpression(id, draft.y2, mutation);
+            break;
         }
       });
     });
@@ -197,6 +240,7 @@ export namespace algorithm {
     if (!expression) return expression;
     if (expression.id === id) return Object.assign(expression, mutation);
 
+    // this is not the expression, search within
     return produce(expression, (draft) => {
       switch (draft.type) {
         case 'not':
@@ -229,6 +273,7 @@ export namespace algorithm {
    * Emplace a block|expression by id recursively into a block[] state
    */
   export function Emplace(emplacement: Emplacement, state: Block[]): Block[] {
+    console.log(`emplacing ${emplacement.component.id}`);
     const { component, destinationId, action, locale } = emplacement;
 
     // check for root emplacement
@@ -263,6 +308,8 @@ export namespace algorithm {
                 case 'repeat':
                   if (locale === 'repetition' && IsNumericVariable(component))
                     draft.repetition = component;
+                case 'repeat':
+                case 'forever':
                   if (locale === 'components' && isBlock)
                     draft.components = [component];
                   break;
@@ -275,8 +322,32 @@ export namespace algorithm {
                     draft.condition = component;
                   break;
                 case 'print':
+                case 'increment':
+                case 'decrement':
                   // @ts-ignore
                   if (locale === 'expression') draft.expression = component;
+                  break;
+                case 'draw_line':
+                  if (
+                    !IsNumericVariable(component) &&
+                    !IsLiteral(component) &&
+                    !IsOperation(component)
+                  )
+                    return;
+                  switch (locale) {
+                    case 'x1':
+                      draft.x1 = component;
+                      break;
+                    case 'y1':
+                      draft.y1 = component;
+                      break;
+                    case 'x2':
+                      draft.x2 = component;
+                      break;
+                    case 'y2':
+                      draft.y2 = component;
+                      break;
+                  }
               }
             });
         }
@@ -285,13 +356,6 @@ export namespace algorithm {
       return state.map((block) =>
         produce(block, (draft) => {
           switch (draft.type) {
-            case 'print':
-              if (draft.expression)
-                draft.expression = EmplaceExpression(
-                  emplacement,
-                  draft.expression,
-                ); // variable|literal expression
-              break;
             case 'branch':
               // branches
               if (draft.branches)
@@ -309,9 +373,24 @@ export namespace algorithm {
 
               break;
             case 'repeat':
+            case 'forever':
               if (draft.components)
                 draft.components = Emplace(emplacement, draft.components); // repeat body
               break;
+            case 'print':
+            case 'increment':
+            case 'decrement':
+              if (draft.expression)
+                draft.expression = EmplaceExpression(
+                  emplacement,
+                  draft.expression,
+                ); // variable|literal expression
+              break;
+            case 'draw_line':
+              if (draft.x1) draft.x1 = EmplaceExpression(emplacement, draft.x1);
+              if (draft.y1) draft.y1 = EmplaceExpression(emplacement, draft.y1);
+              if (draft.x2) draft.x2 = EmplaceExpression(emplacement, draft.x2);
+              if (draft.y2) draft.y2 = EmplaceExpression(emplacement, draft.y2);
           }
         }),
       );
@@ -364,6 +443,10 @@ export namespace algorithm {
             //@ts-ignore
             else if (locale === 'right') draft.expression[1] = component;
             break;
+          case 'increment':
+          case 'decrement':
+            // @ts-ignore
+            if (locale === 'expression') draft.expression = component;
         }
       });
     } else
@@ -391,6 +474,13 @@ export namespace algorithm {
             if (rvalue)
               draft.expression[1] = EmplaceExpression(emplacement, rvalue);
             break;
+          case 'increment':
+          case 'decrement':
+            if (draft.expression)
+              draft.expression = EmplaceExpression(
+                emplacement,
+                draft.expression,
+              );
         }
       });
   }

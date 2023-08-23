@@ -1,4 +1,5 @@
 #include <parser.hpp>
+#include <vec2.hpp>
 
 void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
@@ -31,8 +32,6 @@ void Parser::ParseRepeat(Json& repeat) {
   else throw std::invalid_argument("Invalid expression TYPE provided for REPEAT!");
 
   Json& components = repeat["components"];
-
-  // establish invariant
   if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
   if (!components.is_array()) throw std::invalid_argument("Repeat components must be an array!");
 
@@ -50,6 +49,18 @@ void Parser::ParseRepeat(Json& repeat) {
   // push statements into the repeat loops stack
   stackMachine.PushBlock(incrementor);
   stackMachine.PushBlock(jumpIf); 
+}
+
+void Parser::ParseForever(Json& forever) {
+  Json& components = forever["components"];
+  if (!components.is_array()) throw std::invalid_argument("Forever components must be an array!");
+
+  stackMachine.Push(components); // create a new stack for the repeat block body
+
+  const auto instructions = components.size(); 
+  constexpr int EXTRA_INSTRUCTIONS = 1; // `jump`
+  Json jump = Block::Jump(-(instructions + EXTRA_INSTRUCTIONS)); // jump to the start of the forever loop
+  stackMachine.PushBlock(jump);
 }
 
 void Parser::ParseJump(Json& jump) {
@@ -70,6 +81,19 @@ void Parser::ParseConditionJump(Json& jump) {
   Json& condition = jump["condition"];
   bool result = ParseCondition(condition);
   if (result) ParseJump(jump);
+}
+
+void Parser::ParseDrawLine(Json& line) {
+  const auto x1 = (double)ExtractValue<int>(line["x1"]);
+  const auto y1 = (double)ExtractValue<int>(line["y1"]);
+  const auto x2 = (double)ExtractValue<int>(line["x2"]);
+  const auto y2 = (double)ExtractValue<int>(line["y2"]);
+
+  const Vec2 start{ x1, y1 };
+  const Vec2 end{ x2, y2 };
+
+  renderer.DrawLine(start, end);
+  renderer.Present();
 }
 
 [[nodiscard]] bool Parser::ParseCondition(Json& condition) {
@@ -155,16 +179,21 @@ void Parser::ParsePrint(Json& print) {
     const int result = ParseOperation(print);
     ClientPrint(std::to_string(result));        
   } else
-    throw std::invalid_argument("Invalid TYPE for STDOUT expression");
+    throw std::invalid_argument("Invalid TYPE for PRINT expression");
 }
 
 
-void Parser::ParseClear() {
+void Parser::ParseClearOutput() {
 #ifdef __EMSCRIPTEN__
-  ClientClear(); 
+  ClientClearOutput(); 
 #else
   // todo: some native clear
 #endif // __EMSCRIPTEN__
+}
+
+void Parser::ParseClearScreen() {
+  renderer.Clear();
+  renderer.Present();
 }
 
 void Parser::ParseBranch(Json& branch) {
@@ -188,12 +217,16 @@ void Parser::ParseComponent(Json& component) {
   if (type == "definition")             ParseDefinition(component);
   else if (type == "branch")            ParseBranch(component);
   else if (type == "print")             ParsePrint(component["expression"]);
-  else if (type == "clear")             ParseClear();
-  else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component);
-  else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component);
+  else if (type == "clear_output")      ParseClearOutput();
+  else if (type == "clear_screen")      ParseClearScreen();
+  else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
+  else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
   else if (type == "repeat")            ParseRepeat(component);
+  else if (type == "forever")           ParseForever(component);
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
+  else if (type == "draw_line")         ParseDrawLine(component);
+  else throw std::invalid_argument("Invalid TYPE provided for component");
 }
 
 // API //
@@ -220,4 +253,4 @@ bool Parser::Next() {
 
 // Construction //
 
-Parser::Parser() : stackMachine(), store() { }
+Parser::Parser(Renderer& renderer) : stackMachine(), store(), renderer(renderer) { }
