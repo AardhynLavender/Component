@@ -6,20 +6,42 @@ import {
   TabsTrigger,
   TAB_HEIGHT,
 } from 'ui/Tabs';
-
 import Components from 'routes/ComponentList';
 import Ast from './Ast';
 import DragHandle from 'ui/DragHandle';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
+import {
+  PuzzlePieceIcon,
+  CodeBracketIcon,
+  PhotoIcon,
+  Cog6ToothIcon,
+} from '@heroicons/react/24/solid';
 
+const ICON_SIZE = 24;
+const SIZING = {
+  width: ICON_SIZE,
+  height: ICON_SIZE,
+} as const;
 const tabs = [
   {
     label: 'Components',
+    icon: <PuzzlePieceIcon {...SIZING} />,
     component: <Components />,
   },
   {
     label: 'AST',
+    icon: <CodeBracketIcon {...SIZING} />,
     component: <Ast />,
+  },
+  {
+    label: 'assets',
+    icon: <PhotoIcon {...SIZING} />,
+    component: <></>,
+  },
+  {
+    label: 'details',
+    icon: <Cog6ToothIcon {...SIZING} />,
+    component: <></>,
   },
 ] as const;
 const DEFAULT_TAB: (typeof tabs)[number]['label'] = 'Components';
@@ -43,11 +65,11 @@ export default function RightSidebar({ css }: { css: CSS }) {
         ...css,
       }}
     >
-      <TabRoot defaultValue={DEFAULT_TAB} css={{ h: '100%' }}>
+      <TabRoot defaultValue={DEFAULT_TAB} css={{ height: ' 100%' }}>
         <Tabs>
-          {tabs.map(({ label }) => (
+          {tabs.map(({ label, icon }) => (
             <TabsTrigger key={label} value={label}>
-              {label}
+              {icon}
             </TabsTrigger>
           ))}
         </Tabs>
@@ -66,11 +88,10 @@ const Root = styled(s.div, {
   pos: 'relative',
   w: '100%',
   bl: '1px solid $outline',
-  background: '$background2',
 });
 
 const Tabs = styled(TabsList, {
-  bb: `1px solid $outline`,
+  bb: '1px solid $outline',
   d: 'flex',
   gap: 8,
   items: 'center',
@@ -78,6 +99,7 @@ const Tabs = styled(TabsList, {
 });
 
 const Content = styled(TabsContent, {
+  background: '$background2',
   w: '100%',
   h: `calc(100% - ${TAB_HEIGHT}px)`,
 });

@@ -21,9 +21,9 @@ export const TabsTrigger = styled(TabsPrimitive.Trigger, {
   items: 'center',
   justify: 'center',
   userSelect: 'none',
+
+  color: '$dark',
   '&[data-state="active"]': { color: '$primary' },
-  '&:hover': { background: '$background2' },
-  '&:focus': { background: '$background2', fontWeight: 600 },
 });
 
 export const TabsContent = styled(TabsPrimitive.Content, {});
