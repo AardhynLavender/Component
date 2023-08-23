@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
 import { s } from 'theme/stitches.config';
-import { Clear } from 'types';
+import { ClearOutput } from 'types';
 import { BlockRoot } from './generic';
 
 export function ClearBlock({
   block,
   preview = false,
 }: {
-  block: Clear;
+  block: ClearOutput;
   preview?: boolean;
 }) {
   return (

@@ -6,5 +6,5 @@ export * from './Literal';
 export * from './Repeat';
 export * from './Variable';
 export * from './Print';
-export * from './Clear';
+export * from './ClearOutput';
 export * from './Unary';

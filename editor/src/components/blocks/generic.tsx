@@ -9,7 +9,7 @@ import {
   UnaryOperationBlock,
   RepeatBlock,
   VariableExpression,
-  ClearBlock,
+  ClearOutputBlock,
 } from '.';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from '../../util/Drag';
@@ -282,8 +282,8 @@ export function GetJsxComponent(
       return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
-    case 'clear':
-      return <ClearBlock block={component} {...stdProps} />;
+    case 'clear_output':
+      return <ClearOutputBlock block={component} {...stdProps} />;
     case 'repeat':
       return <RepeatBlock block={component} {...stdProps} />;
     case 'forever':

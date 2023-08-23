@@ -26,7 +26,7 @@ export const operators = [
 ] as const;
 export type OperatorType = (typeof operators)[number];
 
-export const outputs = ['print', 'clear'] as const;
+export const outputs = ['print', 'clear_output'] as const;
 export type OutputType = (typeof outputs)[number];
 
 export const renderers = ['draw_line'] as const;
@@ -218,8 +218,8 @@ export type Print = ComponentPrimitive<
   'print',
   { expression: Literal | Variable | null }
 >;
-export type Clear = ComponentPrimitive<'clear'>;
-export type Output = Print | Clear;
+export type ClearOutput = ComponentPrimitive<'clear_output'>;
+export type Output = Print | ClearOutput;
 
 // Renderers
 
@@ -260,7 +260,7 @@ export type Block =
   | Definition
   | Renderer
   | Branch
-  | Clear
+  | ClearOutput
   | UnaryOperation;
 
 export type Expression =

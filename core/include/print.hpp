@@ -10,7 +10,7 @@
 extern "C" {
 // see `/core/lib/print.js`
     void js_client_print(const char* message); // locale is messed up when I use `std::string`. A `C char array` ("C String") seems to work fine.
-    void js_client_clear();
+    void js_client_clear_output();
 }
 #endif // __EMSCRIPTEN__
 
@@ -36,9 +36,9 @@ void Log(T value, const int& indent) {
 /**
  * Clear the console
  */
-inline void ClientClear() {
+inline void ClientClearOutput() {
 #ifdef __EMSCRIPTEN__
-    js_client_clear();
+    js_client_clear_output();
 #else 
     // todo: native implementation of clear
 #endif // __EMSCRIPTEN__

@@ -10,7 +10,7 @@ mergeInto(LibraryManager.library, {
   /**
    * Clear the DOM element with id "component:console"
    */
-  js_client_clear: () => {
+  js_client_clear_output: () => {
     document.getElementById("component:console").innerHTML = "";
   },
 });

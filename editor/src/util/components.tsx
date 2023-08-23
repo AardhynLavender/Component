@@ -80,7 +80,7 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
-    case 'clear':
+    case 'clear_output':
       component = base(type);
       break;
 
