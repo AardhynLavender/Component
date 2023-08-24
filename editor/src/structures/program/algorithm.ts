@@ -2,7 +2,7 @@ import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
 import { Expression } from 'components/componentTypes';
 import produce from 'immer';
-import { IsOperation } from '../../types/predicates';
+import { IsOperation, IsVariable } from '../../types/predicates';
 import {
   IsBlock,
   IsCondition,
@@ -41,10 +41,14 @@ export namespace algorithm {
           found ??= Find(id, block.components); // search repeat body
           break;
         case 'forever':
-          found ??= Find(id, block.components); // search forever body
+          found ??= Find(id, block.components); // search forever bodyr
           break;
         case 'print':
           if (block.expression) found ??= FindExpression(id, block.expression); // search expression
+          break;
+        case 'assignment':
+          found ??= FindExpression(id, block.rvalue);
+          found ??= FindExpression(id, block.lvalue);
           break;
         case 'draw_line':
           found ??= FindExpression(id, block.x1); // search x1
@@ -130,6 +134,10 @@ export namespace algorithm {
           case 'print':
             if (draft.expression)
               draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
+            break;
+          case 'assignment':
+            draft.lvalue = RemoveExpression(id, draft.lvalue);
+            draft.rvalue = RemoveExpression(id, draft.rvalue);
             break;
           case 'draw_line':
             if (draft.x1) draft.x1 = RemoveExpression(id, draft.x1); // x1
@@ -218,6 +226,10 @@ export namespace algorithm {
                 mutation,
               ); // variable|literal expression
 
+            break;
+          case 'assignment':
+            draft.lvalue = MutateExpression(id, draft.lvalue, mutation);
+            draft.rvalue = MutateExpression(id, draft.rvalue, mutation);
             break;
           case 'draw_line':
             if (draft.x1) draft.x1 = MutateExpression(id, draft.x1, mutation);
@@ -327,6 +339,18 @@ export namespace algorithm {
                   // @ts-ignore
                   if (locale === 'expression') draft.expression = component;
                   break;
+                case 'assignment':
+                  if (locale === 'lvalue' && IsVariable(component))
+                    draft.lvalue = component;
+                  // lvalue must be assignable (variable)
+                  else if (
+                    locale === 'rvalue' &&
+                    (IsVariable(component) ||
+                      IsLiteral(component) ||
+                      IsOperation(component))
+                  )
+                    draft.rvalue = component;
+                  break;
                 case 'draw_line':
                   if (
                     !IsNumericVariable(component) &&
@@ -385,6 +409,12 @@ export namespace algorithm {
                   emplacement,
                   draft.expression,
                 ); // variable|literal expression
+              break;
+            case 'assignment':
+              if (draft.lvalue)
+                draft.lvalue = EmplaceExpression(emplacement, draft.lvalue);
+              if (draft.rvalue)
+                draft.rvalue = EmplaceExpression(emplacement, draft.rvalue);
               break;
             case 'draw_line':
               if (draft.x1) draft.x1 = EmplaceExpression(emplacement, draft.x1);

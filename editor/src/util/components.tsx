@@ -51,7 +51,10 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       component = {
         ...base(type),
         lvalue: null,
-        rvalue: null,
+        rvalue: {
+          ...base('literal'),
+          expression: '',
+        },
       };
       break;
 

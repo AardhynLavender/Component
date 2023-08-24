@@ -44,14 +44,14 @@ export function AssignmentBlock({
               preview={preview}
               parent={{
                 id: block.id,
-                locale: 'lValue',
+                locale: 'lvalue',
                 dropPredicate: lValuePredicate,
               }}
             />
           ) : (
             <ExpressionDropzone
               parentId={block.id}
-              locale="lValue"
+              locale="lvalue"
               dropPredicate={lValuePredicate}
             />
           )}

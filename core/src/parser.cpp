@@ -226,6 +226,7 @@ void Parser::ParseComponent(Json& component) {
   if constexpr (DEBUG) Log("Parsing `"s + type + "` component"s);
 
   if (type == "definition")             ParseDefinition(component);
+  else if (type == "assignment")        ParseAssignment(component);
   else if (type == "branch")            ParseBranch(component);
   else if (type == "print")             ParsePrint(component["expression"]);
   else if (type == "clear_output")      ParseClearOutput();
