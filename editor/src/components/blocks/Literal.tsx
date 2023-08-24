@@ -1,15 +1,11 @@
-import { s, styled } from 'theme/stitches.config';
+import { CSS } from 'theme/stitches.config';
 import { ReactElement, FocusEvent, useState } from 'react';
 import { useMutateComponent } from 'structures/program';
 import { Literal, PrimitiveType } from 'types';
 import { ExpressionDropzone } from './generic';
 import { ExpressionParent } from './types';
 import { GetBoolFromString } from 'util/string';
-import Field, {
-  FieldBlurHandler,
-  FieldKeyEventHandler,
-  KeyEventOptions,
-} from 'ui/Field';
+import Field, { FieldBlurHandler, FieldKeyEventHandler } from 'ui/Field';
 
 export function LiteralExpression({
   expression,
@@ -44,14 +40,10 @@ export function LiteralExpression({
       locale={parent.locale}
       dropPredicate={parent.dropPredicate}
       enabled={!preview}
-      css={{
-        p: 0,
-        b: 'none',
-        pos: 'relative',
-        background: error ? '$onError' : undefined,
-      }}
+      css={{ p: 0, b: 'none', pos: 'relative' }}
     >
       <PrimitiveInput
+        error={error}
         setError={setError}
         type={type}
         value={value}
@@ -66,6 +58,7 @@ function PrimitiveInput<T extends PrimitiveType>({
   type,
   value,
   setError,
+  error,
   handleChange,
   handleApplyMutation,
 }: {
@@ -76,6 +69,7 @@ function PrimitiveInput<T extends PrimitiveType>({
     : T extends 'number'
     ? number
     : boolean | null;
+  error?: boolean;
   handleChange: (value: T) => void;
   handleApplyMutation: () => void;
 }) {
@@ -83,6 +77,7 @@ function PrimitiveInput<T extends PrimitiveType>({
   const stdProps: {
     onKeyDown: FieldKeyEventHandler;
     onBlur: FieldBlurHandler;
+    css: CSS;
   } = {
     onKeyDown: (key, { blur }) => {
       if (key !== 'Enter') return;
@@ -90,6 +85,10 @@ function PrimitiveInput<T extends PrimitiveType>({
       blur();
     },
     onBlur: handleApplyMutation,
+    css: {
+      bg: error ? '$error' : undefined,
+      c: error ? '$onError' : undefined,
+    },
   };
 
   // Unfortunately, TypeScript can't infer a generic type from the runtime value deduced

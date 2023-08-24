@@ -186,8 +186,9 @@ export function useVariableStore() {
  * @param definitionId id of the component that declares this variable
  * @returns the variable definition
  */
-export function useVariableDefinition(definitionId: string) {
+export function useVariableDefinition(definitionId?: string) {
   const { variables } = useVariableStore();
+  if (!definitionId) return null;
   const variable = definitionId in variables ? variables[definitionId] : null;
   return variable;
 }

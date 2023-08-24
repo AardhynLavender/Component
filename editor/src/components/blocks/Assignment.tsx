@@ -8,6 +8,7 @@ import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 import { Assignment, Component } from '../componentTypes';
 import { BinaryOperationBlock } from 'components/expressions/Operation';
+import { useVariableDefinition } from 'structures/program';
 
 export function AssignmentBlock({
   block,
@@ -24,6 +25,8 @@ export function AssignmentBlock({
   const lValuePredicate = (c: Component) => IsVariable(c);
   const rValuePredicate = (c: Component) =>
     IsVariable(c) || IsOperation(c) || IsLiteral(c);
+
+  const definition = useVariableDefinition(block.lvalue?.definitionId);
 
   return (
     <BlockRoot
@@ -66,6 +69,7 @@ export function AssignmentBlock({
             <LiteralExpression
               expression={block.rvalue}
               preview={preview}
+              type={definition?.primitive ?? 'string'}
               parent={{
                 id: block.id,
                 locale: 'expression',
