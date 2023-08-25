@@ -30,7 +30,7 @@ export default function DrawLineBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <s.span>Draw from</s.span>
+      <s.span>Draw line</s.span>
       <Parameter {...props} expression={block.x1} locale="x1" />
       <Parameter {...props} expression={block.y1} locale="y1" />
       <s.span>to</s.span>
@@ -69,6 +69,7 @@ function Parameter({
       <LiteralExpression
         expression={expression}
         preview={preview}
+        type="number"
         parent={parent}
       />
     );
