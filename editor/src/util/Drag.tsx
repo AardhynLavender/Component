@@ -139,7 +139,7 @@ export namespace Drag {
    * Make the `<body>` an unhandled dropzone to prevent the delay when dropping cards outside a dropzone empty space
    * @param type the type of item to handle ( or rather, not handle )
    */
-  export function useBodyDrop(type: string = 'component') {
+  export function useUnhandledDropzone(type: string = 'component') {
     const [, drop] = useDrop(() => ({
       accept: type,
     }));
@@ -156,14 +156,14 @@ export namespace Drag {
    * Remove a component when dropped within
    */
   export function useRemoveComponentOnDrop() {
-    const remote = useRemoveComponent();
+    const remove = useRemoveComponent();
     const [{ isOverShallow, isOver }, drop] = useDrop({
       accept: 'component',
       drop: ({ component }: DragItem, monitor) => {
         if (monitor.didDrop()) return; // check if the drop was handled by a child dropzone
 
         // simply remove the component
-        remote(component.id);
+        remove(component.id);
       },
       collect: (monitor) => ({
         isOverShallow: monitor.isOver({ shallow: true }), // hovered by the cursor and *not* behind a child dropzone

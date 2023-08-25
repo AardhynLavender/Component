@@ -4,6 +4,7 @@ import Field from '../../ui/Field';
 import { SyntheticEvent, useState } from 'react';
 import { useScreen } from 'structures/program';
 import useCoreModule from '../../hooks/useCoreModule';
+import { Drag } from '../../util/Drag';
 
 export const SCREEN_RATIO = 16 / 9;
 
@@ -15,7 +16,7 @@ export default function GameScreen() {
         style={{
           width: '100%',
           aspectRatio: SCREEN_RATIO,
-          backgroundColor: 'var(--colors-text)', // stitches $text
+          backgroundColor: 'var(--colors-dark)', // stitches $text
           borderRadius: 8,
           position: 'relative',
         }}

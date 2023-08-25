@@ -5,9 +5,11 @@ import Title from './header/Title';
 import LeftSidebar from './left';
 import Main from './main/Main';
 import RightSidebar from './right';
-import BottomPane from './bottom/Bottom';
+import { Drag } from 'util/Drag';
 
 export default function Layout() {
+  Drag.useUnhandledDropzone(); // unhandled drops are rejected
+
   return (
     <Root>
       <Title css={{ gridArea: 'header' }} />
@@ -24,6 +26,9 @@ const Root = styled('div', {
   maxW: '100vw',
   minH: '100vh',
   minW: '100vw',
+
+  background: '$background',
+  c: '$text',
 
   d: 'grid',
   gridTemplateColumns: 'auto 1fr auto',

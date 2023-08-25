@@ -43,8 +43,8 @@ const Root = styled('div', {
   variants: {
     noIndent: {
       false: {
-        bl: '1px solid $outline2',
-        pl: 16,
+        bl: '2px solid $outline2',
+        pl: 12,
         my: 8,
       },
     },

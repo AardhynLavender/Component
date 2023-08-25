@@ -1,15 +1,59 @@
 import {
   createStitches,
+  createTheme,
   CSS as StitchesCSS,
   CSSProperties as CssProp,
 } from '@stitches/react';
+
+// Stitches! what's that? See https://stitches.dev/docs/introduction
 
 const DEFAULT_FONT = 'Nimbus Sans';
 const BACKUP_FONTS = `
   system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
 `;
 
-// See https://stitches.dev/docs/introduction
+export const lightTheme = createTheme('light', {
+  colors: {
+    light: '#fff',
+    dark: '#24292e',
+    text: '#24292e',
+    text2: '#6a737c',
+    primary: '#117dff',
+    primary2: '#0f69d5',
+    onPrimary: '#fff',
+    tonal: '#576069',
+    tonal2: '#24292e',
+    outline: '#d0d7de',
+    outline2: '#e6edf5',
+    background: '#fff',
+    background2: '#f6f8fa',
+    background3: '#e1e4e8',
+    background4: '#d1d5da',
+    error: '#f2e1e3',
+    onError: '#e35557',
+  },
+});
+export const darkTheme = createTheme('dark', {
+  colors: {
+    light: '#fff',
+    dark: '#12141a',
+    text: '#fff',
+    text2: '#c6cbd1',
+    primary: '#117dff',
+    primary2: '#0f69d5',
+    onPrimary: '#fff',
+    tonal: '#c6cbd1',
+    tonal2: '#fff',
+    outline: '#1b1f23',
+    outline2: '#2f363d',
+    background: '#24292e',
+    background2: '#1f2428',
+    background3: '#2f363d',
+    background4: '#3f4448',
+    error: '#392d33',
+    onError: '#f85c58',
+  },
+});
 
 const config = createStitches({
   media: {
@@ -21,25 +65,7 @@ const config = createStitches({
     xxl: '(min-width: 1536px)',
   },
   theme: {
-    colors: {
-      light: '#fff',
-      dark: '#24292e',
-      text: '#24292e',
-      text2: '#6a737c',
-      primary: '#117dff',
-      primary2: '#0f69d5',
-      onPrimary: '#fff',
-      tonal: '#576069',
-      tonal2: '#24292e',
-      outline: '#d0d7de',
-      outline2: '#e6edf5',
-      background: '#fff',
-      background2: '#f6f8fa',
-      background3: '#e1e4e8',
-      background4: '#d1d5da',
-      error: '#f2e1e3',
-      onError: '#e35557',
-    },
+    colors: {}, // colors are defined in `lightTheme` and `darkTheme` applied in `App.tsx`
     fontWeights: {
       normal: 500,
       bold: 900,

@@ -22,7 +22,7 @@ export const TabsTrigger = styled(TabsPrimitive.Trigger, {
   justify: 'center',
   userSelect: 'none',
 
-  color: '$dark',
+  c: '$text',
   '&[data-state="active"]': { color: '$primary' },
 });
 

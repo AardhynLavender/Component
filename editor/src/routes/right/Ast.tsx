@@ -28,6 +28,8 @@ const Editor = styled(s.textarea, {
   outline: 'none',
   background: 'transparent',
 
+  c: '$text',
+
   variants: {
     error: {
       true: {

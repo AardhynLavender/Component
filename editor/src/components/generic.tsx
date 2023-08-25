@@ -123,6 +123,7 @@ export function BlockRoot({
       key={block.id}
       data-dragging={isDragging} // enables parents to select based on the dragging state of their children
       css={{
+        c: '$text',
         opacity: isDragging ? 0 : 1,
         ...styles,
         ...css,

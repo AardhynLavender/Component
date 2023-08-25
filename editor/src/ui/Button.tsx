@@ -43,7 +43,7 @@ const ButtonRoot = styled('button', {
       },
       neutral: {
         bg: '$background3',
-        c: '$dark',
+        c: '$text',
         '&:hover': { background: '$background4' },
       },
     },

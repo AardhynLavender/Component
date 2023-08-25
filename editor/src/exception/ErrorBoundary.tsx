@@ -24,6 +24,8 @@ function ErrorFallback({
   );
 }
 const Root = styled(s.div, {
+  bg: '$background',
+  c: '$text',
   d: 'flex',
   justify: 'center',
   items: 'center',

@@ -10,6 +10,7 @@ import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
 import Scroll from 'ui/Scroll';
 import ErrorBoundary from 'exception/ErrorBoundary';
+import { Drag } from '../util/Drag';
 
 const ComponentCategories = {
   blocks: blockTypes,
@@ -26,18 +27,22 @@ export default function ComponentList() {
   // signal. This is a bit of a  hack, but it'll do for now.
   const _ = useComponentStore((store) => store.program);
 
+  const { Dropzone: DeleteDropzone } = Drag.useRemoveComponentOnDrop();
+
   return (
-    <Root>
-      <ErrorBoundary>
-        {Object.entries(ComponentCategories).map(([category, types]) => (
-          <ComponentListCategory
-            key={category}
-            category={category as ComponentCategory}
-            components={types}
-          />
-        ))}
-      </ErrorBoundary>
-    </Root>
+    <DeleteDropzone>
+      <Root>
+        <ErrorBoundary>
+          {Object.entries(ComponentCategories).map(([category, types]) => (
+            <ComponentListCategory
+              key={category}
+              category={category as ComponentCategory}
+              components={types}
+            />
+          ))}
+        </ErrorBoundary>
+      </Root>
+    </DeleteDropzone>
   );
 }
 const Root = styled(Scroll, {});
