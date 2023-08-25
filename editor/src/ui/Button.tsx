@@ -28,7 +28,7 @@ const ButtonRoot = styled('button', {
   justify: 'center',
   cursor: 'pointer',
   userSelect: 'none',
-  r: 4,
+  r: 8,
   variants: {
     color: {
       primary: {
@@ -38,16 +38,18 @@ const ButtonRoot = styled('button', {
       },
       transparent: {
         bg: 'transparent',
+        c: '$primary',
         '&:hover': { background: '$primary2' },
       },
       neutral: {
         bg: '$background3',
+        c: '$dark',
         '&:hover': { background: '$background4' },
       },
     },
     size: {
       small: { p: '2px 8px', fontSize: 12 },
-      medium: { p: '4px 16px', fontSize: 16 },
+      medium: { p: '4px 16px', fontSize: 14 },
       large: { p: '8px 32px', fontSize: 24 },
       expand: { flex: 1 },
     },
