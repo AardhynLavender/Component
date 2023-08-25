@@ -13,11 +13,14 @@ export type FieldKeyEventHandler = (
 ) => void;
 export type FieldBlurHandler = (value: string) => void;
 
+export type FieldType = 'text' | 'number';
+
 export default function Field({
   value,
   onValueChange,
   onBlur,
   onKeyDown,
+  type = 'text',
   dynamicSize = false,
   readOnly = false,
   disabled = false,
@@ -28,16 +31,22 @@ export default function Field({
   onBlur?: FieldBlurHandler;
   onKeyDown?: FieldKeyEventHandler;
   dynamicSize?: boolean;
+  type?: 'text' | 'number';
   readOnly?: boolean;
   disabled?: boolean;
   css?: CSS;
 }) {
   return (
     <FieldRoot
-      css={{ w: dynamicSize ? `${value?.length}ch` : undefined, ...css }}
+      css={{
+        w: dynamicSize ? `${value?.length}ch` : undefined,
+        ...hideNumberArrows,
+        ...css,
+      }}
       value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}
+      type={type}
       onKeyDown={(e) =>
         onKeyDown?.(e.key, {
           shift: e.shiftKey,
@@ -58,3 +67,14 @@ const FieldRoot = styled(s.input, {
   r: 4,
   bg: '$background2',
 });
+
+// @see https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp
+const hideNumberArrows: CSS = {
+  '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+    '-webkit-appearance': 'none',
+    m: 0,
+  },
+  '&[type=number]': {
+    '-moz-appearance': 'textfield',
+  },
+};
