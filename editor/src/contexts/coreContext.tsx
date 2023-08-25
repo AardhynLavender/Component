@@ -1,10 +1,4 @@
-import {
-  createContext,
-  ReactElement,
-  RefObject,
-  useEffect,
-  useRef,
-} from 'react';
+import { createContext, ReactElement } from 'react';
 import { GenericModule } from 'hooks/useWebAssembly';
 import { CoreApi } from 'types';
 import useWebAssembly from 'hooks/useWebAssembly';
