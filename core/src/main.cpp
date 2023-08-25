@@ -13,6 +13,16 @@ constexpr int SIMULATE_INFINITE_LOOP = 0; // invoking `emscripten_main_loop()` i
 Runtime runtime{ };
 void mainLoop() { runtime.Daemon(); }
 void terminate() { runtime.Terminate(); }
+void setSize(int width, int height) { runtime.SetCanvasResolution({ (double)width, (double)height }); }
+int getCanvasWidth() {
+    const auto w = runtime.GetCanvasResolution().x;
+    return (int)w;
+}
+int getCanvasHeight() {
+    const auto h = runtime.GetCanvasResolution().y;
+    return (int)h;
+}
+void clearCanvas() { runtime.ClearCanvas(); }
 
 void parse(std::string ast) {
     runtime.Load(ast);
@@ -26,10 +36,12 @@ void parse(std::string ast) {
 
 int main() {
     // prevent SDL2 from capturing keyboard events
+    // todo: this is not a long term solution, we'll need a workaround when we _want_ keyboard input
     SDL_EventState(SDL_TEXTINPUT, SDL_DISABLE);
     SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
     SDL_EventState(SDL_KEYUP, SDL_DISABLE);
     SDL_SetHint(SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT, "#canvas");
+
     return EXIT_SUCCESS;
 }
 
@@ -37,5 +49,9 @@ int main() {
 EMSCRIPTEN_BINDINGS(parser) { 
     emscripten::function("Parse", &parse); 
     emscripten::function("Terminate", &terminate);
+    emscripten::function("SetCanvasSize", &setSize);
+    emscripten::function("ClearCanvas", &clearCanvas);
+    emscripten::function("GetCanvasWidth", &getCanvasWidth);
+    emscripten::function("GetCanvasHeight", &getCanvasHeight);
 }
 #endif // __EMSCRIPTEN__

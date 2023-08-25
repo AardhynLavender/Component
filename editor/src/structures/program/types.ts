@@ -19,5 +19,9 @@ export type Program = {
   author?: string;
   version: string;
   description?: string;
+  canvas: {
+    width: number;
+    height: number;
+  };
   ast: Block[] | null;
 };

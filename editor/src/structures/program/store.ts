@@ -24,6 +24,10 @@ type ProgramStore = {
    */
   program: Program | null;
   /**
+   * set the screen resolution
+   */
+  setScreenSize: (width: number, height: number) => void;
+  /**
    * Variables used in the program
    */
   variables: VariableStore;
@@ -83,6 +87,16 @@ type ProgramStore = {
 const useComponentStore = create<ProgramStore>((set, get) => ({
   program: defaultProgram,
   setProgram: (program) => set((state) => (state = { ...state, program })),
+
+  setScreenSize: (width, height) =>
+    set((state) =>
+      produce(state, (draft) => {
+        if (!draft.program) return;
+        draft.program.canvas ??= { width: 0, height: 0 };
+        draft.program.canvas.height = height;
+        draft.program.canvas.width = width;
+      }),
+    ),
 
   variables: {},
   declare: (id: string, variable: Definition | undefined) =>
@@ -164,7 +178,6 @@ const useComponentStore = create<ProgramStore>((set, get) => ({
 export function useRemoveComponent() {
   return useComponentStore((state) => state.removeBlock);
 }
-
 export function useAddComponent() {
   return useComponentStore((state) => state.addBlock);
 }
@@ -173,6 +186,16 @@ export function useMoveComponent() {
 }
 export function useMutateComponent() {
   return useComponentStore((state) => state.mutateBlock);
+}
+
+export function useScreen() {
+  return useComponentStore(
+    (state) =>
+      [
+        state.program?.canvas ?? { width: 0, height: 0 },
+        state.setScreenSize,
+      ] as const,
+  );
 }
 
 export function useVariableStore() {

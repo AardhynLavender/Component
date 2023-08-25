@@ -48,5 +48,8 @@ public:
   Window& operator=(Window&& other) noexcept; // move assignment
   ~Window();
 
+  [[nodiscard]] Vec2 Size() const;
+  void SetSize(const Vec2 size);
+
   inline SDL_Window* GetWindow() { return window; }
 };
