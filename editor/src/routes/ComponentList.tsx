@@ -30,8 +30,8 @@ export default function ComponentList() {
   const { Dropzone: DeleteDropzone } = Drag.useRemoveComponentOnDrop();
 
   return (
-    <DeleteDropzone>
-      <Root>
+    <Root>
+      <DeleteDropzone>
         <ErrorBoundary>
           {Object.entries(ComponentCategories).map(([category, types]) => (
             <ComponentListCategory
@@ -41,8 +41,8 @@ export default function ComponentList() {
             />
           ))}
         </ErrorBoundary>
-      </Root>
-    </DeleteDropzone>
+      </DeleteDropzone>
+    </Root>
   );
 }
 const Root = styled(Scroll, {});
