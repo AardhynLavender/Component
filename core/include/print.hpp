@@ -19,8 +19,12 @@ extern "C" {
  * @param value The message to log
  */
 template<typename T>
-void Log(T value) { 
+inline void Log(T value) { 
+#ifdef __DEBUG__
+#if __DEBUG__ == 1
     std::cout << value << "\n";
+#endif // __DEBUG__ == 1
+#endif // __DEBUG__
 }
 
 /**

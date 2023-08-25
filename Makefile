@@ -6,6 +6,8 @@ low_optimization = -O1
 medium_optimization = -O2
 full_optimization = -O3 # use release builds
 
+debug_mode = 1
+
 # variables
 optimization_level = $(no_optimization)
 cpp_std = c++20
@@ -34,16 +36,17 @@ build-core: core
 	cd core \
 		&& mkdir -p out \
 		&& emcc \
+			src/main.cpp \
 			src/vec2.cpp \
 			src/rec2.cpp \
-			src/main.cpp \
-			src/parser.cpp \
 			src/stack.cpp \
+			src/window.cpp \
+			src/parser.cpp \
+			src/runtime.cpp \
+			src/renderer.cpp \
 			src/stackMachine.cpp \
 			src/variableStore.cpp \
-			src/window.cpp \
-			src/renderer.cpp \
-			src/runtime.cpp \
+			-D __DEBUG__=$(debug_mode) \
 			-o out/core.mjs \
 			-I include \
 			--pre-js pre/pre.js \

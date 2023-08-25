@@ -12,7 +12,6 @@
 
 class Parser final {
 private:
-    static constexpr bool DEBUG = 1;
     static constexpr int MAX_REPEAT_LENGTH = 2048;
     static constexpr int MAX_BRANCHES = 2;
 

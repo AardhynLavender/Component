@@ -84,7 +84,7 @@ void Parser::ParseJump(Json& jump) {
   else if (type == "variable") instructions = ParseVariable(jump["expression"]).Get<int>();
   else throw std::invalid_argument("Invalid expression TYPE provided for JUMP!");
 
-  if (DEBUG) Log("Jumping `"s + std::to_string(instructions) + "` instructions"s);
+  Log("Jumping `"s + std::to_string(instructions) + "` instructions"s);
   stackMachine.Jump(instructions);
 }
 
@@ -223,7 +223,7 @@ void Parser::ParseComponent(Json& component) {
   const std::string type = component["type"];
   
   using std::string_literals::operator""s;
-  if constexpr (DEBUG) Log("Parsing `"s + type + "` component"s);
+  Log("Parsing `"s + type + "` component"s);
 
   if (type == "definition")             ParseDefinition(component);
   else if (type == "assignment")        ParseAssignment(component);
