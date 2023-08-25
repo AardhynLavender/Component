@@ -1,7 +1,8 @@
-import { GenericBlock, BlockDropzone } from './generic';
+import { GenericBlock } from '../generic';
 import { styled } from 'theme/stitches.config';
 import { Block } from 'types';
 import { VariantProps } from '@stitches/react';
+import { BlockDropzone } from 'components/dropzone';
 
 export default function GenericBlockSet({
   parentId,

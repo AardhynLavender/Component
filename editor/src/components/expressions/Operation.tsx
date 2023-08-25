@@ -1,14 +1,14 @@
 import { Drag } from 'util/Drag';
 import { ReactElement } from 'react';
 import { uuid } from 'util/uuid';
-import { BinaryOperation, Literal, Variable } from '../componentTypes';
-import { ExpressionDropzone } from '../blocks/generic';
+import { BinaryOperation, Literal, Variable } from '../types';
 import { LiteralExpression } from '../blocks/Literal';
-import { ExpressionParent } from '../blocks/types';
+import { ExpressionParent } from './types';
 import { VariableExpression } from '../blocks/Variable';
-import { Component } from '../componentTypes';
+import { Component } from '../types';
 import { IsNumericVariable, IsLiteral } from '../../types/predicates';
 import { s } from 'theme/stitches.config';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export function BinaryOperationBlock({
   parent,

@@ -1,14 +1,15 @@
 import { ReactElement } from 'react';
-import { Print, IsLiteral } from 'types';
-import { BlockRoot, ExpressionDropzone } from './generic';
+import { IsLiteral } from 'types';
+import { BlockRoot } from '../generic';
 import { LiteralExpression } from './Literal';
 import { VariableExpression } from './Variable';
 import { Drag } from 'util/Drag';
 import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
-import { Assignment, Component } from '../componentTypes';
+import { Assignment, Component } from '../types';
 import { BinaryOperationBlock } from 'components/expressions/Operation';
 import { useVariableDefinition } from 'structures/program';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export function AssignmentBlock({
   block,

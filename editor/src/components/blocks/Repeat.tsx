@@ -1,5 +1,5 @@
 import { Component, IsLiteral, IsNumericVariable, Repeat } from 'types';
-import { BlockRoot } from './generic';
+import { BlockRoot } from '../generic';
 import GenericBlockSet from './BlockSet';
 import { useState } from 'react';
 import { s, CSS, styled } from 'theme/stitches.config';

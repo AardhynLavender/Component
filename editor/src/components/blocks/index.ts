@@ -1,4 +1,4 @@
-export * from './generic';
+export * from '../generic';
 export * from './Branch';
 export * from 'components/expressions/Condition';
 export * from './Definition';

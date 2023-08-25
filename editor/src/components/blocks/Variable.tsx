@@ -1,11 +1,11 @@
 import { Drag } from 'util/Drag';
 import { ReactElement } from 'react';
 import { Variable } from 'types';
-import { ExpressionDropzone } from './generic';
-import { ExpressionParent } from './types';
+import { ExpressionParent } from '../expressions/types';
 import { useVariableDefinition } from 'structures/program/store';
 import { styled, s } from 'theme/stitches.config';
 import Badge from 'ui/Badge';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export function VariableExpression({
   variable,

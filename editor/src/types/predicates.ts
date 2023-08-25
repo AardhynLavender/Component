@@ -1,4 +1,4 @@
-import { RenderType } from '../components/componentTypes';
+import { RenderType } from '../components/types';
 import {
   Loop,
   loops,

@@ -1,6 +1,6 @@
 import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
-import { Expression } from 'components/componentTypes';
+import { Expression } from 'components/types';
 import produce from 'immer';
 import { IsOperation, IsVariable } from '../../types/predicates';
 import {

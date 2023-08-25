@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement } from 'react';
 import {
   Condition,
   Literal,
@@ -6,10 +6,8 @@ import {
   Component,
   IsLiteral,
   ConditionType,
-  Primitive,
   OutputType,
 } from 'types';
-import { ExpressionDropzone } from '../blocks/generic';
 import { VariableExpression } from '../blocks/Variable';
 import { LiteralExpression } from '../blocks/Literal';
 import { Drag } from 'util/Drag';
@@ -22,8 +20,9 @@ import {
   IsNumber,
   IsPrimitive,
 } from '../../types/predicates';
-import { ExpressionParent } from '../blocks/types';
+import { ExpressionParent } from './types';
 import { IsOperation } from '../../types/predicates';
+import { ExpressionDropzone } from 'components/dropzone';
 
 /**
  * Unary or binary comparison node

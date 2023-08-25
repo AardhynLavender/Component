@@ -12,8 +12,8 @@ import {
   Primitive,
   Primitives,
   PrimitiveType,
-} from 'components/componentTypes';
-import { BlockRoot } from './generic';
+} from 'components/types';
+import { BlockRoot } from '../generic';
 import { Select, SelectItem } from 'ui/Select';
 import { s, CSS, styled } from 'theme/stitches.config';
 import Field, { FIELD_HEIGHT } from 'ui/Field';

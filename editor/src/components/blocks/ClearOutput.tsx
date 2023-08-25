@@ -1,6 +1,6 @@
 import { s } from 'theme/stitches.config';
 import { ClearOutput as ClearOutput } from 'types';
-import { BlockRoot } from './generic';
+import { BlockRoot } from '../generic';
 
 export function ClearOutputBlock({
   block,

@@ -6,7 +6,7 @@ import { EmplacementAction, Mutation, Program } from './types';
 import { BLANK_PROGRAM } from 'constants/program';
 import { LOCAL_STORAGE_KEY } from '../../constants/program';
 import { ReadPersistent } from 'hooks/usePersistent';
-import { Definition } from '../../components/componentTypes';
+import { Definition } from '../../components/types';
 
 // read any existing program from disk
 const defaultProgram =

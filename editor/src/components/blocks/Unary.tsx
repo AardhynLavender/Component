@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import { Drag } from 'util/Drag';
 import { UnaryOperation } from 'types';
-import { ExpressionDropzone } from './generic';
-import { ExpressionParent } from './types';
+import { ExpressionParent } from '../expressions/types';
 import { VariableExpression } from './Variable';
-import { Component } from '../componentTypes';
+import { Component } from '../types';
 import { IsVariable } from '../../types/predicates';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export function UnaryOperationBlock({
   block,

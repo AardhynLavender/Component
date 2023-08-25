@@ -1,13 +1,12 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { DrawLine, Expression, Component, IsLiteral, IsOperation } from 'types';
-import { BlockRoot, ExpressionDropzone } from './generic';
-import Field from 'ui/Field';
+import { BlockRoot } from '../generic';
 import { s } from 'theme/stitches.config';
-import { useMutateComponent } from 'structures/program';
 import { BinaryOperationBlock } from 'components/expressions/Operation';
 import { LiteralExpression } from './Literal';
 import { VariableExpression } from './Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export default function DrawLineBlock({
   block,
@@ -19,6 +18,12 @@ export default function DrawLineBlock({
   const predicate = (c: Component) =>
     IsNumericVariable(c) || IsOperation(c) || IsLiteral(c);
 
+  const props = {
+    preview,
+    id: block.id,
+    dropPredicate: predicate,
+  };
+
   return (
     <BlockRoot
       preview={preview}
@@ -26,35 +31,11 @@ export default function DrawLineBlock({
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
       <s.span>Draw from</s.span>
-      <Parameter
-        preview={preview}
-        id={block.id}
-        dropPredicate={predicate}
-        expression={block.x1}
-        locale="x1"
-      />
-      <Parameter
-        preview={preview}
-        id={block.id}
-        dropPredicate={predicate}
-        expression={block.y1}
-        locale="y1"
-      />
+      <Parameter {...props} expression={block.x1} locale="x1" />
+      <Parameter {...props} expression={block.y1} locale="y1" />
       <s.span>to</s.span>
-      <Parameter
-        preview={preview}
-        id={block.id}
-        dropPredicate={predicate}
-        expression={block.x2}
-        locale="x2"
-      />
-      <Parameter
-        preview={preview}
-        id={block.id}
-        dropPredicate={predicate}
-        expression={block.y2}
-        locale="y2"
-      />
+      <Parameter {...props} expression={block.x2} locale="x2" />
+      <Parameter {...props} expression={block.y2} locale="y2" />
     </BlockRoot>
   );
 }

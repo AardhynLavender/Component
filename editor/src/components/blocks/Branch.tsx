@@ -1,9 +1,10 @@
 import { ReactElement } from 'react';
 import { Branch, Condition, IsCondition } from 'types';
-import { BlockRoot, ExpressionDropzone } from './generic';
+import { BlockRoot } from '../generic';
 import { ConditionBlock } from '../expressions/Condition';
 import { s, styled } from 'theme/stitches.config';
 import GenericBlockSet from './BlockSet';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export function BranchBlock({
   block,

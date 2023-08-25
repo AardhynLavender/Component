@@ -1,13 +1,8 @@
 import { s, styled } from 'theme/stitches.config';
 import { ComponentType } from 'types';
-import {
-  blockTypes,
-  conditions,
-  operators,
-  Variable,
-} from 'components/componentTypes';
+import { blockTypes, conditions, operators, Variable } from 'components/types';
 import { CreateComponent } from 'util/components';
-import { GetJsxComponent } from 'components/blocks/generic';
+import { GetJsxComponent } from 'components/generic';
 import useComponentStore, { useVariableStore } from 'structures/program/store';
 import { H5 } from 'theme/Typography';
 import { Capitalize } from 'util/string';

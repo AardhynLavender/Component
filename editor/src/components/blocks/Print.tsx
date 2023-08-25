@@ -1,13 +1,14 @@
 import { ReactElement } from 'react';
 import { Print, IsLiteral } from 'types';
-import { BlockRoot, ExpressionDropzone } from './generic';
+import { BlockRoot } from '../generic';
 import { LiteralExpression } from './Literal';
 import { VariableExpression } from './Variable';
 import { Drag } from 'util/Drag';
 import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
-import { Component } from '../componentTypes';
+import { Component } from '../types';
 import { BinaryOperationBlock } from 'components/expressions/Operation';
+import { ExpressionDropzone } from 'components/dropzone';
 
 export function PrintBlock({
   block,
