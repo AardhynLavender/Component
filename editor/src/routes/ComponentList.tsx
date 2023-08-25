@@ -86,11 +86,11 @@ function ComponentListCategory({
 const CategoryRoot = styled('div', {
   d: 'flex',
   fd: 'column',
-  gap: 8,
 });
 const CategoryName = styled(H5, {
   pos: 'sticky',
   top: 0,
+  z: 1,
   p: 8,
   bg: '$background2',
 });
