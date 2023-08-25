@@ -32,8 +32,8 @@ export type OutputType = (typeof outputs)[number];
 export const renderers = ['draw_line', 'clear_screen'] as const;
 export type RenderType = (typeof renderers)[number];
 
-export const miscBlocks = ['branch', 'definition', 'assignment'] as const;
-export type MiscType = (typeof miscBlocks)[number];
+export const variables = ['definition', 'assignment'] as const;
+export type VariableType = (typeof variables)[number];
 
 export const miscExpressions = ['variable', 'literal'] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
@@ -42,7 +42,8 @@ export const blockTypes = [
   ...loops,
   ...outputs,
   ...renderers,
-  ...miscBlocks,
+  ...variables,
+  'branch',
 ] as const;
 export type BlockType = (typeof blockTypes)[number];
 

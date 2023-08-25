@@ -1,6 +1,13 @@
 import { s, styled } from 'theme/stitches.config';
 import { ComponentType } from 'types';
-import { blockTypes, conditions, operators, Variable } from 'components/types';
+import {
+  conditions,
+  operators,
+  outputs,
+  loops,
+  Variable,
+  variables,
+} from 'components/types';
 import { CreateComponent } from 'util/components';
 import { GetJsxComponent } from 'components/generic';
 import useComponentStore, { useVariableStore } from 'structures/program/store';
@@ -11,12 +18,16 @@ import { useMemo } from 'react';
 import Scroll from 'ui/Scroll';
 import ErrorBoundary from 'exception/ErrorBoundary';
 import { Drag } from '../util/Drag';
+import { renderers } from '../components/types';
 
 const ComponentCategories = {
-  blocks: blockTypes,
-  variables: [], // loops variable store instead
+  output: outputs,
+  loops,
+  rendering: renderers,
   operators,
-  conditions,
+  conditions: ['branch', ...conditions],
+  declarations: variables,
+  variables: [], // loops variable store instead
 } as const;
 type ComponentCategory = keyof typeof ComponentCategories;
 
@@ -56,7 +67,7 @@ function ComponentListCategory({
 }) {
   return (
     <CategoryRoot>
-      <H5>{Capitalize(category)}</H5>
+      <CategoryName>{Capitalize(category)}</CategoryName>
       {category === 'variables' ? (
         <VariableStoreList />
       ) : (
@@ -76,13 +87,19 @@ const CategoryRoot = styled('div', {
   d: 'flex',
   fd: 'column',
   gap: 8,
+});
+const CategoryName = styled(H5, {
+  pos: 'sticky',
+  top: 0,
   p: 8,
+  bg: '$background2',
 });
 const ComponentListRoot = styled('div', {
   d: 'flex',
   fd: 'column',
   alignItems: 'flex-start',
   gap: 8,
+  p: 8,
 });
 
 function VariableStoreList() {
