@@ -53,6 +53,7 @@ function Canvas() {
           parentId={null}
           locale={undefined}
           blocks={program.ast ?? []}
+          greedy
           noIndent
         />
       </CanvasRoot>
@@ -62,7 +63,7 @@ function Canvas() {
 const CanvasRoot = styled(s.div, {
   d: 'flex',
   fd: 'column',
-  flex: 1,
+  h: '100%',
   p: 16,
 });
 

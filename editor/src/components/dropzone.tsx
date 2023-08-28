@@ -3,6 +3,7 @@ import { EmplacementAction } from 'structures/program';
 import { s, CSS } from 'theme/stitches.config';
 import { Drag } from 'util/Drag';
 import { Component } from './types';
+import If from 'util/util';
 
 export const DROPZONE_HEIGHT = 24;
 
@@ -21,6 +22,7 @@ export function BlockDropzone({
   action,
   locale,
   dropPredicate = (_) => true, // allow everything by default
+  greedy = false,
   css,
 }: {
   children?: ReactElement;
@@ -28,6 +30,7 @@ export function BlockDropzone({
   action: EmplacementAction;
   locale?: string;
   dropPredicate?: (component: Component) => boolean;
+  greedy?: boolean;
   css?: CSS;
 }) {
   const { Dropzone, isHovering } = Drag.useComponentDropzone(
@@ -42,17 +45,19 @@ export function BlockDropzone({
       css={{
         pos: 'relative',
         w: '100%',
+        ...If(greedy, { h: '100%' }),
       }}
     >
       <Dropzone
         css={{
           inset: 0,
-          top: -DROPZONE_HEIGHT / 2,
           pos: 'absolute',
           h: DROPZONE_HEIGHT,
-          bg: isHovering ? '$background2' : '$transparent',
+          bg: '$tonal',
+          opacity: isHovering ? 0.4 : 0,
+          r: 8,
+          ...If(greedy, { h: '100%' }, { top: -DROPZONE_HEIGHT / 2 }),
           // border: '1px solid #f00',
-          // r: 4,
         }}
       >
         {children}

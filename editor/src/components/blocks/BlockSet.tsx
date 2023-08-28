@@ -3,20 +3,23 @@ import { styled } from 'theme/stitches.config';
 import { Block } from 'types';
 import { VariantProps } from '@stitches/react';
 import { BlockDropzone } from 'components/dropzone';
+import If from 'util/util';
 
 export default function GenericBlockSet({
   parentId,
   locale,
   blocks,
+  greedy = false,
   ...rootProps
 }: {
   parentId: string | null;
   locale?: string;
   blocks: Block[];
+  greedy?: boolean;
 } & RootProps) {
   const empty = !blocks.length;
   return (
-    <Root {...rootProps}>
+    <Root {...rootProps} css={If(greedy, { h: '100%' })}>
       {blocks.map((block, index) => {
         const firstOfSet = !index;
         return (
@@ -29,7 +32,12 @@ export default function GenericBlockSet({
         );
       })}
       {empty && (
-        <BlockDropzone parentId={parentId} action="insert" locale={locale} />
+        <BlockDropzone
+          parentId={parentId}
+          action="insert"
+          locale={locale}
+          greedy={greedy}
+        />
       )}
     </Root>
   );
