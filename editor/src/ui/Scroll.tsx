@@ -54,6 +54,7 @@ const ScrollAreaThumb = styled(ScrollArea.Thumb, {
   flex: 1,
   bg: '$outline',
   r: SCROLLBAR_SIZE,
+  z: 16, // ensure scrollbar is on top of content
 
   // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
   pos: 'relative',
