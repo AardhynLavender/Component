@@ -114,7 +114,7 @@ export function BlockRoot({
         p: '4px 8px',
 
         bg: error ? '$error' : '$background',
-        outline: `2px solid ${error ? '$onError' : '$outline'}`,
+        b: `2px solid ${error ? '$onError' : '$outline'}`,
       }
     : {};
 

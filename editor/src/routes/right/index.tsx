@@ -51,9 +51,9 @@ export default function RightSidebar({ css }: { css: CSS }) {
     'right-sidebar',
     'left',
     {
-      minSize: 311,
+      minSize: 313, // smallest size possible to prevent the lengthiest component wrapping
       maxSize: 1024,
-      defaultSize: 311,
+      defaultSize: 313,
     },
   );
 

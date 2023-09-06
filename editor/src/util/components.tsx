@@ -1,6 +1,6 @@
-import { GenericBlock } from 'components/blocks';
+import { GenericBlock } from 'components/generic';
+import { Block, Component, ComponentType } from 'components/types';
 import { ReactElement } from 'react';
-import { Block, Component, ComponentType } from 'types';
 import { uuid } from './uuid';
 
 /**
