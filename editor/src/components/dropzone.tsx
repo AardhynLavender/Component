@@ -123,6 +123,7 @@ export function ExpressionDropzone({
 
         bg: isHovering ? '$background3' : error ? '$error' : '$background',
         b: `2px solid ${error ? '$onError' : '$outline'}`,
+        c: '$text',
         whiteSpace: 'nowrap',
 
         ...css,
