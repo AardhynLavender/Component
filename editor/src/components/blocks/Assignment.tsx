@@ -63,7 +63,7 @@ export function AssignmentBlock({
           {!block.rvalue ? (
             <ExpressionDropzone
               parentId={block.id}
-              locale="expression"
+              locale="rvalue"
               dropPredicate={rValuePredicate}
             />
           ) : IsLiteral(block.rvalue) ? (
@@ -73,7 +73,7 @@ export function AssignmentBlock({
               type={definition?.primitive ?? 'string'}
               parent={{
                 id: block.id,
-                locale: 'expression',
+                locale: 'rvalue',
                 dropPredicate: rValuePredicate,
               }}
             />
@@ -83,7 +83,7 @@ export function AssignmentBlock({
               preview={preview}
               parent={{
                 id: block.id,
-                locale: 'expression',
+                locale: 'rvalue',
                 dropPredicate: rValuePredicate,
               }}
             />
@@ -93,7 +93,7 @@ export function AssignmentBlock({
               preview={preview}
               parent={{
                 id: block.id,
-                locale: 'expression',
+                locale: 'rvalue',
                 dropPredicate: rValuePredicate,
               }}
             />

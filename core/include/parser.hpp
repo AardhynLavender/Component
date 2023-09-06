@@ -90,7 +90,8 @@ private:
             if constexpr (std::is_same_v<T, Any>) return expression["expression"].get<Any>();
             else return expression["expression"].get<T>();
         } else if (IsOperation(type)) {
-            if constexpr (std::is_arithmetic_v<T>) return ParseOperation<T>(expression);
+            if constexpr (std::is_same_v<T, Any>) return ParseOperation<int>(expression);
+            else if constexpr (std::is_arithmetic_v<T>) return ParseOperation<T>(expression);
             else throw std::invalid_argument("unconstrained typename T is not arithmetic; Can't process operation!");
         }
 
