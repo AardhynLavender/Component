@@ -41,7 +41,11 @@ export namespace algorithm {
           found ??= Find(id, block.components); // search repeat body
           break;
         case 'forever':
-          found ??= Find(id, block.components); // search forever bodyr
+          found ??= Find(id, block.components); // search forever body
+          break;
+        case 'while':
+          found ??= FindExpression(id, block.condition); // search repeat condition
+          found ??= Find(id, block.components); // search forever body
           break;
         case 'print':
           if (block.expression) found ??= FindExpression(id, block.expression); // search expression
@@ -128,6 +132,10 @@ export namespace algorithm {
             draft.repetition = RemoveExpression(id, draft.repetition);
             draft.components = Remove(id, draft.components); // repeat body
             break;
+          case 'while':
+            draft.condition = RemoveExpression(id, draft.condition);
+            draft.components = Remove(id, draft.components); // repeat body
+            break;
           case 'forever':
             draft.components = Remove(id, draft.components); // forever body
             break;
@@ -209,6 +217,10 @@ export namespace algorithm {
             break;
           case 'repeat':
             draft.repetition = MutateExpression(id, draft.repetition, mutation);
+            draft.components = Mutate(id, draft.components, mutation); // repeat body
+            break;
+          case 'while':
+            draft.condition = MutateExpression(id, draft.condition, mutation);
             draft.components = Mutate(id, draft.components, mutation); // repeat body
             break;
           case 'forever':
@@ -322,7 +334,15 @@ export namespace algorithm {
                 case 'repeat':
                   if (locale === 'repetition' && IsNumericVariable(component))
                     draft.repetition = component;
-                case 'repeat':
+                  if (locale === 'components' && isBlock)
+                    draft.components = [component];
+                  break;
+                case 'while':
+                  if (locale === 'condition' && IsCondition(component))
+                    draft.condition = component;
+                  if (locale === 'components' && isBlock)
+                    draft.components = [component];
+                  break;
                 case 'forever':
                   if (locale === 'components' && isBlock)
                     draft.components = [component];
@@ -398,6 +418,12 @@ export namespace algorithm {
               }
 
               break;
+            case 'while':
+              if (draft.condition)
+                draft.condition = EmplaceExpression(
+                  emplacement,
+                  draft.condition,
+                ); // condition
             case 'repeat':
             case 'forever':
               if (draft.components)

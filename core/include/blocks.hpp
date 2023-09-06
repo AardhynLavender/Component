@@ -92,7 +92,7 @@ namespace Block {
     return block;
   }
 
-  // Jump the instruction pointer by a nonzero integer within the current stack frame based on a provided conditional
+  // move the instruction pointer by a nonzero integer within the current stack frame based on a provided conditional
   template<bool variable = false>
   Json ConditionalJump (int instructions, Json condition) {
     if (!condition.is_object()) throw std::invalid_argument("CONDITIONAL_JUMP condition cannot be an object!");

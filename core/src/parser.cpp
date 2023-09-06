@@ -5,7 +5,7 @@ void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
   const std::string primitive = definition["primitive"];
-  Json value = definition["value"];
+  Json value = definition["value"]; // todo: extract value
 
   using namespace std::string_literals;
   Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive + "` with value `"s + value.dump() + "`"s);
@@ -51,7 +51,7 @@ void Parser::ParseRepeat(Json& repeat) {
   const auto i = store.Add(0); // initialize `i`
 
   // create incrementor and conditional jump statements
-  constexpr int EXTRA_INSTRUCTIONS = 2; // `incrementor` and `conditional jump`
+  constexpr int EXTRA_INSTRUCTIONS = 2; // `incrementor` and `conditional jump` appended to the stack
   Json incrementor = Block::Incrementor<Block::ArithmeticOperation::INC, int>(i); // ++i
   Json repeatCondition = Block::Conditional<Block::BooleanOperation::LT, true, false>(i, times); // counter < times
   Json jumpIf = Block::ConditionalJump(-(instructions + EXTRA_INSTRUCTIONS), repeatCondition); // jump to the start of the repeat loop
@@ -59,6 +59,17 @@ void Parser::ParseRepeat(Json& repeat) {
   // push statements into the repeat loops stack
   stackMachine.PushBlock(incrementor);
   stackMachine.PushBlock(jumpIf); 
+}
+
+void Parser::ParseWhile(Json& loop) {
+  Json& condition = loop["condition"];
+  Json& components = loop["components"];
+  if (!components.is_array()) throw std::invalid_argument("While components must be an array!");
+
+  constexpr int EXTRA_INSTRUCTIONS = 1; // `conditional jump` appended to the stack
+  Json jumpIf = Block::ConditionalJump(-(components.size() + EXTRA_INSTRUCTIONS), condition); // jump to the start of the while loop 
+  stackMachine.Push(components);
+  stackMachine.PushBlock(jumpIf);
 }
 
 void Parser::ParseForever(Json& forever) {
@@ -234,11 +245,12 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
   else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
   else if (type == "repeat")            ParseRepeat(component);
+  else if (type == "while")             ParseWhile(component);
   else if (type == "forever")           ParseForever(component);
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
   else if (type == "draw_line")         ParseDrawLine(component);
-  else throw std::invalid_argument("Invalid TYPE provided for component");
+  else                                  throw std::invalid_argument("Invalid TYPE provided for component: `"s + type + "`"s);
 }
 
 // API //

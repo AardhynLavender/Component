@@ -112,6 +112,7 @@ private:
 
     void ParseRepeat(Json& repeat);
     void ParseForever(Json& forever);
+    void ParseWhile(Json& loop);
 
     void ParseJump(Json& jump);
     void ParseConditionJump(Json& condition);

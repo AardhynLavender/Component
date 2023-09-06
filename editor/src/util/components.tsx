@@ -78,6 +78,14 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    case 'while':
+      component = {
+        ...base(type),
+        condition: null,
+        components: [],
+      };
+      break;
+
     case 'forever':
       component = {
         ...base(type),

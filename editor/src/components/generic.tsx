@@ -21,6 +21,7 @@ import DrawLineBlock from './blocks/DrawLine';
 import { ClearScreenBlock } from './blocks/ClearScreen';
 import { AssignmentBlock } from './blocks/Assignment';
 import { BlockDropzone } from 'components/dropzone';
+import { WhileBlock } from './blocks/While';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -168,6 +169,8 @@ export function GetJsxComponent(
       return <ClearOutputBlock block={component} {...stdProps} />;
     case 'repeat':
       return <RepeatBlock block={component} {...stdProps} />;
+    case 'while':
+      return <WhileBlock block={component} {...stdProps} />;
     case 'forever':
       return <ForeverBlock block={component} {...stdProps} />;
     case 'branch':

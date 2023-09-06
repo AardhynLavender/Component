@@ -11,7 +11,7 @@ export const conditions = [
 ] as const;
 export type ConditionType = (typeof conditions)[number];
 
-export const loops = ['repeat', 'forever'] as const;
+export const loops = ['repeat', 'while', 'forever'] as const;
 export type LoopType = (typeof loops)[number];
 
 export const operators = [
@@ -254,10 +254,12 @@ export type Renderer = DrawLine | ClearScreen;
 
 export type Repeat = ComponentPrimitive<
   'repeat',
-  {
-    repetition: Variable | Literal<number> | null;
-    components: Block[] | null;
-  }
+  { repetition: Variable | Literal<number> | null; components: Block[] | null }
+>;
+
+export type While = ComponentPrimitive<
+  'while',
+  { condition: Condition | null; components: Block[] | null }
 >;
 
 export type Forever = ComponentPrimitive<
@@ -265,7 +267,7 @@ export type Forever = ComponentPrimitive<
   { components: Block[] | null }
 >;
 
-export type Loop = Repeat | Forever;
+export type Loop = Repeat | Forever | While;
 
 // General
 
