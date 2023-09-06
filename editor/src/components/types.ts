@@ -35,7 +35,7 @@ export type RenderType = (typeof renderers)[number];
 export const variables = ['definition', 'assignment'] as const;
 export type VariableType = (typeof variables)[number];
 
-export const miscExpressions = ['variable', 'literal'] as const;
+export const miscExpressions = ['variable', 'literal', 'comment'] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
 
 export const blockTypes = [
@@ -69,6 +69,10 @@ export type Literal<T extends Primitive = Primitive> = ComponentPrimitive<
   'literal',
   { expression: T | null }
 >;
+
+// Comments
+
+export type Comment = ComponentPrimitive<'comment', { expression: string }>;
 
 // Declarations and Variables
 
@@ -266,6 +270,7 @@ export type Loop = Repeat | Forever;
 // General
 
 export type Block =
+  | Comment
   | Output
   | Loop
   | Definition

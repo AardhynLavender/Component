@@ -10,7 +10,6 @@ void Parser::ParseDefinition(Json& definition) {
   using namespace std::string_literals;
   Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive + "` with value `"s + value.dump() + "`"s);
 
-
   if (primitive == "string") store.Add(key, { name, primitive, value.get<std::string>() });
   else if (primitive == "number") store.Add(key, { name, primitive, value.get<int>() });
   else if (primitive == "boolean") store.Add(key, Variable{name, primitive, value.get<bool>()});
@@ -221,10 +220,11 @@ void Parser::ParseBranch(Json& branch) {
 
 void Parser::ParseComponent(Json& component) {
   const std::string type = component["type"];
+  if (type == "comment") return; // todo: tempted to strip comments from the json before parsing, might just wait for Bytecode parsing later...
   
   using std::string_literals::operator""s;
   Log("Parsing `"s + type + "` component"s);
-
+  
   if (type == "definition")             ParseDefinition(component);
   else if (type == "assignment")        ParseAssignment(component);
   else if (type == "branch")            ParseBranch(component);

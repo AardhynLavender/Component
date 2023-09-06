@@ -29,9 +29,14 @@ export function IsBlock(component: Component): component is Block {
     loops.includes(component.type as LoopType) ||
     outputs.includes(component.type as OutputType) ||
     renderers.includes(component.type as RenderType) ||
-    ['branch', 'definition', 'assignment', 'increment', 'decrement'].includes(
-      component.type,
-    )
+    [
+      'comment',
+      'branch',
+      'definition',
+      'assignment',
+      'increment',
+      'decrement',
+    ].includes(component.type)
   );
 }
 

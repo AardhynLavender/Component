@@ -8,3 +8,5 @@ export * from './Variable';
 export * from './Print';
 export * from './ClearOutput';
 export * from './Unary';
+export * from './Assignment';
+export * from './Comment';

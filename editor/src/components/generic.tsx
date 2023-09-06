@@ -10,6 +10,7 @@ import {
   RepeatBlock,
   VariableExpression,
   ClearOutputBlock,
+  CommentBlock,
 } from './blocks';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from '../util/Drag';
@@ -153,6 +154,8 @@ export function GetJsxComponent(
   };
 
   switch (component.type) {
+    case 'comment':
+      return <CommentBlock block={component} {...stdProps} />;
     case 'definition':
       return <DefinitionBlock block={component} {...stdProps} />;
     case 'assignment':

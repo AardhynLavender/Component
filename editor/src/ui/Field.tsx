@@ -18,6 +18,7 @@ export type FieldType = 'text' | 'number';
 export default function Field({
   value,
   onValueChange,
+  placeholder = '',
   onBlur,
   onKeyDown,
   type = 'text',
@@ -28,6 +29,7 @@ export default function Field({
 }: {
   value: string;
   onValueChange?: (value: string) => void;
+  placeholder?: string;
   onBlur?: FieldBlurHandler;
   onKeyDown?: FieldKeyEventHandler;
   dynamicSize?: boolean;
@@ -43,6 +45,7 @@ export default function Field({
         ...hideNumberArrows,
         ...css,
       }}
+      placeholder={placeholder}
       value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}
@@ -66,6 +69,7 @@ const FieldRoot = styled(s.input, {
   p: 4,
   r: 4,
   bg: '$background2',
+  '&::placeholder': { c: '$text3' },
 });
 
 // @see https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp

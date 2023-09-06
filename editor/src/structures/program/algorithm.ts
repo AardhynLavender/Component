@@ -285,7 +285,9 @@ export namespace algorithm {
    * Emplace a block|expression by id recursively into a block[] state
    */
   export function Emplace(emplacement: Emplacement, state: Block[]): Block[] {
-    console.log(`emplacing ${emplacement.component.id}`);
+    console.log(
+      `emplacing ${emplacement.component.id} ${emplacement.action} ${emplacement.destinationId} at ${emplacement.locale}`,
+    );
     const { component, destinationId, action, locale } = emplacement;
 
     // check for root emplacement
@@ -435,7 +437,6 @@ export namespace algorithm {
     if (IsBlock(emplacement.component)) return state; // block cannot be emplaced into an expression
 
     const { component, destinationId, action, locale } = emplacement;
-    console.log(component, destinationId, action, locale);
 
     if (!destinationId) throw new Error('Cannot emplace expression without id');
 
@@ -523,6 +524,8 @@ export namespace algorithm {
     locale: string | undefined,
     state: Block[],
   ): Block[] {
+    console.log(`Moving ${sourceId} ${action} ${destinationId} in ${locale}`);
+
     if (sourceId === destinationId) return state;
 
     // find destination component

@@ -37,6 +37,13 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
 
   let component: Component;
   switch (type) {
+    case 'comment':
+      component = {
+        ...base(type),
+        expression: '',
+      };
+      break;
+
     // Blocks //
 
     case 'definition':

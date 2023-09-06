@@ -21,6 +21,7 @@ import { Drag } from '../util/Drag';
 import { renderers } from '../components/types';
 
 const ComponentCategories = {
+  misc: ['comment'],
   output: outputs,
   loops,
   rendering: renderers,
