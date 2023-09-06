@@ -1,6 +1,9 @@
 #include <stack.hpp>
 
-Stack::Stack(Json& components): componentPointer(0), components(components) {
+Stack::Stack() : componentPointer(0), components(Json::array()) { }
+
+Stack::Stack(Json& components)
+    : componentPointer(0), components(components) {
     if (!Check()) throw std::invalid_argument("Stack components must be an array with at least one element");
 }
 

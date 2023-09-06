@@ -1,5 +1,4 @@
 #pragma once
-
 #include <json.hpp>
 
 class Stack final {
@@ -8,6 +7,7 @@ private:
     Json components;
     inline bool Check() const { return components.is_array(); }
 public:
+    Stack();
     explicit Stack(Json& components);
 
     // Move the instruction pointer

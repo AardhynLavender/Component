@@ -17,6 +17,10 @@
 }
 
 void StackMachine::Push(Json& components) { /// Push a new stack onto the stack machine
-  if (Size() + 1 > MAX_STACK_SIZE) throw stack_overflow("component tree has exceeded MAX_STACK_SIZE");
-  else stacks.emplace(components); 
+  OverflowInvariant();
+  stacks.emplace(components); 
+}
+void StackMachine::Push() { // Push an empty stack onto the stack machine
+  OverflowInvariant();
+  stacks.emplace();
 }
