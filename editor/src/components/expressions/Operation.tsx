@@ -10,7 +10,7 @@ import { IsNumericVariable, IsLiteral } from '../../types/predicates';
 import { s } from 'theme/stitches.config';
 import { ExpressionDropzone } from 'components/dropzone';
 
-export function BinaryOperationBlock({
+export function BinaryExpression({
   parent,
   block,
   preview = false,
@@ -71,7 +71,7 @@ function Side({
   if (!expression)
     return (
       <LiteralExpression
-        type="number"
+        types={['number']}
         parent={parent}
         expression={{ id: uuid(), type: 'literal', expression: null }}
       />
@@ -84,10 +84,10 @@ function Side({
       <LiteralExpression
         expression={expression}
         parent={parent}
-        type="number"
+        types={['number']}
       />
     );
-  else return <BinaryOperationBlock block={expression} parent={parent} />;
+  else return <BinaryExpression block={expression} parent={parent} />;
 }
 
 function NumericOperation(type: BinaryOperation['type']) {

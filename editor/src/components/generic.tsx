@@ -14,7 +14,7 @@ import {
 } from './blocks';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from '../util/Drag';
-import { BinaryOperationBlock } from './expressions/Operation';
+import { BinaryExpression } from './expressions/Operation';
 import { ExpressionParent } from './expressions/types';
 import { ForeverBlock } from './blocks/Forever';
 import DrawLineBlock from './blocks/DrawLine';
@@ -198,7 +198,7 @@ export function GetJsxComponent(
     case 'divide':
     case 'modulo':
     case 'exponent':
-      return <BinaryOperationBlock block={component} {...stdProps} />;
+      return <BinaryExpression block={component} {...stdProps} />;
 
     default:
       throw new Error(`Unhandled expression type '${component.type}'`);

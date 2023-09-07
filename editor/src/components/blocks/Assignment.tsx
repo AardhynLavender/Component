@@ -7,7 +7,7 @@ import { Drag } from 'util/Drag';
 import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 import { Assignment, Component } from '../types';
-import { BinaryOperationBlock } from 'components/expressions/Operation';
+import { BinaryExpression } from 'components/expressions/Operation';
 import { useVariableDefinition } from 'structures/program';
 import { ExpressionDropzone } from 'components/dropzone';
 
@@ -70,7 +70,7 @@ export function AssignmentBlock({
             <LiteralExpression
               expression={block.rvalue}
               preview={preview}
-              type={definition?.primitive ?? 'string'}
+              types={[definition?.primitive ?? 'string']}
               parent={{
                 id: block.id,
                 locale: 'rvalue',
@@ -78,7 +78,7 @@ export function AssignmentBlock({
               }}
             />
           ) : IsOperation(block.rvalue) ? (
-            <BinaryOperationBlock
+            <BinaryExpression
               block={block.rvalue}
               preview={preview}
               parent={{

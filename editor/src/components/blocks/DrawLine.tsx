@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { DrawLine, Expression, Component, IsLiteral, IsOperation } from 'types';
 import { BlockRoot } from '../generic';
 import { s } from 'theme/stitches.config';
-import { BinaryOperationBlock } from 'components/expressions/Operation';
+import { BinaryExpression } from 'components/expressions/Operation';
 import { LiteralExpression } from './Literal';
 import { VariableExpression } from './Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
@@ -69,17 +69,13 @@ function Parameter({
       <LiteralExpression
         expression={expression}
         preview={preview}
-        type="number"
+        types={['number']}
         parent={parent}
       />
     );
   if (IsOperation(expression))
     return (
-      <BinaryOperationBlock
-        block={expression}
-        preview={preview}
-        parent={parent}
-      />
+      <BinaryExpression block={expression} preview={preview} parent={parent} />
     );
   if (IsVariable(expression))
     return (

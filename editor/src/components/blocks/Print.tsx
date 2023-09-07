@@ -7,7 +7,7 @@ import { Drag } from 'util/Drag';
 import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 import { Component } from '../types';
-import { BinaryOperationBlock } from 'components/expressions/Operation';
+import { BinaryExpression } from 'components/expressions/Operation';
 import { ExpressionDropzone } from 'components/dropzone';
 
 export function PrintBlock({
@@ -64,7 +64,7 @@ export function PrintBlock({
               }}
             />
           ) : IsOperation(block.expression) ? (
-            <BinaryOperationBlock
+            <BinaryExpression
               block={block.expression}
               preview={preview}
               parent={{
