@@ -16,7 +16,7 @@ const defaultProgram =
 
 // What does `produce()` do? See https://immerjs.github.io/immer/*
 
-type VariableStore = Record<string, Definition>;
+export type VariableStore = Record<string, Definition>;
 
 type ProgramStore = {
   /**

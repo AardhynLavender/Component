@@ -32,7 +32,7 @@ export function RepeatBlock({
             expression={
               block.repetition ?? { id: uuid(), type: 'literal', expression: 1 }
             }
-            type="number"
+            types={['number']}
             parent={{
               id: block.id,
               locale: 'repetition',

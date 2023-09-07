@@ -28,6 +28,9 @@ export namespace algorithm {
     for (const block of state) {
       if (block.id === id) return block;
       switch (block.type) {
+        case 'definition':
+          found ??= FindExpression(id, block.expression); // search expression
+          break;
         case 'branch':
           for (const branch of block.branches) found ??= Find(id, branch); // search branches
           found ??= FindExpression(id, block.condition); // search condition
@@ -113,6 +116,9 @@ export namespace algorithm {
     return draft.map((block) =>
       produce(block, (draft) => {
         switch (draft.type) {
+          case 'definition':
+            draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
+            break;
           case 'print':
             if (draft.expression)
               draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
@@ -208,6 +214,9 @@ export namespace algorithm {
 
       return produce(block, (draft) => {
         switch (draft.type) {
+          case 'definition':
+            draft.expression = MutateExpression(id, draft.expression, mutation); // variable|literal expression
+            break;
           case 'branch':
             draft.condition = MutateExpression(id, draft.condition, mutation); // condition
 
@@ -331,6 +340,14 @@ export namespace algorithm {
             draft[index] = produce(draft[index], (draft) => {
               switch (draft.type) {
                 // Blocks
+                case 'definition':
+                  if (
+                    (locale === 'expression' && IsOperation(component)) ||
+                    IsVariable(component) ||
+                    IsLiteral(component)
+                  )
+                    draft.expression = component;
+                  break;
                 case 'repeat':
                   if (locale === 'repetition' && IsNumericVariable(component))
                     draft.repetition = component;
@@ -402,6 +419,13 @@ export namespace algorithm {
       return state.map((block) =>
         produce(block, (draft) => {
           switch (draft.type) {
+            case 'definition':
+              if (draft.expression)
+                draft.expression = EmplaceExpression(
+                  emplacement,
+                  draft.expression,
+                ); // expression
+              break;
             case 'branch':
               // branches
               if (draft.branches)

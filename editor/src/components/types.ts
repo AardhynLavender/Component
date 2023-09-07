@@ -79,13 +79,14 @@ export type Comment = ComponentPrimitive<'comment', { expression: string }>;
 export const Primitives = ['string', 'number', 'boolean'] as const;
 export type PrimitiveType = (typeof Primitives)[number];
 export type Primitive = string | number | boolean;
+export type DefinitionRValue = Literal | Variable | BinaryOperation | Condition;
 
 export type Definition = ComponentPrimitive<
   'definition',
   {
     name: string;
     primitive: PrimitiveType;
-    value: Primitive;
+    expression: DefinitionRValue | null;
   }
 >;
 

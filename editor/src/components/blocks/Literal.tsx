@@ -1,37 +1,38 @@
 import { CSS } from 'theme/stitches.config';
 import { ReactElement, FocusEvent, useState } from 'react';
 import { useMutateComponent } from 'structures/program';
-import { Literal, PrimitiveType } from 'types';
+import { Literal, Primitive, PrimitiveType } from 'types';
 import { ExpressionParent } from '../expressions/types';
 import { GetBoolFromString } from 'util/string';
 import Field, { FieldBlurHandler, FieldKeyEventHandler } from 'ui/Field';
 import { ExpressionDropzone } from 'components/dropzone';
+import { Primitives } from '../types';
+import { setDefaultResultOrder } from 'dns';
 
 export function LiteralExpression({
   expression,
   parent,
   preview = false,
-  type = 'string',
+  types = ['string', 'number', 'boolean'],
 }: {
   expression: Literal;
   parent: ExpressionParent;
   preview?: boolean;
-  type?: PrimitiveType;
+  types?: PrimitiveType[];
 }): ReactElement | null {
   const [error, setError] = useState(false);
 
   // local state for editing
   const [value, setValue] = useState(expression.expression);
-  const handleChange = (value: PrimitiveType) => {
+  const handleChange = (value: Primitive) => {
     if (value !== expression.expression) setValue(value);
   };
 
   // apply mutation to the ast
   const mutate = useMutateComponent();
   const handleApplyMutation = () => {
-    if (error || value === expression.expression) return;
-    if (type === 'number') mutate(expression.id, { expression: Number(value) });
-    else mutate(expression.id, { expression: value });
+    if (!error && value !== expression.expression)
+      mutate(expression.id, { expression: value });
   };
 
   return (
@@ -45,92 +46,88 @@ export function LiteralExpression({
       <PrimitiveInput
         error={error}
         setError={setError}
-        type={type}
+        primitives={types}
         value={value}
-        handleChange={handleChange}
-        handleApplyMutation={handleApplyMutation}
+        onChange={handleChange}
+        onBlur={handleApplyMutation}
       />
     </ExpressionDropzone>
   );
 }
 
-function PrimitiveInput<T extends PrimitiveType>({
-  type,
+const DEFAULT_INCREMENT = 1;
+const SHIFT_INCREMENT = 10;
+
+function formatNumberPrimitive(value: string) {
+  const rawString = value.replace(/[^0-9.-]/g, '');
+  const number = Number(rawString);
+  if (isNaN(number)) return 0;
+  return number;
+}
+
+function reinterpretPrimitive(value: string): [PrimitiveType, Primitive] {
+  const number = Number(value);
+  if (!isNaN(number)) return ['number', number];
+  const bool = GetBoolFromString(value, { noExcept: true });
+  if (bool !== null && bool !== undefined) return ['boolean', bool];
+  return ['string', value];
+}
+
+export function PrimitiveInput({
   value,
-  setError,
+  onChange,
+  onPrimitiveChange,
+  onBlur,
   error,
-  handleChange,
-  handleApplyMutation,
+  setError,
+  primitives,
 }: {
-  type: T;
-  setError: (error: boolean) => void;
-  value: T extends 'string'
-    ? string
-    : T extends 'number'
-    ? number
-    : boolean | null;
+  value: Primitive | null;
+  onChange: (value: Primitive) => void;
+  onBlur: () => void;
+  onPrimitiveChange?: (type: PrimitiveType) => void;
   error?: boolean;
-  handleChange: (value: T) => void;
-  handleApplyMutation: () => void;
+  setError?: (error: boolean) => void;
+  primitives: PrimitiveType[];
 }) {
-  // apply mutation on enter and blur
+  const [primitive, setPrimitive] = useState<PrimitiveType | null>(null);
+
   const stdProps: {
-    onKeyDown: FieldKeyEventHandler;
     onBlur: FieldBlurHandler;
     css: CSS;
   } = {
-    onKeyDown: (key, { blur }) => {
-      if (key !== 'Enter') return;
-      handleApplyMutation();
-      blur();
-    },
-    onBlur: handleApplyMutation,
+    onBlur,
     css: {
       bg: error ? '$error' : undefined,
       c: error ? '$onError' : undefined,
     },
   };
 
-  // Unfortunately, TypeScript can't infer a generic type from the runtime value deduced
-  // from this switch statement... We have to do some nasty type casting here.
-  switch (type) {
-    case 'string':
-      return (
-        <Field
-          value={value?.toString() ?? ''}
-          onValueChange={(value) => handleChange(value as T)}
-          dynamicSize
-          {...stdProps}
-        />
-      );
-    case 'number':
-      return (
-        <Field
-          value={value?.toString() ?? ''}
-          dynamicSize
-          onValueChange={(value) => {
-            const int = parseInt(value);
-            setError(Number.isNaN(int) || int === null);
+  return (
+    <Field
+      value={value?.toString() ?? ''}
+      onValueChange={(value) => {
+        const [primitive, typedValue] = reinterpretPrimitive(value);
+        setPrimitive(primitive);
+        onPrimitiveChange?.(primitive);
+        onChange(typedValue);
 
-            handleChange(value as unknown as T);
-          }}
-          {...stdProps}
-        />
-      );
-    case 'boolean':
-      return (
-        <Field
-          value={value?.toString() ?? ''}
-          dynamicSize
-          onValueChange={(value) => {
-            const bool = GetBoolFromString(value, { noExcept: false });
-            setError(bool === null);
-            handleChange(bool as unknown as T); // even nastier type casting
-          }}
-          {...stdProps}
-        />
-      );
-    default:
-      throw new Error('Invalid type for primitive');
-  }
+        if (!primitives.includes(primitive)) setError?.(true);
+        else setError?.(false);
+      }}
+      onKeyDown={(key, { blur, shift, value }) => {
+        if (key === 'Enter') blur();
+
+        if (primitive === 'number') {
+          // raise or lower number by some increment
+          const number = formatNumberPrimitive(value);
+          const increment = shift ? SHIFT_INCREMENT : DEFAULT_INCREMENT;
+          if (key === 'ArrowUp') onChange(number + increment);
+          if (key === 'ArrowDown') onChange(number - increment);
+        }
+      }}
+      dynamicSize
+      {...stdProps}
+    />
+  );
 }

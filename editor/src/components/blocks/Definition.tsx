@@ -1,32 +1,30 @@
+import { ReactElement, useEffect, useState } from 'react';
 import {
-  ReactElement,
-  useEffect,
-  useState,
-  ChangeEvent,
-  useRef,
-  useLayoutEffect,
-} from 'react';
-import { useMutateComponent, useVariableStore } from 'structures/program';
+  useMutateComponent,
+  useVariableStore,
+  VariableStore,
+} from 'structures/program';
 import {
+  Component,
   Definition,
+  DefinitionRValue,
+  Literal,
   Primitive,
-  Primitives,
   PrimitiveType,
 } from 'components/types';
 import { BlockRoot } from '../generic';
-import { Select, SelectItem } from 'ui/Select';
-import { s, CSS, styled } from 'theme/stitches.config';
-import Field, { FIELD_HEIGHT } from 'ui/Field';
-
-const DEFAULT_VALUE = {
-  string: '',
-  number: 0,
-  boolean: false,
-};
-function getDefaultValue(primitive: PrimitiveType, value: Primitive | null) {
-  if (value === null) return value;
-  return DEFAULT_VALUE[primitive];
-}
+import {
+  IsOperation,
+  IsLiteral,
+  IsVariable,
+  IsPrimitive,
+} from '../../types/predicates';
+import { BinaryExpression } from '../expressions/Operation';
+import { LiteralExpression } from './Literal';
+import { ExpressionParent } from '../expressions/types';
+import Field from 'ui/Field';
+import Badge from 'ui/Badge';
+import { VariableExpression } from './Variable';
 
 export function DefinitionBlock({
   block,
@@ -35,23 +33,23 @@ export function DefinitionBlock({
   block: Definition;
   preview?: boolean;
 }): ReactElement | null {
-  const [name, setName] = useState<string>(block.name);
-  const [primitive, setPrimitive] = useState<PrimitiveType>(block.primitive);
-  const [value, setValue] = useState<Primitive | null>(block.value ?? null);
+  useVariableDefinition(block, !preview);
 
   const mutate = useMutateComponent();
-  const handleDefinitionChange = () => {
-    mutate(block.id, { name, primitive, value });
-  };
 
+  const [name, setName] = useState<string>(block.name);
+
+  const handleNameChange = () => mutate(block.id, { name });
+
+  const primitive = useComputedPrimitive(block.expression, !preview);
+  const handlePrimitiveChange = () => mutate(block.id, { primitive });
   useEffect(() => {
-    if (block.primitive === primitive) return;
-    const newValue = getDefaultValue(primitive, value);
-    setValue(newValue);
-    mutate(block.id, { primitive, value: newValue });
-  }, [primitive]);
+    if (preview || primitive === block.primitive) return;
+    handlePrimitiveChange();
+  }, [primitive, block.primitive]);
 
-  useVariableDefinition(block, !preview);
+  const dropPredicate = (expression: Component) =>
+    IsLiteral(expression) || IsOperation(expression) || IsVariable(expression);
 
   return (
     <BlockRoot
@@ -59,109 +57,77 @@ export function DefinitionBlock({
       preview={preview}
       css={{ fd: 'row', items: 'center' }}
     >
-      <span>{'let'}</span>
+      <Let />
       <Field
         value={name}
         onValueChange={(value) => setName(value.replace(/\s/g, '-'))}
-        onBlur={handleDefinitionChange}
+        onBlur={handleNameChange}
         dynamicSize
       />
-      <span>{':'}</span>
-      <PrimitiveDropdown primitive={primitive} setPrimitive={setPrimitive} />
-      <span>{'='}</span>
-      <InitialValue
-        type={primitive}
-        value={value}
-        setValue={setValue}
-        onBlur={handleDefinitionChange}
+      <Colon />
+      <PrimitiveBadge primitive={primitive} />
+      <Equals />
+      <Expression
+        expression={block.expression}
+        parent={{
+          id: block.id,
+          locale: 'expression',
+          dropPredicate,
+        }}
       />
     </BlockRoot>
   );
 }
 
-function PrimitiveDropdown({
-  primitive,
-  setPrimitive,
-}: {
-  primitive: PrimitiveType;
-  setPrimitive: (type: PrimitiveType) => void;
-}) {
+const Let = () => <span>{'let'}</span>;
+const Equals = () => <span>{'='}</span>;
+const Colon = () => <span>{':'}</span>;
+
+const UNKNOWN_PRIMITIVE = 'unknown';
+function PrimitiveBadge({ primitive }: { primitive: PrimitiveType | null }) {
   return (
-    <Select
-      fontFamily="$mono"
-      height={FIELD_HEIGHT}
-      value={primitive}
-      placeholder="type"
-      onValueChange={setPrimitive}
-    >
-      {Primitives.map((p) => (
-        <SelectItem key={p} value={p}>
-          {p}
-        </SelectItem>
-      ))}
-    </Select>
+    <Badge color="neutral" size="small">
+      {primitive ?? UNKNOWN_PRIMITIVE}
+    </Badge>
   );
 }
 
-const BOOLEANS = ['true', 'false'] as const;
+function computePrimitive(
+  value: DefinitionRValue | null,
+  variables: VariableStore,
+) {
+  if (value === null) return null;
+  if (IsLiteral(value)) return computeLiteralPrimitive(value);
+  if (IsOperation(value)) return 'number';
+  if (IsVariable(value)) return variables[value.id].primitive;
 
-function InitialValue({
-  type,
-  value,
-  setValue,
-  onBlur,
-}: {
-  type: PrimitiveType;
-  value: Primitive | null;
-  setValue: (value: Primitive | null) => void;
-  onBlur: () => void;
-}) {
-  if (type === 'boolean')
-    return (
-      <Select
-        fontFamily="$mono"
-        height={FIELD_HEIGHT}
-        value={value?.toString() ?? 'false'}
-        onValueChange={(value) => {
-          if (value === 'true') setValue(true);
-          else if (value === 'false') setValue(false);
-          else setValue(null);
-        }}
-      >
-        {BOOLEANS.map((b) => (
-          <SelectItem key={b} value={b}>
-            {b}
-          </SelectItem>
-        ))}
-      </Select>
-    );
-  else
-    return (
-      <Field
-        value={value?.toLocaleString() ?? ''}
-        onValueChange={(value) => {
-          if (type === 'number') {
-            const number = formatNumberPrimitive(value);
-            setValue(number);
-          } else setValue(value);
-        }}
-        onKeyDown={(key, { shift, value }) => {
-          if (key === 'Enter') onBlur();
-          if (type != 'number') return;
+  throw new Error(
+    `Invalid expression type: \`${value}\`! Failed to compute primitive for variable definition`,
+  );
+}
+function useComputedPrimitive(
+  rvalue: DefinitionRValue | null,
+  enabled: boolean = true,
+) {
+  const [primitive, setPrimitive] = useState<PrimitiveType | null>(null);
+  const { variables } = useVariableStore();
 
-          const number = formatNumberPrimitive(value);
-          const increment = shift ? SHIFT_INCREMENT : DEFAULT_INCREMENT;
-          if (key === 'ArrowUp') setValue(number + increment);
-          if (key === 'ArrowDown') setValue(number - increment);
-        }}
-        onBlur={onBlur}
-        dynamicSize
-      />
-    );
+  useEffect(() => {
+    if (!enabled) return;
+    const newPrimitive = computePrimitive(rvalue, variables);
+    setPrimitive(newPrimitive);
+  }, [rvalue]);
+
+  return primitive;
 }
 
-const DEFAULT_INCREMENT = 1;
-const SHIFT_INCREMENT = 10;
+function computeLiteralPrimitive(literal: Literal) {
+  const type = typeof literal.expression ?? UNKNOWN_PRIMITIVE;
+  if (IsPrimitive(type)) return type as PrimitiveType;
+  throw new Error(
+    `Unknown primitive type: ${type}! Failed to compute primitive for literal expression`,
+  );
+}
 
 function useVariableDefinition(block: Definition, enabled: boolean = true) {
   const { declare } = useVariableStore();
@@ -172,9 +138,25 @@ function useVariableDefinition(block: Definition, enabled: boolean = true) {
   }, [block.id, block.name, block.primitive, enabled]);
 }
 
-function formatNumberPrimitive(value: string) {
-  const rawString = value.replace(/[^0-9.-]/g, '');
-  const number = Number(rawString);
-  if (isNaN(number)) return 0;
-  return number;
+function Expression({
+  expression,
+  preview,
+  parent,
+}: {
+  expression: DefinitionRValue | null;
+  preview?: boolean;
+  parent: ExpressionParent;
+}): ReactElement | null {
+  if (expression === null) return null;
+
+  if (IsLiteral(expression))
+    return <LiteralExpression expression={expression} parent={parent} />;
+
+  if (IsVariable(expression))
+    return <VariableExpression variable={expression} parent={parent} />;
+
+  if (IsOperation(expression))
+    return <BinaryExpression block={expression} parent={parent} />;
+
+  return null;
 }

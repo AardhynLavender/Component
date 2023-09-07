@@ -5,16 +5,13 @@ void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
   const std::string primitive = definition["primitive"];
-  Json value = definition["value"]; // todo: extract value
+  Log(definition);
+  auto value = ExtractValue(definition["expression"]);
 
   using namespace std::string_literals;
-  Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive + "` with value `"s + value.dump() + "`"s);
+  // Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive);
 
-  if (primitive == "string") store.Add(key, { name, primitive, value.get<std::string>() });
-  else if (primitive == "number") store.Add(key, { name, primitive, value.get<int>() });
-  else if (primitive == "boolean") store.Add(key, Variable{name, primitive, value.get<bool>()});
-  else if (primitive == "double") store.Add(key, { name, primitive, value.get<double>() });
-  else throw std::invalid_argument("Invalid TYPE provided for definition!");
+  store.Add(key, { name, primitive, value });
 }
 
 void Parser::ParseAssignment(Json& assignment) {

@@ -51,7 +51,10 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         ...base(type),
         name: 'var',
         primitive: 'string',
-        value: '',
+        expression: {
+          ...base('literal'),
+          expression: '',
+        },
       };
       break;
     case 'assignment':

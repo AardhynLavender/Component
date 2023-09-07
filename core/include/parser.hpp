@@ -79,6 +79,7 @@ private:
 
     template<typename T = Any>
     [[nodiscard]] T ExtractValue(Json& expression) {
+        Log(expression.dump());
         const std::string type = expression["type"];
         
         if (type == "variable") {
@@ -87,7 +88,13 @@ private:
             else return ParseVariable(expression).Get<T>();
             // todo: have some fun with `std::view`...
         } else if (type == "literal") {
-            if constexpr (std::is_same_v<T, Any>) return expression["expression"].get<Any>();
+            if constexpr (std::is_same_v<T, Any>) {
+                const auto value = expression["expression"];
+                if (value.is_number_integer()) return value.get<int>();
+                if (value.is_number_float()) return value.get<double>();
+                if (value.is_string()) return value.get<std::string>();
+                throw std::invalid_argument("Invalid literal type provided!");
+            }
             else return expression["expression"].get<T>();
         } else if (IsOperation(type)) {
             if constexpr (std::is_same_v<T, Any>) return ParseOperation<int>(expression);
