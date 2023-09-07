@@ -19,6 +19,7 @@ import Scroll from 'ui/Scroll';
 import ErrorBoundary from 'exception/ErrorBoundary';
 import { Drag } from '../util/Drag';
 import { renderers } from '../components/types';
+import Spacer from 'ui/Spacer';
 
 const ComponentCategories = {
   misc: ['comment'],
@@ -52,6 +53,7 @@ export default function ComponentList() {
               components={types}
             />
           ))}
+          <Spacer height="lg" />
         </ErrorBoundary>
       </DeleteDropzone>
     </Root>
