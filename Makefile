@@ -73,7 +73,6 @@ install-editor: editor/package.json
 
 build-editor: editor
 	cd editor \
-		&& npm ci \
 		&& npm run build
 
 run-editor: editor
