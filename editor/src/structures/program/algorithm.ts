@@ -119,10 +119,6 @@ export namespace algorithm {
           case 'definition':
             draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
             break;
-          case 'print':
-            if (draft.expression)
-              draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
-            break;
           case 'increment':
           case 'decrement':
             draft.expression = RemoveExpression(id, draft.expression); // variable
