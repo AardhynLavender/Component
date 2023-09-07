@@ -20,7 +20,6 @@ void Runtime::Daemon() {
   const auto CLOCK_SPEED = 10ms; // 1 instruction every 10 milliseconds
   const auto start = Timing::Now();
 
-  
   try {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
     while (!Timing::Elapsed(start, CLOCK_SPEED)) {

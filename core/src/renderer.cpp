@@ -1,10 +1,13 @@
 #include <renderer.hpp>
 
-Renderer::Renderer(Window& window, Flags flags)
+Renderer::Renderer(Window& window, Flags flags, ScaleQuality interpolation)
 : window(window), flags(flags) {
   renderer = SDL_CreateRenderer(window.GetWindow(), 1, NULL); // using `1` for the driver as `-1` and `0` cause a crash?
   if (!renderer) throw SDL2Exception(SDL_GetError());
+
+  SetScaleQuality(interpolation);
   Clear(); // replace the default black with the brand dark blue
+
   Log("Constructed renderer");
 }
 

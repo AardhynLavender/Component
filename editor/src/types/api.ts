@@ -1,3 +1,6 @@
+export const scaleQualities = ['nearest', 'linear'] as const;
+export type ScaleQuality = (typeof scaleQualities)[number];
+
 /**
  * `Core` functions exposed to the `editor` module
  * @fn Parse Parses and runs the provided JSON abstract syntax tree in the daemon
@@ -14,4 +17,7 @@ export type CoreApi = {
   readonly GetCanvasWidth: () => number;
   readonly GetCanvasHeight: () => number;
   readonly ClearCanvas: () => void;
+
+  readonly SetScaleQuality: (scaleQuality: ScaleQuality) => void;
+  readonly GetScaleQuality: () => ScaleQuality;
 };
