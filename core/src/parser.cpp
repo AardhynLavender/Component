@@ -5,11 +5,10 @@ void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
   const std::string primitive = definition["primitive"];
-  Log(definition);
   auto value = ExtractValue(definition["expression"]);
 
   using namespace std::string_literals;
-  // Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive);
+  Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive);
 
   store.Add(key, { name, primitive, value });
 }
