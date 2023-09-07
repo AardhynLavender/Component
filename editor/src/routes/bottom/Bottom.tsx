@@ -1,8 +1,8 @@
 import { s, CSS, styled } from 'theme/stitches.config';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
-import DragHandle from 'ui/DragHandle';
+import DragHandle from 'components/util/DragHandle';
 import { useRef } from 'react';
-import Button from 'ui/Button';
+import Button from 'components/ui/Button';
 import { H5 } from 'theme/Typography';
 
 export default function BottomPane() {

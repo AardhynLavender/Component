@@ -5,10 +5,10 @@ import {
   TabsList,
   TabsTrigger,
   TAB_HEIGHT,
-} from 'ui/Tabs';
+} from 'components/ui/Tabs';
 import Components from 'routes/ComponentList';
 import Ast from './Ast';
-import DragHandle from 'ui/DragHandle';
+import DragHandle from 'components/util/DragHandle';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 import {
   PuzzlePieceIcon,

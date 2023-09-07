@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Program } from 'structures/program';
-import useComponentStore from 'structures/program/store';
+import { Program } from 'program';
+import useComponentStore from 'program/store';
 
 const DEFAULT_ERROR_STATE = false;
 const DEFAULT_TAB_SIZE = 2;

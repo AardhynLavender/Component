@@ -1,12 +1,13 @@
 import { CoreApi } from 'types/api';
-import useComponentStore from 'structures/program/store';
+import useComponentStore from 'program/store';
 import { CSS, styled } from 'theme/stitches.config';
-import Button from 'ui/Button';
+import Button from 'components/ui/Button';
 import useCoreModule from '../../hooks/useCoreModule';
 import {
   DEFAULT_CANVAS_RESOLUTION,
   DEFAULT_CANVAS_RATIO,
 } from '../../constants/program';
+import { save } from 'util/saveFile';
 
 export default function Ribbon({ css }: { css: CSS }) {
   const program = useComponentStore((state) => state.program);
@@ -24,12 +25,21 @@ export default function Ribbon({ css }: { css: CSS }) {
   };
   const handleTerminate = () => core?.Terminate();
 
+  const handleDownload = () => {
+    const ast = JSON.stringify(program?.ast, null, 2);
+    const filename = program?.name ?? 'program';
+    save(ast, `${filename}.json`, 'json');
+  };
+
   error && console.error(error);
 
   return (
     <Root css={css}>
       {core && (
         <>
+          <Button color="neutral" onClick={() => handleDownload()}>
+            Download
+          </Button>
           <Button color="neutral" onClick={() => handleTerminate()}>
             Stop
           </Button>

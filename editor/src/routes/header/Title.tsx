@@ -1,7 +1,7 @@
 import { CoreApi } from 'types/api';
 import { CSS, styled } from 'theme/stitches.config';
 import { H3 } from 'theme/Typography';
-import Badge from 'ui/Badge';
+import Badge from 'components/ui/Badge';
 
 export default function Header({ css }: { css: CSS }) {
   return (

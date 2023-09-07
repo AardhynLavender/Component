@@ -1,11 +1,11 @@
 import { styled, CSS, s } from 'theme/stitches.config';
-import useComponentStore from 'structures/program/store';
-import GenericBlockSet from 'components/blocks/BlockSet';
+import useComponentStore from 'program/store';
+import GenericBlockSet from 'program/components/blocks/BlockSet';
 import { useEffect } from 'react';
 import { LOCAL_STORAGE_KEY } from 'constants/program';
 import { WritePersistent } from 'hooks/usePersistent';
-import Field from 'ui/Field';
-import Scroll from 'ui/Scroll';
+import Field from 'components/ui/Field';
+import Scroll from 'components/ui/Scroll';
 import BottomPane from 'routes/bottom/Bottom';
 import ErrorBoundary from 'exception/ErrorBoundary';
 

@@ -1,7 +1,7 @@
 import useAbstractSyntaxTree from 'hooks/useAbstractSyntaxTree';
 import { ChangeEvent } from 'react';
 import { s, styled } from 'theme/stitches.config';
-import Scroll from 'ui/Scroll';
+import Scroll from 'components/ui/Scroll';
 
 export default function Ast() {
   const { astString, error, loadAst } = useAbstractSyntaxTree();

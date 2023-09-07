@@ -1,4 +1,4 @@
-import { Program } from 'structures/program';
+import { Program } from 'program';
 
 export const LOCAL_STORAGE_KEY = 'componentProgram';
 export const AST_VERSION = '0.0.1';

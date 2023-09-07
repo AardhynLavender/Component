@@ -9,13 +9,13 @@ import { useDrag, useDragLayer, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { Component } from 'types';
 import { CSS, keyframes, s, styled } from 'theme/stitches.config';
-import { GetJsxComponent } from 'components/blocks';
-import { EmplacementAction } from 'structures/program/types';
+import { GetJsxComponent } from 'program/components/blocks';
+import { EmplacementAction } from 'program/types';
 import {
   useRemoveComponent,
   useAddComponent,
   useMoveComponent,
-} from 'structures/program/store';
+} from 'program/store';
 
 type DropAction = 'move' | 'copy';
 type DragItem = { component: Component; action: DropAction };

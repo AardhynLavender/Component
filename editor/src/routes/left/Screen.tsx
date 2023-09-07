@@ -1,8 +1,8 @@
 import { s, styled } from 'theme/stitches.config';
-import Button from 'ui/Button';
-import Field from '../../ui/Field';
+import Button from 'components/ui/Button';
+import Field from '../../components/ui/Field';
 import { SyntheticEvent, useState } from 'react';
-import { useScreen } from 'structures/program';
+import { useScreen } from 'program';
 import useCoreModule from '../../hooks/useCoreModule';
 import { Drag } from '../../util/Drag';
 

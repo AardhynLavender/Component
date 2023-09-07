@@ -1,6 +1,6 @@
 import { CSS, styled } from 'theme/stitches.config';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
-import DragHandle from 'ui/DragHandle';
+import DragHandle from 'components/util/DragHandle';
 import GameScreen from './Screen';
 
 export default function LeftSidebar({ css }: { css: CSS }) {

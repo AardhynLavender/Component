@@ -7,19 +7,19 @@ import {
   loops,
   Variable,
   variables,
-} from 'components/types';
+} from 'program/components/types';
 import { CreateComponent } from 'util/components';
-import { GetJsxComponent } from 'components/generic';
-import useComponentStore, { useVariableStore } from 'structures/program/store';
+import { GetJsxComponent } from 'program/components/generic';
+import useComponentStore, { useVariableStore } from 'program/store';
 import { H5 } from 'theme/Typography';
 import { Capitalize } from 'util/string';
 import { uuid } from 'util/uuid';
 import { useMemo } from 'react';
-import Scroll from 'ui/Scroll';
+import Scroll from 'components/ui/Scroll';
 import ErrorBoundary from 'exception/ErrorBoundary';
 import { Drag } from '../util/Drag';
-import { renderers } from '../components/types';
-import Spacer from 'ui/Spacer';
+import { renderers } from 'program/components/types';
+import Spacer from 'components/util/Spacer';
 
 const ComponentCategories = {
   misc: ['comment'],
