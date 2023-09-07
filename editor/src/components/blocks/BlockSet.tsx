@@ -52,8 +52,8 @@ const Root = styled('div', {
     noIndent: {
       false: {
         bl: '2px solid $outline2',
-        pl: 12,
-        my: 8,
+        pl: 16,
+        my: 16,
       },
     },
   },
