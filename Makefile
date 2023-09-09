@@ -6,10 +6,9 @@ low_optimization = -O1
 medium_optimization = -O2
 full_optimization = -O3 # use release builds
 
-debug_mode = 1
-
 # variables
-optimization_level = $(no_optimization)
+debug_mode = 0
+optimization_level = $(full_optimization)
 cpp_std = c++20
 module_name = LoadModule
 
