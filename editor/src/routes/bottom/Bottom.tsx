@@ -9,7 +9,7 @@ export default function BottomPane() {
   const { bind, rangeConstraint, size } = useDragPanePrimitive(
     'console-pane',
     'up',
-    { minSize: 100, maxSize: 500 },
+    { minSize: 100, maxSize: 780 },
   );
 
   const consoleRef = useRef<HTMLDivElement>(null);

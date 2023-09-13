@@ -145,10 +145,6 @@ export namespace algorithm {
           case 'forever':
             draft.components = Remove(id, draft.components); // forever body
             break;
-          case 'print':
-            if (draft.expression)
-              draft.expression = RemoveExpression(id, draft.expression); // variable|literal expression
-            break;
           case 'assignment':
             draft.lvalue = RemoveExpression(id, draft.lvalue);
             draft.rvalue = RemoveExpression(id, draft.rvalue);

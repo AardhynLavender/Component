@@ -10,10 +10,20 @@
 constexpr int USE_BROWSER_FPS = 0; // run as fast as the browser wants to render (usually 60fps)
 constexpr int SIMULATE_INFINITE_LOOP = 0; // invoking `emscripten_main_loop()` is non-blocking
 
-Runtime runtime{ };
+Runtime runtime;
 void mainLoop() { runtime.Daemon(); }
 void terminate() { runtime.Terminate(); }
-void setSize(int width, int height) { runtime.SetCanvasResolution({ (double)width, (double)height }); }
+
+void setScaleQuality(std::string quality) { 
+    runtime.SetScaleQuality(quality == "nearest"
+        ? Renderer::ScaleQuality::nearest
+        : Renderer::ScaleQuality::linear
+    ); 
+}
+std::string getScaleQuality() { 
+    return runtime.GetScaleQuality() == Renderer::ScaleQuality::nearest ? "nearest" : "linear";
+}
+
 int getCanvasWidth() {
     const auto w = runtime.GetCanvasResolution().x;
     return (int)w;
@@ -22,7 +32,9 @@ int getCanvasHeight() {
     const auto h = runtime.GetCanvasResolution().y;
     return (int)h;
 }
+
 void clearCanvas() { runtime.ClearCanvas(); }
+void setSize(int width, int height) { runtime.SetCanvasResolution({ (double)width, (double)height }); }
 
 void parse(std::string ast) {
     runtime.Load(ast);
@@ -49,9 +61,13 @@ int main() {
 EMSCRIPTEN_BINDINGS(parser) { 
     emscripten::function("Parse", &parse); 
     emscripten::function("Terminate", &terminate);
-    emscripten::function("SetCanvasSize", &setSize);
+
     emscripten::function("ClearCanvas", &clearCanvas);
     emscripten::function("GetCanvasWidth", &getCanvasWidth);
     emscripten::function("GetCanvasHeight", &getCanvasHeight);
+    emscripten::function("SetCanvasSize", &setSize);
+
+    emscripten::function("GetScaleQuality", &getScaleQuality);
+    emscripten::function("SetScaleQuality", &setScaleQuality);
 }
 #endif // __EMSCRIPTEN__

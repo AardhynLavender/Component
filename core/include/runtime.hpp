@@ -23,14 +23,17 @@ public:
   void Load(std::string ast);
 
   inline void SetCanvasResolution(const Vec2 size) { 
-    window.SetSize(size);
+    renderer.SetSize(size);
     renderer.Clear(); // changing the resolution clears the screen to that awful #000
   }
-  inline Vec2 GetCanvasResolution() const { return window.Size(); }
+  inline Vec2 GetCanvasResolution() const { return renderer.GetSize(); }
   inline void ClearCanvas() { 
     renderer.Clear();
     renderer.Present(); 
   }
+
+  inline void SetScaleQuality(const Renderer::ScaleQuality scaleQuality) { renderer.SetScaleQuality(scaleQuality); }
+  inline Renderer::ScaleQuality GetScaleQuality() const { return renderer.GetScaleQuality(); }
 
   inline bool IsRunning() const { return running; }
 };
