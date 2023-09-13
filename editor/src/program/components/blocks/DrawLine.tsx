@@ -30,7 +30,7 @@ export default function DrawLineBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <s.span>Draw line</s.span>
+      <s.span>draw line</s.span>
       <Parameter {...props} expression={block.x1} locale="x1" />
       <Parameter {...props} expression={block.y1} locale="y1" />
       <s.span>to</s.span>

@@ -30,7 +30,7 @@ export default function DrawRectBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <s.span>Draw rectangle</s.span>
+      <s.span>draw rectangle</s.span>
       <Parameter {...props} expression={block.x} locale="x" />
       <Parameter {...props} expression={block.y} locale="y" />
       <s.span>of</s.span>

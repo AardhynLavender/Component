@@ -37,7 +37,7 @@ export default function DrawPixelBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <s.span>Draw pixel</s.span>
+      <s.span>draw pixel</s.span>
       <Parameter {...props} expression={block.x} locale="x" />
       <Parameter {...props} expression={block.y} locale="y" />
     </BlockRoot>
