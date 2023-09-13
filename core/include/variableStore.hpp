@@ -31,8 +31,8 @@ public:
 
     void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
 
-    [[nodiscard]] inline constexpr std::string GetName() const { return name; }
-    [[nodiscard]] inline constexpr std::string GetPrimitive() const { return primitive; }
+    [[nodiscard]] inline std::string GetName() const { return name; }
+    [[nodiscard]] inline std::string GetPrimitive() const { return primitive; }
 
     template<typename T = Any>
     [[nodiscard]] inline constexpr const T& Get() const { 

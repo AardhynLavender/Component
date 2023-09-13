@@ -19,6 +19,7 @@ public:
   ~Runtime();
 
   void Daemon();
+  void Cycle();
   void Terminate();
   void Load(std::string ast);
 

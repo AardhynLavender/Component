@@ -28,6 +28,7 @@ namespace Colors {
 class Renderer final {
 public:
   enum class ScaleQuality { nearest, linear };
+  static constexpr int DEFAULT_FLAGS = 0;
   struct Flags { // https://wiki.libsdl.org/SDL2/SDL_RendererFlags
     bool software = false;
     bool accelerated = false;

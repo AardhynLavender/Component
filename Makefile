@@ -36,6 +36,7 @@ build-core: core
 		&& mkdir -p out \
 		&& emcc \
 			src/main.cpp \
+			src/file.cpp \
 			src/vec2.cpp \
 			src/rec2.cpp \
 			src/stack.cpp \
@@ -65,6 +66,33 @@ build-core: core
 
 	mv core/out/core.mjs editor/src/modules
 	mv core/out/core.wasm editor/public
+
+build-core-native: core
+	cd core \
+		&& mkdir -p out \
+		&& ( \
+			[ -f lib/SDL2.dll ] \
+			&& cp lib/SDL2.dll out \
+		) \
+		&& g++ \
+			src/main.cpp \
+			src/file.cpp \
+			src/vec2.cpp \
+			src/rec2.cpp \
+			src/stack.cpp \
+			src/window.cpp \
+			src/parser.cpp \
+			src/runtime.cpp \
+			src/renderer.cpp \
+			src/stackMachine.cpp \
+			src/variableStore.cpp \
+			-I include \
+			-L lib \
+			-l SDL2 \
+			$(optimization_level) \
+			-D __DEBUG__=$(debug_mode) \
+			-std=$(cpp_std)	\
+			-o out/component \
 
 install-editor: editor/package.json
 	cd editor \
