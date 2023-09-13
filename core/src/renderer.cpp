@@ -42,3 +42,9 @@ void Renderer::DrawRect(const Rec2 rect, const Color color, const Color fill) {
     if (SDL_RenderFillRect(renderer, &r)) throw SDL2Exception(SDL_GetError());
   }
 }
+
+void Renderer::DrawPixel(const Vec2 vec, const Color color) {
+  SetColor(color);
+  if (SDL_RenderDrawPoint(renderer, (int)vec.x, (int)vec.y))
+    throw SDL2Exception(SDL_GetError());
+}

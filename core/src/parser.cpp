@@ -100,16 +100,38 @@ void Parser::ParseConditionJump(Json& jump) {
   if (result) ParseJump(jump);
 }
 
-void Parser::ParseDrawLine(Json& line) {
-  const auto x1 = (double)ExtractValue<int>(line["x1"]);
-  const auto y1 = (double)ExtractValue<int>(line["y1"]);
-  const auto x2 = (double)ExtractValue<int>(line["x2"]);
-  const auto y2 = (double)ExtractValue<int>(line["y2"]);
+void Parser::ParseDrawLine(Json& draw) {
+  const double x1 = ExtractValue<int>(draw["x1"]);
+  const double y1 = ExtractValue<int>(draw["y1"]);
+  const double x2 = ExtractValue<int>(draw["x2"]);
+  const double y2 = ExtractValue<int>(draw["y2"]);
 
   const Vec2 start{ x1, y1 };
   const Vec2 end{ x2, y2 };
 
   renderer.DrawLine(start, end);
+  renderer.Present();
+}
+
+void Parser::ParseDrawRect(Json& draw) {
+  const double x = ExtractValue<int>(draw["x"]);
+  const double y = ExtractValue<int>(draw["y"]);
+  const double w = ExtractValue<int>(draw["w"]);
+  const double h = ExtractValue<int>(draw["h"]);
+
+  const Rec2 rect{ { x, y }, { w, h } };
+
+  renderer.DrawRect(rect);
+  renderer.Present();
+}
+
+void Parser::ParseDrawPixel(Json& draw) {
+  const double x = ExtractValue<int>(draw["x"]);
+  const double y = ExtractValue<int>(draw["y"]);
+
+  const Vec2 pixel{ x, y };
+
+  renderer.DrawPixel(pixel);
   renderer.Present();
 }
 
@@ -246,6 +268,8 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
   else if (type == "draw_line")         ParseDrawLine(component);
+  else if (type == "draw_rect")         ParseDrawRect(component);
+  else if (type == "draw_pixel")        ParseDrawPixel(component);
   else                                  throw std::invalid_argument("Invalid TYPE provided for component: `"s + type + "`"s);
 }
 

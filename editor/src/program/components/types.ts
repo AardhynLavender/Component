@@ -29,7 +29,12 @@ export type OperatorType = (typeof operators)[number];
 export const outputs = ['print', 'clear_output'] as const;
 export type OutputType = (typeof outputs)[number];
 
-export const renderers = ['draw_line', 'clear_screen'] as const;
+export const renderers = [
+  'draw_line',
+  'draw_rect',
+  'draw_pixel',
+  'clear_screen',
+] as const;
 export type RenderType = (typeof renderers)[number];
 
 export const variables = ['definition', 'assignment'] as const;
@@ -247,9 +252,27 @@ export type DrawLine = ComponentPrimitive<
   }
 >;
 
+export type DrawRect = ComponentPrimitive<
+  'draw_rect',
+  {
+    x: Variable | BinaryOperation | Literal | null;
+    y: Variable | BinaryOperation | Literal | null;
+    w: Variable | BinaryOperation | Literal | null;
+    h: Variable | BinaryOperation | Literal | null;
+  }
+>;
+
+export type DrawPixel = ComponentPrimitive<
+  'draw_pixel',
+  {
+    x: Variable | BinaryOperation | Literal | null;
+    y: Variable | BinaryOperation | Literal | null;
+  }
+>;
+
 export type ClearScreen = ComponentPrimitive<'clear_screen'>;
 
-export type Renderer = DrawLine | ClearScreen;
+export type Renderer = DrawLine | DrawRect | DrawPixel | ClearScreen;
 
 // Loops
 

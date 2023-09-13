@@ -124,7 +124,9 @@ private:
     void ParseJump(Json& jump);
     void ParseConditionJump(Json& condition);
 
-    void ParseDrawLine(Json& line);
+    void ParseDrawLine(Json& draw);
+    void ParseDrawRect(Json& draw);
+    void ParseDrawPixel(Json& draw);
 
     void ParsePrint(Json& print);
     void ParseClearOutput();

@@ -58,13 +58,24 @@ export namespace algorithm {
           found ??= FindExpression(id, block.lvalue);
           break;
         case 'draw_line':
-          found ??= FindExpression(id, block.x1); // search x1
-          found ??= FindExpression(id, block.y1); // search y1
-          found ??= FindExpression(id, block.x2); // search x2
-          found ??= FindExpression(id, block.y2); // search y2
+          found ??= FindExpression(id, block.x1);
+          found ??= FindExpression(id, block.y1);
+          found ??= FindExpression(id, block.x2);
+          found ??= FindExpression(id, block.y2);
+          break;
+        case 'draw_rect':
+          found ??= FindExpression(id, block.x);
+          found ??= FindExpression(id, block.y);
+          found ??= FindExpression(id, block.w);
+          found ??= FindExpression(id, block.h);
+          break;
+        case 'draw_pixel':
+          found ??= FindExpression(id, block.x);
+          found ??= FindExpression(id, block.y);
           break;
       }
     }
+
     return found;
   }
 
@@ -154,6 +165,16 @@ export namespace algorithm {
             if (draft.y1) draft.y1 = RemoveExpression(id, draft.y1); // y1
             if (draft.x2) draft.x2 = RemoveExpression(id, draft.x2); // x2
             if (draft.y2) draft.y2 = RemoveExpression(id, draft.y2); // y2
+            break;
+          case 'draw_rect':
+            if (draft.x) draft.x = RemoveExpression(id, draft.x); // x
+            if (draft.y) draft.y = RemoveExpression(id, draft.y); // y
+            if (draft.w) draft.w = RemoveExpression(id, draft.w); // w
+            if (draft.h) draft.h = RemoveExpression(id, draft.h); // h
+            break;
+          case 'draw_pixel':
+            if (draft.x) draft.x = RemoveExpression(id, draft.x); // x
+            if (draft.y) draft.y = RemoveExpression(id, draft.y); // y
             break;
         }
       }),
@@ -253,6 +274,16 @@ export namespace algorithm {
             if (draft.y1) draft.y1 = MutateExpression(id, draft.y1, mutation);
             if (draft.x2) draft.x2 = MutateExpression(id, draft.x2, mutation);
             if (draft.y2) draft.y2 = MutateExpression(id, draft.y2, mutation);
+            break;
+          case 'draw_rect':
+            if (draft.x) draft.x = MutateExpression(id, draft.x, mutation);
+            if (draft.y) draft.y = MutateExpression(id, draft.y, mutation);
+            if (draft.w) draft.w = MutateExpression(id, draft.w, mutation);
+            if (draft.h) draft.h = MutateExpression(id, draft.h, mutation);
+            break;
+          case 'draw_pixel':
+            if (draft.x) draft.x = MutateExpression(id, draft.x, mutation);
+            if (draft.y) draft.y = MutateExpression(id, draft.y, mutation);
             break;
         }
       });
@@ -407,6 +438,45 @@ export namespace algorithm {
                       draft.y2 = component;
                       break;
                   }
+                  break;
+                case 'draw_rect':
+                  if (
+                    !IsNumericVariable(component) &&
+                    !IsLiteral(component) &&
+                    !IsOperation(component)
+                  )
+                    return;
+                  switch (locale) {
+                    case 'x':
+                      draft.x = component;
+                      break;
+                    case 'y':
+                      draft.y = component;
+                      break;
+                    case 'w':
+                      draft.w = component;
+                      break;
+                    case 'h':
+                      draft.h = component;
+                      break;
+                  }
+                  break;
+                case 'draw_pixel':
+                  if (
+                    !IsNumericVariable(component) &&
+                    !IsLiteral(component) &&
+                    !IsOperation(component)
+                  )
+                    return;
+                  switch (locale) {
+                    case 'x':
+                      draft.x = component;
+                      break;
+                    case 'y':
+                      draft.y = component;
+                      break;
+                  }
+                  break;
               }
             });
         }
@@ -469,6 +539,17 @@ export namespace algorithm {
               if (draft.y1) draft.y1 = EmplaceExpression(emplacement, draft.y1);
               if (draft.x2) draft.x2 = EmplaceExpression(emplacement, draft.x2);
               if (draft.y2) draft.y2 = EmplaceExpression(emplacement, draft.y2);
+              break;
+            case 'draw_rect':
+              if (draft.x) draft.x = EmplaceExpression(emplacement, draft.x);
+              if (draft.y) draft.y = EmplaceExpression(emplacement, draft.y);
+              if (draft.w) draft.w = EmplaceExpression(emplacement, draft.w);
+              if (draft.h) draft.h = EmplaceExpression(emplacement, draft.h);
+              break;
+            case 'draw_pixel':
+              if (draft.x) draft.x = EmplaceExpression(emplacement, draft.x);
+              if (draft.y) draft.y = EmplaceExpression(emplacement, draft.y);
+              break;
           }
         }),
       );
