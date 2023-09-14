@@ -109,6 +109,10 @@ export namespace algorithm {
         const [lvalue, rvalue] = state.expression;
         found ??= FindExpression(id, lvalue); // expression lvalue
         if (rvalue) found ??= FindExpression(id, rvalue); // optional expression rvalue
+        break;
+      case 'subscript':
+        found ??= FindExpression(id, state.variable); // variable
+        found ??= FindExpression(id, state.expression); // index
     }
     return found;
   }
@@ -211,6 +215,10 @@ export namespace algorithm {
           const [lvalue, rvalue] = draft.expression;
           draft.expression[0] = RemoveExpression(id, lvalue); // expression lvalue
           if (rvalue) draft.expression[1] = RemoveExpression(id, rvalue); // optional expression rvalue
+          break;
+        case 'subscript':
+          draft.variable = RemoveExpression(id, draft.variable); // variable
+          draft.expression = RemoveExpression(id, draft.expression); // index
           break;
       }
     });
@@ -322,6 +330,10 @@ export namespace algorithm {
           draft.expression[0] = MutateExpression(id, lvalue, mutation); // expression lvalue
           if (rvalue)
             draft.expression[1] = MutateExpression(id, rvalue, mutation); // optional expression rvalue
+          break;
+        case 'subscript':
+          draft.variable = MutateExpression(id, draft.variable, mutation); // variable
+          draft.expression = MutateExpression(id, draft.expression, mutation); // index
           break;
       }
     });
@@ -596,15 +608,17 @@ export namespace algorithm {
           case 'divide':
           case 'modulo':
           case 'exponent':
-            // @ts-ignore
             if (locale === 'left') draft.expression[0] = component;
-            //@ts-ignore
             else if (locale === 'right') draft.expression[1] = component;
             break;
           case 'increment':
           case 'decrement':
-            // @ts-ignore
             if (locale === 'expression') draft.expression = component;
+            break;
+          case 'subscript':
+            if (locale === 'expression') draft.expression = component;
+            if (locale === 'variable') draft.variable = component;
+            break;
         }
       });
     } else
@@ -639,6 +653,16 @@ export namespace algorithm {
                 emplacement,
                 draft.expression,
               );
+            break;
+          case 'subscript':
+            if (draft.expression)
+              draft.expression = EmplaceExpression(
+                emplacement,
+                draft.expression,
+              );
+            if (draft.variable)
+              draft.variable = EmplaceExpression(emplacement, draft.variable);
+            break;
         }
       });
   }
