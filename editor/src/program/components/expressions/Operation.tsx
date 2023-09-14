@@ -8,6 +8,7 @@ import { VariableExpression } from '../blocks/Variable';
 import { IsNumericVariable, IsLiteral } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import { IsOperation } from '../../../types/predicates';
 
 export function BinaryExpression({
   parent,
@@ -23,7 +24,7 @@ export function BinaryExpression({
     preview,
   );
   const dropPredicate = (c: Component) =>
-    IsNumericVariable(c) || IsLiteral<number>(c);
+    IsNumericVariable(c) || IsLiteral<number>(c) || IsOperation(c);
 
   const [left, right] = block.expression;
 
