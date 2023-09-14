@@ -3,10 +3,14 @@ import { DrawLine, Expression, Component, IsLiteral, IsOperation } from 'types';
 import { BlockRoot } from '../generic';
 import { s } from 'theme/stitches.config';
 import { BinaryExpression } from 'program/components/expressions/Operation';
-import { LiteralExpression } from './Literal';
-import { VariableExpression } from './Variable';
+import { LiteralExpression } from '../expressions/Literal';
+import { VariableExpression } from '../expressions/Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import {
+  GenericExpression,
+  GenericExpressionOptions,
+} from '../expressions/Expression';
 
 export default function DrawLineBlock({
   block,
@@ -15,14 +19,10 @@ export default function DrawLineBlock({
   block: DrawLine;
   preview?: boolean;
 }): ReactElement | null {
-  const predicate = (c: Component) =>
+  const dropPredicate = (c: Component) =>
     IsNumericVariable(c) || IsOperation(c) || IsLiteral(c);
 
-  const props = {
-    preview,
-    id: block.id,
-    dropPredicate: predicate,
-  };
+  const parent = { id: block.id, dropPredicate };
 
   return (
     <BlockRoot
@@ -30,61 +30,35 @@ export default function DrawLineBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <s.span>draw line</s.span>
-      <Parameter {...props} expression={block.x1} locale="x1" />
-      <Parameter {...props} expression={block.y1} locale="y1" />
-      <s.span>to</s.span>
-      <Parameter {...props} expression={block.x2} locale="x2" />
-      <Parameter {...props} expression={block.y2} locale="y2" />
+      <DrawLine />
+      <GenericExpression
+        parent={{ ...parent, locale: 'x1' }}
+        expression={block.x1}
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
+      <GenericExpression
+        parent={{ ...parent, locale: 'y1' }}
+        expression={block.y1}
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
+      <To />
+      <GenericExpression
+        parent={{ ...parent, locale: 'x2' }}
+        expression={block.x2}
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
+      <GenericExpression
+        parent={{ ...parent, locale: 'y2' }}
+        expression={block.y2}
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
     </BlockRoot>
   );
 }
 
-function Parameter({
-  preview,
-  id,
-  dropPredicate,
-  expression,
-  locale,
-}: {
-  preview: boolean;
-  id: string;
-  dropPredicate: (c: Component) => boolean;
-  expression: Expression | null;
-  locale: string;
-}) {
-  if (!expression)
-    return (
-      <ExpressionDropzone
-        parentId={id}
-        locale={locale}
-        dropPredicate={dropPredicate}
-      />
-    );
-
-  const parent = { id, locale, dropPredicate };
-
-  if (IsLiteral(expression))
-    return (
-      <LiteralExpression
-        expression={expression}
-        preview={preview}
-        types={['number']}
-        parent={parent}
-      />
-    );
-  if (IsOperation(expression))
-    return (
-      <BinaryExpression block={expression} preview={preview} parent={parent} />
-    );
-  if (IsVariable(expression))
-    return (
-      <VariableExpression
-        variable={expression}
-        preview={preview}
-        parent={parent}
-      />
-    );
-
-  throw new Error(`Invalid expression type: ${expression}`);
-}
+const DrawLine = () => <s.span>draw line</s.span>;
+const To = () => <s.span>to</s.span>;

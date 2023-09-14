@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
-import { Branch, Condition, IsCondition } from 'types';
+import { Branch, Component, Condition, IsCondition } from 'types';
 import { BlockRoot } from '../generic';
-import { ConditionBlock } from '../expressions/Condition';
 import { s, styled } from 'theme/stitches.config';
 import GenericBlockSet from './BlockSet';
-import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from '../expressions/Expression';
+import { IsExpression } from 'types/predicates';
 
 export function BranchBlock({
   block,
@@ -15,19 +15,31 @@ export function BranchBlock({
 }): ReactElement | null {
   const [trueBranch, falseBranch] = block.branches;
 
+  const parent = {
+    id: block.id,
+    locale: 'condition',
+    dropPredicate: IsExpression,
+  };
+
   return (
     <BlockRoot block={block} preview={preview} overrideStyles>
-      <ConditionSection
-        condition={block.condition}
-        id={block.id}
-        preview={preview}
-      />
+      <ConditionSectionRoot>
+        <If />
+        <GenericExpression
+          parent={parent}
+          expression={block.condition}
+          preview={preview}
+          options={{
+            literals: ['boolean'],
+          }}
+        />
+      </ConditionSectionRoot>
       <GenericBlockSet
         parentId={block.id}
         blocks={trueBranch ?? []}
         locale="true"
       />
-      <ElseSection>else</ElseSection>
+      <Else />
       <GenericBlockSet
         parentId={block.id}
         blocks={falseBranch ?? []}
@@ -37,21 +49,26 @@ export function BranchBlock({
   );
 }
 
-function ConditionSection({
-  condition,
-  id,
-  preview,
-}: {
-  condition: Condition | null;
-  id: string;
-  preview?: boolean;
-}) {
+const ConditionSectionRoot = styled(s.div, {
+  d: 'inline-flex',
+  gap: 16,
+  items: 'center',
+  p: '4px 8px',
+  r: 4,
+  fontFamily: '$mono',
+  fontSize: '$1',
+  outline: '2px solid $outline',
+  bg: '$background',
+});
+
+const If = () => <s.span>if</s.span>;
+
+function Else() {
   return (
-    <s.div
+    <s.span
       css={{
         d: 'inline-flex',
-        gap: 16,
-        items: 'center',
+        justify: 'lex-start',
         p: '4px 8px',
         r: 4,
         fontFamily: '$mono',
@@ -60,35 +77,7 @@ function ConditionSection({
         bg: '$background',
       }}
     >
-      <span>if</span>
-      {condition ? (
-        <ConditionBlock
-          condition={condition}
-          parent={{
-            id,
-            locale: 'condition',
-            dropPredicate: (c) => IsCondition(c), // todo: allow literal|variable booleans ( eg: if `true` then )
-          }}
-          preview={preview}
-        />
-      ) : (
-        <ExpressionDropzone
-          parentId={id}
-          locale="condition"
-          enabled={!preview}
-        />
-      )}
-    </s.div>
+      else
+    </s.span>
   );
 }
-
-const ElseSection = styled(s.div, {
-  d: 'inline-flex',
-  justify: 'lex-start',
-  p: '4px 8px',
-  r: 4,
-  fontFamily: '$mono',
-  fontSize: '$1',
-  outline: '2px solid $outline',
-  bg: '$background',
-});

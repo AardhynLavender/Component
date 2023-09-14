@@ -1,10 +1,10 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { PrintBlock } from './blocks/Print';
 import { Block } from './types';
 import { IsBlock, Component } from 'types';
 import {
   BranchBlock,
-  ConditionBlock,
+  ConditionExpression,
   DefinitionBlock,
   UnaryOperationBlock,
   RepeatBlock,
@@ -24,6 +24,7 @@ import { BlockDropzone } from 'program/components/dropzone';
 import { WhileBlock } from './blocks/While';
 import DrawRectBlock from './blocks/DrawRect';
 import DrawPixelBlock from './blocks/DrawPixel';
+import { SubscriptExpression } from './expressions/Subscript';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -93,7 +94,7 @@ export function BlockRoot({
   css,
 }: {
   block: Block;
-  children?: ReactElement | (ReactElement | null | undefined)[];
+  children?: ReactNode | null;
   preview?: boolean;
   overrideStyles?: boolean;
   error?: boolean;
@@ -128,7 +129,7 @@ export function BlockRoot({
       data-dragging={isDragging} // enables parents to select based on the dragging state of their children
       css={{
         c: '$text',
-        opacity: isDragging ? 0 : 1,
+        visibility: isDragging ? 'hidden' : 'visible',
         ...styles,
         ...css,
       }}
@@ -163,6 +164,8 @@ export function GetJsxComponent(
       return <DefinitionBlock block={component} {...stdProps} />;
     case 'assignment':
       return <AssignmentBlock block={component} {...stdProps} />;
+    case 'subscript':
+      return <SubscriptExpression expression={component} {...stdProps} />;
     case 'variable':
       return <VariableExpression variable={component} {...stdProps} />;
     case 'print':
@@ -194,7 +197,7 @@ export function GetJsxComponent(
     case 'gt':
     case 'le':
     case 'ge':
-      return <ConditionBlock condition={component} {...stdProps} />; // todo: add parent
+      return <ConditionExpression condition={component} {...stdProps} />; // todo: add parent
     case 'increment':
     case 'decrement':
       return <UnaryOperationBlock block={component} {...stdProps} />; // todo: add parent

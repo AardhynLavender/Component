@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { IsLiteral } from 'types';
 import { BlockRoot } from '../generic';
-import { LiteralExpression } from './Literal';
-import { VariableExpression } from './Variable';
+import { LiteralExpression } from '../expressions/Literal';
+import { VariableExpression } from '../expressions/Variable';
 import { Drag } from 'util/Drag';
 import { IsOperation, IsVariable } from 'types/predicates';
 import { s } from 'theme/stitches.config';
@@ -10,6 +10,7 @@ import { Assignment, Component } from 'types';
 import { BinaryExpression } from 'program/components/expressions/Operation';
 import { useVariableDefinition } from 'program';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from '../expressions/Expression';
 
 export function AssignmentBlock({
   block,
@@ -18,90 +19,46 @@ export function AssignmentBlock({
   block: Assignment;
   preview?: boolean;
 }): ReactElement | null {
-  const { isDragging, DragHandle } = Drag.useComponentDragHandle(
-    block,
-    preview,
-  );
-
   const lValuePredicate = (c: Component) => IsVariable(c);
   const rValuePredicate = (c: Component) =>
     IsVariable(c) || IsOperation(c) || IsLiteral(c);
 
   const definition = useVariableDefinition(block.lvalue?.definitionId);
+  const assignableLiteral = definition?.primitive ?? 'string';
 
   return (
-    <BlockRoot
-      preview={preview}
-      block={block}
-      css={{
-        items: 'center',
-        direction: 'row',
-        gap: 16,
-        d: isDragging ? 'none' : 'flex',
-      }}
-    >
-      <DragHandle>
-        <s.div css={{ d: 'flex', items: 'center', gap: 8 }}>
-          {block.lvalue ? (
-            <VariableExpression
-              variable={block.lvalue}
-              preview={preview}
-              parent={{
-                id: block.id,
-                locale: 'lvalue',
-                dropPredicate: lValuePredicate,
-              }}
-            />
-          ) : (
-            <ExpressionDropzone
-              parentId={block.id}
-              locale="lvalue"
-              dropPredicate={lValuePredicate}
-            />
-          )}
-          <span> = </span>
-          {!block.rvalue ? (
-            <ExpressionDropzone
-              parentId={block.id}
-              locale="rvalue"
-              dropPredicate={rValuePredicate}
-            />
-          ) : IsLiteral(block.rvalue) ? (
-            <LiteralExpression
-              expression={block.rvalue}
-              preview={preview}
-              types={[definition?.primitive ?? 'string']}
-              parent={{
-                id: block.id,
-                locale: 'rvalue',
-                dropPredicate: rValuePredicate,
-              }}
-            />
-          ) : IsOperation(block.rvalue) ? (
-            <BinaryExpression
-              block={block.rvalue}
-              preview={preview}
-              parent={{
-                id: block.id,
-                locale: 'rvalue',
-                dropPredicate: rValuePredicate,
-              }}
-            />
-          ) : IsVariable(block.rvalue) ? (
-            <VariableExpression
-              variable={block.rvalue}
-              preview={preview}
-              parent={{
-                id: block.id,
-                locale: 'rvalue',
-                dropPredicate: rValuePredicate,
-              }}
-            />
-          ) : (
-            'error'
-          )}
-        </s.div>
-      </DragHandle>
+    <BlockRoot preview={preview} block={block} css={styles}>
+      <GenericExpression
+        parent={{
+          id: block.id,
+          locale: 'lvalue',
+          dropPredicate: lValuePredicate,
+        }}
+        expression={block.lvalue}
+        options={{
+          literals: false,
+          operation: false,
+          subscript: false,
+        }}
+      />
+      <Assign />
+      <GenericExpression
+        parent={{
+          id: block.id,
+          locale: 'rvalue',
+          dropPredicate: rValuePredicate,
+        }}
+        expression={block.rvalue}
+        options={{ literals: [assignableLiteral] }}
+      />
     </BlockRoot>
   );
 }
+
+const Assign = () => <s.span> = </s.span>;
+
+const styles = {
+  items: 'center',
+  direction: 'row',
+  gap: 16,
+};

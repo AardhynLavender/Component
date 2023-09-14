@@ -37,7 +37,7 @@ export const renderers = [
 ] as const;
 export type RenderType = (typeof renderers)[number];
 
-export const variables = ['definition', 'assignment'] as const;
+export const variables = ['definition', 'assignment', 'subscript'] as const;
 export type VariableType = (typeof variables)[number];
 
 export const miscExpressions = ['variable', 'literal', 'comment'] as const;
@@ -83,7 +83,7 @@ export type Comment = ComponentPrimitive<'comment', { expression: string }>;
 
 export const Primitives = ['string', 'number', 'boolean'] as const;
 export type PrimitiveType = (typeof Primitives)[number];
-export type Primitive = string | number | boolean;
+export type Primitive = string | number | boolean | Primitive[];
 export type DefinitionRValue = Literal | Variable | BinaryOperation | Condition;
 
 export type Definition = ComponentPrimitive<
@@ -103,6 +103,11 @@ export type Assignment = ComponentPrimitive<
   }
 >;
 
+export type Subscript = ComponentPrimitive<
+  'subscript',
+  { variable: Variable | null; expression: Literal<number> | Variable | null }
+>;
+
 export type Variable = ComponentPrimitive<'variable', { definitionId: string }>;
 
 // Control Flow
@@ -112,7 +117,7 @@ export type BinaryBranch = [Block[] | null, Block[] | null];
 export type Branch = ComponentPrimitive<
   'branch',
   {
-    condition: Condition | null;
+    condition: Condition | Literal<boolean> | null | Variable;
     branches: UnaryBranch | BinaryBranch;
   }
 >;
@@ -283,7 +288,10 @@ export type Repeat = ComponentPrimitive<
 
 export type While = ComponentPrimitive<
   'while',
-  { condition: Condition | null; components: Block[] | null }
+  {
+    condition: Condition | Literal<number> | Variable | null;
+    components: Block[] | null;
+  }
 >;
 
 export type Forever = ComponentPrimitive<
@@ -308,6 +316,7 @@ export type Block =
 
 export type Expression =
   | Literal<Primitive>
+  | Subscript
   | Variable
   | BinaryOperation
   | UnaryOperation

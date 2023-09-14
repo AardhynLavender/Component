@@ -1,4 +1,4 @@
-import { styled } from 'theme/stitches.config';
+import { s, styled } from 'theme/stitches.config';
 import { Component, Forever, IsLiteral, IsNumericVariable } from 'types';
 import GenericBlockSet from './BlockSet';
 import { BlockRoot } from '../generic';
@@ -12,9 +12,7 @@ export function ForeverBlock({
 }) {
   return (
     <BlockRoot block={block} preview={preview} overrideStyles>
-      <ForeverSection>
-        <span>forever</span>
-      </ForeverSection>
+      <ForeverSection />
       <GenericBlockSet
         blocks={block.components ?? []}
         locale="components"
@@ -24,15 +22,23 @@ export function ForeverBlock({
   );
 }
 
-const ForeverSection = styled('div', {
-  d: 'inline-flex',
-  items: 'center',
-  gap: 8,
-  p: '4px 8px',
-  r: 4,
-  fontFamily: '$mono',
-  fontSize: '$1',
+function ForeverSection() {
+  return (
+    <s.div
+      css={{
+        d: 'inline-flex',
+        items: 'center',
+        gap: 8,
+        p: '4px 8px',
+        r: 4,
+        fontFamily: '$mono',
+        fontSize: '$1',
 
-  bg: '$background',
-  outline: '2px solid $outline',
-});
+        bg: '$background',
+        outline: '2px solid $outline',
+      }}
+    >
+      forever
+    </s.div>
+  );
+}

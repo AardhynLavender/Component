@@ -9,8 +9,9 @@ import {
 import GenericBlockSet from './BlockSet';
 import { BlockRoot } from '../generic';
 import { ExpressionDropzone } from 'program/components/dropzone';
-import { ConditionBlock } from '.';
+import { ConditionExpression } from '.';
 import { While } from '../types';
+import { GenericExpression } from '../expressions/Expression';
 
 export function WhileBlock({
   block,
@@ -19,27 +20,25 @@ export function WhileBlock({
   block: While;
   preview?: boolean;
 }) {
+  const dropPredicate = (c: Component) =>
+    IsCondition(c) || IsCondition(c) || IsLiteral(c);
+
+  const parent = {
+    id: block.id,
+    locale: 'condition',
+    dropPredicate,
+  };
+
   return (
     <BlockRoot block={block} preview={preview} overrideStyles>
       <ConditionSection>
-        <span>while</span>
-        {block.condition ? (
-          <ConditionBlock
-            condition={block.condition}
-            parent={{
-              id: block.id,
-              locale: 'condition',
-              dropPredicate: (c) => IsCondition(c), // todo: allow literal|variable booleans ( eg: if `true` then )
-            }}
-            preview={preview}
-          />
-        ) : (
-          <ExpressionDropzone
-            parentId={block.id}
-            locale="condition"
-            enabled={!preview}
-          />
-        )}
+        <While />
+        <GenericExpression
+          parent={parent}
+          expression={block.condition}
+          preview={preview}
+          options={{ literals: ['boolean'] }}
+        />
       </ConditionSection>
       <GenericBlockSet
         blocks={block.components ?? []}
@@ -49,6 +48,8 @@ export function WhileBlock({
     </BlockRoot>
   );
 }
+
+const While = () => <span>while </span>;
 
 const ConditionSection = styled('div', {
   d: 'inline-flex',

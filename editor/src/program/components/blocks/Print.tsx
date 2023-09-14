@@ -1,14 +1,9 @@
 import { ReactElement } from 'react';
-import { Print, IsLiteral } from 'types';
+import { Print } from 'types';
 import { BlockRoot } from '../generic';
-import { LiteralExpression } from './Literal';
-import { VariableExpression } from './Variable';
-import { Drag } from 'util/Drag';
-import { IsOperation, IsVariable } from 'types/predicates';
+import { IsExpression } from 'types/predicates';
 import { s } from 'theme/stitches.config';
-import { Component } from '../types';
-import { BinaryExpression } from 'program/components/expressions/Operation';
-import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from '../expressions/Expression';
 
 export function PrintBlock({
   block,
@@ -17,75 +12,22 @@ export function PrintBlock({
   block: Print;
   preview?: boolean;
 }): ReactElement | null {
-  const { isDragging, DragHandle } = Drag.useComponentDragHandle(
-    block,
-    preview,
-  );
-
-  const predicate = (c: Component) => {
-    const res = IsVariable(c) || IsOperation(c);
-    return res;
+  const parent = {
+    id: block.id,
+    locale: 'expression',
+    dropPredicate: IsExpression,
   };
 
   return (
     <BlockRoot
       preview={preview}
       block={block}
-      css={{
-        items: 'center',
-        direction: 'row',
-        gap: 16,
-        d: isDragging ? 'none' : 'flex',
-      }}
+      css={{ items: 'center', direction: 'row', gap: 16 }}
     >
-      <DragHandle>
-        <s.div
-          css={{
-            d: 'flex',
-            items: 'center',
-            gap: 8,
-          }}
-        >
-          <span>print</span>
-          {!block.expression ? (
-            <ExpressionDropzone
-              parentId={block.id}
-              locale="expression"
-              dropPredicate={predicate}
-            />
-          ) : IsLiteral(block.expression) ? (
-            <LiteralExpression
-              expression={block.expression}
-              preview={preview}
-              parent={{
-                id: block.id,
-                locale: 'expression',
-                dropPredicate: predicate,
-              }}
-            />
-          ) : IsOperation(block.expression) ? (
-            <BinaryExpression
-              block={block.expression}
-              preview={preview}
-              parent={{
-                id: block.id,
-                locale: 'expression',
-                dropPredicate: predicate,
-              }}
-            />
-          ) : (
-            <VariableExpression
-              variable={block.expression}
-              preview={preview}
-              parent={{
-                id: block.id,
-                locale: 'expression',
-                dropPredicate: predicate,
-              }}
-            />
-          )}
-        </s.div>
-      </DragHandle>
+      <Print />
+      <GenericExpression parent={parent} expression={block.expression} />
     </BlockRoot>
   );
 }
+
+const Print = () => <s.span>print</s.span>;

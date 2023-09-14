@@ -1,11 +1,12 @@
 import { ReactElement } from 'react';
 import { Drag } from 'util/Drag';
 import { UnaryOperation } from 'types';
-import { ExpressionParent } from '../expressions/types';
+import { ExpressionParent } from './types';
 import { VariableExpression } from './Variable';
 import { Component } from '../types';
 import { IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from './Expression';
 
 export function UnaryOperationBlock({
   block,
@@ -20,6 +21,12 @@ export function UnaryOperationBlock({
 
   const dropPredicate = (c: Component) => IsVariable(c);
 
+  const props = {
+    id: block.id,
+    locale: 'expression',
+    dropPredicate,
+  };
+
   return (
     <ExpressionDropzone
       parentId={parent?.id}
@@ -27,45 +34,28 @@ export function UnaryOperationBlock({
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
     >
-      <DragHandle
-        css={{
-          pl: 4,
-          d: 'flex',
-          items: 'center',
-          gap: 8,
-        }}
-      >
+      <DragHandle css={styles}>
         <span>{Operator(block.type)}</span>
-        {block.expression ? (
-          <VariableExpression
-            variable={block.expression}
-            parent={{
-              id: block.id,
-              locale: 'expression',
-              dropPredicate,
-            }}
-            preview={preview}
-          />
-        ) : (
-          <ExpressionDropzone
-            parentId={block?.id}
-            locale="expression"
-            dropPredicate={dropPredicate}
-            enabled={!preview}
-          />
-        )}
+        <GenericExpression
+          expression={block.expression}
+          parent={props}
+          preview={preview}
+          options={{ literals: false, subscript: false, operation: false }}
+        />
       </DragHandle>
     </ExpressionDropzone>
   );
 }
 
 function Operator(type: UnaryOperation['type']) {
-  switch (type) {
-    case 'increment':
-      return '++';
-    case 'decrement':
-      return '--';
-    default:
-      throw new Error('Invalid unary operation');
-  }
+  if (type === 'increment') return '++';
+  if (type === 'decrement') return '--';
+  throw new Error('Invalid unary operation');
 }
+
+const styles = {
+  pl: 4,
+  d: 'flex',
+  items: 'center',
+  gap: 8,
+};

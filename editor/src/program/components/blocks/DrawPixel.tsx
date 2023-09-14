@@ -10,10 +10,11 @@ import {
 import { BlockRoot } from '../generic';
 import { s } from 'theme/stitches.config';
 import { BinaryExpression } from 'program/components/expressions/Operation';
-import { LiteralExpression } from './Literal';
-import { VariableExpression } from './Variable';
+import { LiteralExpression } from '../expressions/Literal';
+import { VariableExpression } from '../expressions/Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from '../expressions/Expression';
 
 export default function DrawPixelBlock({
   block,
@@ -22,14 +23,10 @@ export default function DrawPixelBlock({
   block: DrawPixel;
   preview?: boolean;
 }): ReactElement | null {
-  const predicate = (c: Component) =>
+  const dropPredicate = (c: Component) =>
     IsNumericVariable(c) || IsOperation(c) || IsLiteral(c);
 
-  const props = {
-    preview,
-    id: block.id,
-    dropPredicate: predicate,
-  };
+  const parent = { id: block.id, dropPredicate };
 
   return (
     <BlockRoot
@@ -37,58 +34,21 @@ export default function DrawPixelBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <s.span>draw pixel</s.span>
-      <Parameter {...props} expression={block.x} locale="x" />
-      <Parameter {...props} expression={block.y} locale="y" />
+      <DrawPixel />
+      <GenericExpression
+        parent={{ ...parent, locale: 'x' }}
+        expression={block.x}
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
+      <GenericExpression
+        parent={{ ...parent, locale: 'y' }}
+        expression={block.y}
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
     </BlockRoot>
   );
 }
 
-function Parameter({
-  preview,
-  id,
-  dropPredicate,
-  expression,
-  locale,
-}: {
-  preview: boolean;
-  id: string;
-  dropPredicate: (c: Component) => boolean;
-  expression: Expression | null;
-  locale: string;
-}) {
-  if (!expression)
-    return (
-      <ExpressionDropzone
-        parentId={id}
-        locale={locale}
-        dropPredicate={dropPredicate}
-      />
-    );
-
-  const parent = { id, locale, dropPredicate };
-
-  if (IsLiteral(expression))
-    return (
-      <LiteralExpression
-        expression={expression}
-        preview={preview}
-        types={['number']}
-        parent={parent}
-      />
-    );
-  if (IsOperation(expression))
-    return (
-      <BinaryExpression block={expression} preview={preview} parent={parent} />
-    );
-  if (IsVariable(expression))
-    return (
-      <VariableExpression
-        variable={expression}
-        preview={preview}
-        parent={parent}
-      />
-    );
-
-  throw new Error(`Invalid expression type: ${expression}`);
-}
+const DrawPixel = () => <s.span>draw pixel</s.span>;

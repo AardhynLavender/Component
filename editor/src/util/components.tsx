@@ -59,6 +59,14 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    case 'subscript':
+      component = {
+        ...base(type),
+        variable: null,
+        expression: { ...base('literal'), expression: null },
+      };
+      break;
+
     // Loops //
 
     case 'repeat':
@@ -70,7 +78,11 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       break;
 
     case 'while':
-      component = { ...base(type), condition: null, components: [] };
+      component = {
+        ...base(type),
+        condition: { ...base('literal'), expression: null },
+        components: [],
+      };
       break;
 
     case 'forever':
@@ -93,17 +105,33 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     // Control Flow //
 
     case 'branch':
-      component = { ...base(type), condition: null, branches: [[], []] };
+      component = {
+        ...base(type),
+        condition: {
+          ...base('literal'),
+          expression: null,
+        },
+        branches: [[], []],
+      };
       break;
 
     // Conditions //
 
     case 'not':
-      component = { ...base(type), expression: [null] };
+      component = {
+        ...base(type),
+        expression: [{ ...base('literal'), expression: null }],
+      };
       break;
     case 'and':
     case 'or':
-      component = { ...base(type), expression: [null, null] };
+      component = {
+        ...base(type),
+        expression: [
+          { ...base('literal'), expression: null },
+          { ...base('literal'), expression: null },
+        ],
+      };
       break;
     case 'eq':
     case 'ne':

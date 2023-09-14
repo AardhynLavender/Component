@@ -1,4 +1,5 @@
 import { RenderType } from 'program/components/types';
+import { Subscript } from '../program/components/types';
 import {
   Loop,
   loops,
@@ -48,6 +49,10 @@ export function IsOperation(
   component: Component,
 ): component is BinaryOperation {
   return operators.includes(component.type as OperatorType);
+}
+
+export function IsSubscript(component: Component): component is Subscript {
+  return component.type === 'subscript';
 }
 
 // Literals //

@@ -5,7 +5,6 @@ import {
   Definition,
   DefinitionRValue,
   Literal,
-  Primitive,
   PrimitiveType,
 } from 'program/components/types';
 import { BlockRoot } from '../generic';
@@ -15,12 +14,9 @@ import {
   IsVariable,
   IsPrimitive,
 } from 'types/predicates';
-import { BinaryExpression } from '../expressions/Operation';
-import { LiteralExpression } from './Literal';
-import { ExpressionParent } from '../expressions/types';
 import Field from 'components/ui/Field';
 import Badge from 'components/ui/Badge';
-import { VariableExpression } from './Variable';
+import { GenericExpression } from '../expressions/Expression';
 
 export function DefinitionBlock({
   block,
@@ -63,13 +59,14 @@ export function DefinitionBlock({
       <Colon />
       <PrimitiveBadge primitive={primitive} />
       <Equals />
-      <Expression
+      <GenericExpression
         expression={block.expression}
         parent={{
           id: block.id,
           locale: 'expression',
           dropPredicate,
         }}
+        preview={preview}
       />
     </BlockRoot>
   );
@@ -132,27 +129,4 @@ function useVariableDefinition(block: Definition, enabled: boolean = true) {
     if (enabled) declare(block.id, block); // declare the variable
     return () => declare(block.id, undefined); // un-declare the variable on unmount
   }, [block.id, block.name, block.primitive, enabled]);
-}
-
-function Expression({
-  expression,
-  preview,
-  parent,
-}: {
-  expression: DefinitionRValue | null;
-  preview?: boolean;
-  parent: ExpressionParent;
-}): ReactElement | null {
-  if (expression === null) return null;
-
-  if (IsLiteral(expression))
-    return <LiteralExpression expression={expression} parent={parent} />;
-
-  if (IsVariable(expression))
-    return <VariableExpression variable={expression} parent={parent} />;
-
-  if (IsOperation(expression))
-    return <BinaryExpression block={expression} parent={parent} />;
-
-  return null;
 }

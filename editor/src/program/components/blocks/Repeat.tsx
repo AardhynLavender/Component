@@ -4,9 +4,10 @@ import GenericBlockSet from './BlockSet';
 import { useState } from 'react';
 import { s, CSS, styled } from 'theme/stitches.config';
 import { useMutateComponent } from 'program';
-import { LiteralExpression } from './Literal';
-import { VariableExpression } from './Variable';
+import { LiteralExpression } from '../expressions/Literal';
+import { VariableExpression } from '../expressions/Variable';
 import { uuid } from 'util/uuid';
+import { GenericExpression } from '../expressions/Expression';
 
 export const MIN_REPEAT_WIDTH = 48;
 
@@ -23,32 +24,22 @@ export function RepeatBlock({
   const dropPredicate = (c: Component) =>
     IsNumericVariable(c) || IsLiteral<number>(c);
 
+  const parent = {
+    id: block.id,
+    locale: 'repetition',
+    dropPredicate,
+  };
+
   return (
     <BlockRoot block={block} preview={preview} overrideStyles>
       <RepeatSection>
-        <span>repeat </span>
-        {!block.repetition || block.repetition?.type === 'literal' ? (
-          <LiteralExpression
-            expression={
-              block.repetition ?? { id: uuid(), type: 'literal', expression: 1 }
-            }
-            types={['number']}
-            parent={{
-              id: block.id,
-              locale: 'repetition',
-              dropPredicate,
-            }}
-          />
-        ) : block.repetition?.type === 'variable' ? (
-          <VariableExpression
-            variable={block.repetition}
-            parent={{
-              id: block.id,
-              locale: 'repetition',
-              dropPredicate,
-            }}
-          />
-        ) : null}
+        <Repeat />
+        <GenericExpression
+          parent={parent}
+          expression={block.repetition}
+          preview={preview}
+          options={{ literals: ['number'] }}
+        />
       </RepeatSection>
       <GenericBlockSet
         blocks={block.components ?? []}
@@ -58,6 +49,7 @@ export function RepeatBlock({
     </BlockRoot>
   );
 }
+const Repeat = () => <s.span>repeat </s.span>;
 
 const RepeatSection = styled('div', {
   d: 'inline-flex',
@@ -71,14 +63,3 @@ const RepeatSection = styled('div', {
   bg: '$background',
   outline: '2px solid $outline',
 });
-
-// https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp
-const hideArrows: CSS = {
-  // Chrome, Safari, Edge, Opera
-  '&::-webkit-outer-spin-button &::-webkit-inner-spin-button': {
-    '-webkit-appearance': 'none',
-    margin: 0,
-  },
-  // Firefox
-  "&[type='number']": { '-moz-appearance': 'textfield' },
-};
