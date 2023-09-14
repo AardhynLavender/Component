@@ -102,9 +102,10 @@ private:
             if constexpr (std::is_same_v<T, Any>) return ParseCondition(expression);
             else if constexpr (std::is_convertible_v<T, bool>) return ParseCondition(expression);
             else throw std::invalid_argument("unconstrained typename T is not convertible to bool; Can't process condition!");
-        } else
+        }
 
-        throw std::runtime_error("Expected variable or literal expression");
+        using namespace std::string_literals;
+        throw std::runtime_error("Expected variable or literal expression: `"s + type + "` provided!"s);
     }
 
     [[nodiscard]] constexpr inline bool IsOperation(std::string_view type) const {
@@ -118,6 +119,7 @@ private:
 
     [[nodiscard]] constexpr inline bool IsCondition(std::string_view type) const {
         return type == "and"
+            || type == "not"
             || type == "or"
             || type == "xor"
             || type == "eq"

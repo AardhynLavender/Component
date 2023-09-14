@@ -179,6 +179,9 @@ void Parser::ParsePrint(Json& print) {
   } else if (IsOperation(type)) {
     const int result = ParseOperation(print);
     ClientPrint(std::to_string(result));        
+  } else if (IsCondition(type)) {
+    const bool result = ParseCondition(print);
+    ClientPrint(result ? "true" : "false"); 
   } else
     throw std::invalid_argument("Invalid TYPE for PRINT expression");
 }
@@ -188,7 +191,7 @@ void Parser::ParseClearOutput() {
 #ifdef __EMSCRIPTEN__
   ClientClearOutput(); 
 #else
-  // todo: some native clear
+  // todo: some native clear implementation
 #endif // __EMSCRIPTEN__
 }
 
@@ -203,10 +206,11 @@ void Parser::ParseBranch(Json& branch) {
   if (branches.size() > MAX_BRANCHES) throw std::invalid_argument("Branches must be an array of size 2 or less!");
 
   Json& condition = branch["condition"];
-  const bool hasElse = branches.size() == 2;
-  const bool evaluation = ParseCondition(condition);
-  if (evaluation) stackMachine.Push(branches.at(0));
-  else if (hasElse) stackMachine.Push(branches.at(1));
+  const bool evaluation = ExtractValue<bool>(condition);
+
+  const bool hasElse = branches.size() == MAX_BRANCHES;
+  if (evaluation) stackMachine.Push(branches.at(LVALUE));
+  else if (hasElse) stackMachine.Push(branches.at(RVALUE));
 }
 
 void Parser::ParseComponent(Json& component) {
