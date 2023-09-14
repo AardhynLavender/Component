@@ -27,15 +27,7 @@ void Parser::ParseAssignment(Json& assignment) {
 void Parser::ParseRepeat(Json& repeat) {
   Json& repetition = repeat["repetition"];
 
-  // todo:  If `times` is a variable, modifing it within the repeat block 
-  //        will not update the number of iterations as it is read at the 
-  //        start of the loop. Probably should read it each iteration...
-  // todo:  support `operators` for times
-  int times;
-  const std::string repetitionType = repetition["type"];
-  if (repetitionType == "literal") times = repetition["expression"].get<int>();
-  else if (repetitionType == "variable") times = ParseVariable(repetition).Get<int>();
-  else throw std::invalid_argument("Invalid expression TYPE provided for REPEAT!");
+  const int times = ExtractValue<int>(repetition);
 
   Json& components = repeat["components"];
   if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
@@ -135,66 +127,36 @@ void Parser::ParseDrawPixel(Json& draw) {
   renderer.Present();
 }
 
+
 [[nodiscard]] bool Parser::ParseCondition(Json& condition) {
   const std::string type = condition["type"];
+  Json& expression = condition["expression"];
 
   using namespace std::string_literals;
   Log("Parsing conditional expression of type '"s + type + "'"s);
 
-  Json& expression = condition["expression"];
-  Json::value_type lvalue, rvalue;
+  auto left = expression.at(LVALUE);
+  const auto lvalue = ExtractValue(left);
 
-  // parse left-hand operand
-  Log("Parsing lhs expression");
-  Json& left = expression.at(0);
-  if (left["type"] == "literal") lvalue = left["expression"];
-  else if (left["type"] == "variable") {
-    const auto& variable = ParseVariable(left);
-    const auto primitive = variable.GetPrimitive();
+  if (type == "not") return !std::get<bool>(lvalue);
 
-    if (primitive == "string") lvalue = ParseVariable(left).Get<std::string>();
-    else if (primitive == "number") lvalue = ParseVariable(left).Get<int>();
-    else if (primitive == "boolean") lvalue = ParseVariable(left).Get<bool>();
-    else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
-  }
-  else lvalue = ParseCondition(left);
+  if (expression.size() == MAX_BRANCHES) {
+    auto right = expression.at(RVALUE);
+    const auto rvalue = ExtractValue(right);
+    Log("Performing '"s + type + "' on `"s + left.dump() + "` and `"s + right.dump() + "`"s);
 
-  // parse right-hand operand
-  if (expression.size() == 2) {
-    Log("Parsing lhs expression");
-
-    Json& right = expression.at(1);
-    if (right["type"] == "literal") rvalue = right["expression"];
-    else if (right["type"] == "variable") {
-      const auto& variable = ParseVariable(right);
-      const auto primitive = variable.GetPrimitive();
-
-      if (primitive == "string") rvalue = ParseVariable(right).Get<std::string>();
-      else if (primitive == "number") rvalue = ParseVariable(right).Get<int>();
-      else if (primitive == "boolean") rvalue = ParseVariable(right).Get<bool>();
-      else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
-    }
-    else rvalue = ParseCondition(right);
-
-    // perform binary conditional operation
-    using namespace std::string_literals;
-    Log("Performing '"s + type + "' on `"s + lvalue.dump() + "` and `"s + rvalue.dump() + "`"s);
-    if (type == "and") return lvalue && rvalue;
-    if (type == "or") return lvalue && rvalue;
-    if (type == "xor") return (lvalue || rvalue) && (lvalue != rvalue);
-    if (type == "eq") return lvalue == rvalue;
-    if (type == "ne") return lvalue != rvalue;
-    if (type == "gt") return lvalue > rvalue;
-    if (type == "ge") return lvalue >= rvalue;
-    if (type == "lt") return lvalue < rvalue;
-    if (type == "le") return lvalue <= rvalue;
-
+    if (type == "and")  return std::get<bool>(lvalue) && std::get<bool>(rvalue);
+    if (type == "or")   return std::get<bool>(lvalue) || std::get<bool>(rvalue);
+    if (type == "xor")  return (std::get<bool>(lvalue) || std::get<bool>(rvalue)) && (std::get<bool>(lvalue) != std::get<bool>(rvalue));
+    if (type == "eq")   return lvalue == rvalue;
+    if (type == "ne")   return lvalue != rvalue;
+    if (type == "gt")   return lvalue > rvalue;
+    if (type == "ge")   return lvalue >= rvalue;
+    if (type == "lt")   return lvalue < rvalue;
+    if (type == "le")   return lvalue <= rvalue;
+    
     throw std::invalid_argument("'" + type + "' is not a valid TYPE for a BINARY conditional expression");
-  } else 
-    Log("No rhs expression to parse");
-
-  if (type == "not") return !lvalue;
-  if (type == "truthy") return lvalue;
+  }
 
   throw std::invalid_argument("'" + type + "' is not a valid TYPE for a UNARY conditional expression");
 }

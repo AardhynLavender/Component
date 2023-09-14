@@ -14,6 +14,8 @@ class Parser final {
 private:
     static constexpr int MAX_REPEAT_LENGTH = 2048;
     static constexpr int MAX_BRANCHES = 2;
+    static constexpr int LVALUE = 0;
+    static constexpr int RVALUE = 1;
 
     Renderer& renderer;
     
@@ -49,37 +51,26 @@ private:
         store.Set(key, result);
     }
 
-
     template<Block::Arithmetic T = int>
     [[nodiscard]] T ParseOperation(Json& operation) {
         const std::string type = operation["type"];
-        Json left = operation["expression"][0];
-        Json right = operation["expression"][1];
+        auto expression = operation["expression"];
 
-        T lvalue, rvalue;
+        const T lvalue = ExtractValue<T>(expression[LVALUE]);
+        const T rvalue = ExtractValue<T>(expression[RVALUE]);
 
-        if (left["type"] == "variable") lvalue = ParseVariable(left).Get<T>();
-        else if (left["type"] == "literal") lvalue = left["expression"].get<T>();
-        else lvalue = ParseOperation<T>(left);
-
-        if (right["type"] == "variable") rvalue = ParseVariable(right).Get<T>();
-        else if (right["type"] == "literal") rvalue = right["expression"].get<T>();
-        else rvalue = ParseOperation<T>(right);
-
-        if (type == "add") return lvalue + rvalue;
+        if (type == "add")      return lvalue + rvalue;
         if (type == "subtract") return lvalue - rvalue;
         if (type == "multiply") return lvalue * rvalue;
-        if (type == "divide") return lvalue / rvalue;
-        if (type == "modulo") return lvalue % rvalue;
+        if (type == "divide")   return lvalue / rvalue;
+        if (type == "modulo")   return lvalue % rvalue;
         if (type == "exponent") return std::pow(lvalue, rvalue);
-        // todo: support more operations
 
-        else throw std::invalid_argument("Invalid operation TYPE provided!");
+        throw std::invalid_argument("Invalid operation TYPE provided!");
     }
 
     template<typename T = Any>
     [[nodiscard]] T ExtractValue(Json& expression) {
-        Log(expression.dump());
         const std::string type = expression["type"];
         
         if (type == "variable") {
@@ -87,20 +78,31 @@ private:
             if constexpr (std::is_same_v<T, Any>) return variable.Get();
             else return ParseVariable(expression).Get<T>();
             // todo: have some fun with `std::view`...
-        } else if (type == "literal") {
+        }
+        
+        if (type == "literal") {
             if constexpr (std::is_same_v<T, Any>) {
                 const auto value = expression["expression"];
                 if (value.is_number_integer()) return value.get<int>();
                 if (value.is_number_float()) return value.get<double>();
+                if (value.is_boolean()) return value.get<bool>();
                 if (value.is_string()) return value.get<std::string>();
                 throw std::invalid_argument("Invalid literal type provided!");
             }
             else return expression["expression"].get<T>();
-        } else if (IsOperation(type)) {
+        }
+
+        if (IsOperation(type)) {
             if constexpr (std::is_same_v<T, Any>) return ParseOperation<int>(expression);
             else if constexpr (std::is_arithmetic_v<T>) return ParseOperation<T>(expression);
             else throw std::invalid_argument("unconstrained typename T is not arithmetic; Can't process operation!");
-        }
+        } 
+
+        if (IsCondition(type)) {
+            if constexpr (std::is_same_v<T, Any>) return ParseCondition(expression);
+            else if constexpr (std::is_convertible_v<T, bool>) return ParseCondition(expression);
+            else throw std::invalid_argument("unconstrained typename T is not convertible to bool; Can't process condition!");
+        } else
 
         throw std::runtime_error("Expected variable or literal expression");
     }
@@ -112,6 +114,18 @@ private:
             || type == "divide"
             || type == "modulo"
             || type == "exponent";
+    }
+
+    [[nodiscard]] constexpr inline bool IsCondition(std::string_view type) const {
+        return type == "and"
+            || type == "or"
+            || type == "xor"
+            || type == "eq"
+            || type == "ne"
+            || type == "lt"
+            || type == "gt"
+            || type == "le"
+            || type == "ge";
     }
 
     void ParseDefinition(Json& definition);
