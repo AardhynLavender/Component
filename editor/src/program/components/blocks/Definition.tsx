@@ -12,7 +12,10 @@ import {
   IsOperation,
   IsLiteral,
   IsVariable,
+  IsCondition,
   IsPrimitive,
+  IsSubscript,
+  IsList,
 } from 'types/predicates';
 import Field from 'components/ui/Field';
 import Badge from 'components/ui/Badge';
@@ -40,8 +43,17 @@ export function DefinitionBlock({
     handlePrimitiveChange();
   }, [primitive, block.primitive]);
 
-  const dropPredicate = (expression: Component) =>
-    IsLiteral(expression) || IsOperation(expression) || IsVariable(expression);
+  const parent = {
+    id: block.id,
+    locale: 'expression',
+    dropPredicate: (e: Component) =>
+      IsLiteral(e) ||
+      IsOperation(e) ||
+      IsVariable(e) ||
+      IsSubscript(e) ||
+      IsCondition(e) ||
+      IsList(e),
+  };
 
   return (
     <BlockRoot
@@ -61,11 +73,7 @@ export function DefinitionBlock({
       <Equals />
       <GenericExpression
         expression={block.expression}
-        parent={{
-          id: block.id,
-          locale: 'expression',
-          dropPredicate,
-        }}
+        parent={parent}
         preview={preview}
       />
     </BlockRoot>
@@ -76,8 +84,10 @@ const Let = () => <span>{'let'}</span>;
 const Equals = () => <span>{'='}</span>;
 const Colon = () => <span>{':'}</span>;
 
+export type DefinitionPrimitive = PrimitiveType | 'list' | null;
+
 const UNKNOWN_PRIMITIVE = 'unknown';
-function PrimitiveBadge({ primitive }: { primitive: PrimitiveType | null }) {
+function PrimitiveBadge({ primitive }: { primitive: DefinitionPrimitive }) {
   return (
     <Badge color="neutral" size="small">
       {primitive ?? UNKNOWN_PRIMITIVE}
@@ -90,6 +100,8 @@ function computePrimitive(
   variables: VariableStore,
 ) {
   if (value === null) return null;
+  if (value.type === 'list') return 'list';
+  // if (value.type === 'subscript') return UNKNOWN_PRIMITIVE;
   if (IsLiteral(value)) return computeLiteralPrimitive(value);
   if (IsOperation(value)) return 'number';
   if (IsVariable(value)) return variables[value.id].primitive;
@@ -102,7 +114,7 @@ function useComputedPrimitive(
   rvalue: DefinitionRValue | null,
   enabled: boolean = true,
 ) {
-  const [primitive, setPrimitive] = useState<PrimitiveType | null>(null);
+  const [primitive, setPrimitive] = useState<DefinitionPrimitive>(null);
   const { variables } = useVariableStore();
 
   useEffect(() => {

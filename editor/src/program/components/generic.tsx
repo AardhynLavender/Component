@@ -25,6 +25,7 @@ import { WhileBlock } from './blocks/While';
 import DrawRectBlock from './blocks/DrawRect';
 import DrawPixelBlock from './blocks/DrawPixel';
 import { SubscriptExpression } from './expressions/Subscript';
+import { ListExpression } from './expressions/List';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -168,6 +169,8 @@ export function GetJsxComponent(
       return <SubscriptExpression expression={component} {...stdProps} />;
     case 'variable':
       return <VariableExpression variable={component} {...stdProps} />;
+    case 'list':
+      return <ListExpression expression={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
     case 'clear_output':

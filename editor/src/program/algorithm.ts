@@ -2,7 +2,8 @@ import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
 import { Expression } from 'program/components/types';
 import produce from 'immer';
-import { IsOperation, IsVariable } from '../types/predicates';
+import { IsOperation, IsVariable, IsSubscript } from '../types/predicates';
+import { IsList } from 'types/predicates';
 import {
   IsBlock,
   IsCondition,
@@ -111,8 +112,15 @@ export namespace algorithm {
         if (rvalue) found ??= FindExpression(id, rvalue); // optional expression rvalue
         break;
       case 'subscript':
-        found ??= FindExpression(id, state.variable); // variable
-        found ??= FindExpression(id, state.expression); // index
+        found ??= FindExpression(id, state.list);
+        found ??= FindExpression(id, state.index);
+        break;
+      case 'list':
+        for (const expression of state.expression) {
+          found ??= FindExpression(id, expression); // search expressions
+          if (found) break; // early return
+        }
+        break;
     }
     return found;
   }
@@ -217,8 +225,12 @@ export namespace algorithm {
           if (rvalue) draft.expression[1] = RemoveExpression(id, rvalue); // optional expression rvalue
           break;
         case 'subscript':
-          draft.variable = RemoveExpression(id, draft.variable); // variable
-          draft.expression = RemoveExpression(id, draft.expression); // index
+          draft.list = RemoveExpression(id, draft.list);
+          draft.index = RemoveExpression(id, draft.index);
+          break;
+        case 'list':
+          for (const [index, expression] of draft.expression.entries())
+            draft.expression[index] = RemoveExpression(id, expression); // search expressions
           break;
       }
     });
@@ -332,9 +344,16 @@ export namespace algorithm {
             draft.expression[1] = MutateExpression(id, rvalue, mutation); // optional expression rvalue
           break;
         case 'subscript':
-          draft.variable = MutateExpression(id, draft.variable, mutation); // variable
-          draft.expression = MutateExpression(id, draft.expression, mutation); // index
+          draft.list = MutateExpression(id, draft.list, mutation);
+          draft.index = MutateExpression(id, draft.index, mutation);
           break;
+        case 'list':
+          for (const [index, expression] of draft.expression.entries())
+            draft.expression[index] = MutateExpression(
+              id,
+              expression,
+              mutation,
+            ); // search expressions
       }
     });
   }
@@ -381,9 +400,12 @@ export namespace algorithm {
                 // Blocks
                 case 'definition':
                   if (
-                    (locale === 'expression' && IsOperation(component)) ||
-                    IsVariable(component) ||
-                    IsLiteral(component)
+                    locale === 'expression' &&
+                    (IsVariable(component) ||
+                      IsCondition(component) ||
+                      // IsSubscript(component) ||
+                      IsList(component) ||
+                      IsOperation(component))
                   )
                     draft.expression = component;
                   break;
@@ -394,7 +416,13 @@ export namespace algorithm {
                     draft.components = [component];
                   break;
                 case 'while':
-                  if (locale === 'condition' && IsCondition(component))
+                  if (
+                    locale === 'condition' &&
+                    (IsCondition(component) ||
+                      IsSubscript(component) ||
+                      IsVariable(component) ||
+                      IsSubscript(component))
+                  )
                     draft.condition = component;
                   if (locale === 'components' && isBlock)
                     draft.components = [component];
@@ -412,10 +440,17 @@ export namespace algorithm {
                     draft.condition = component;
                   break;
                 case 'print':
+                  if (
+                    (locale === 'expression' && IsVariable(component)) ||
+                    IsLiteral(component) ||
+                    IsSubscript(component)
+                  )
+                    draft.expression = component;
+                  break;
                 case 'increment':
                 case 'decrement':
-                  // @ts-ignore
-                  if (locale === 'expression') draft.expression = component;
+                  if (locale === 'expression' && IsVariable(component))
+                    draft.expression = component;
                   break;
                 case 'assignment':
                   if (locale === 'lvalue' && IsVariable(component))
@@ -608,16 +643,27 @@ export namespace algorithm {
           case 'divide':
           case 'modulo':
           case 'exponent':
+            // @ts-ignore
             if (locale === 'left') draft.expression[0] = component;
+            // @ts-ignore
             else if (locale === 'right') draft.expression[1] = component;
             break;
           case 'increment':
           case 'decrement':
+            // @ts-ignore
             if (locale === 'expression') draft.expression = component;
             break;
           case 'subscript':
-            if (locale === 'expression') draft.expression = component;
-            if (locale === 'variable') draft.variable = component;
+            // @ts-ignore
+            if (locale === 'list') draft.list = component;
+            // @ts-ignore
+            if (locale === 'index') draft.index = component;
+            break;
+          case 'list':
+            const index = Number.parseInt(locale);
+            if (!isNaN(index) && index >= 0 && index < draft.expression.length)
+              // @ts-ignore
+              draft.expression[index] = component;
             break;
         }
       });
@@ -655,13 +701,19 @@ export namespace algorithm {
               );
             break;
           case 'subscript':
+            if (draft.list)
+              draft.list = EmplaceExpression(emplacement, draft.list);
+            if (draft.index)
+              draft.index = EmplaceExpression(emplacement, draft.index);
+            break;
+          case 'list':
             if (draft.expression)
-              draft.expression = EmplaceExpression(
-                emplacement,
-                draft.expression,
-              );
-            if (draft.variable)
-              draft.variable = EmplaceExpression(emplacement, draft.variable);
+              for (const [index, expression] of draft.expression.entries())
+                if (expression)
+                  draft.expression[index] = EmplaceExpression(
+                    emplacement,
+                    expression,
+                  );
             break;
         }
       });

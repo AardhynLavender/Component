@@ -1,6 +1,8 @@
 #include <parser.hpp>
 #include <vec2.hpp>
 
+// Variable and Definition //
+
 void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
@@ -20,9 +22,29 @@ void Parser::ParseAssignment(Json& assignment) {
   using namespace std::string_literals;
   Log("Parsing assignment of definition id `"s + key + "`"s);
 
-  const auto rvalue = ExtractValue(right); // todo: why is the 1st arg not const?
+  const auto rvalue = ExtractValue(right); 
   store.Set(key, rvalue);
 }
+
+// Array //
+
+void Parser::ParsePush(Json& push) {
+  throw std::runtime_error("unimplemented!");
+}
+
+void Parser::ParsePop(Json& pop) {
+  throw std::runtime_error("unimplemented!");
+}
+
+void Parser::ParseInsert(Json& insert) {
+  throw std::runtime_error("unimplemented!");
+}
+
+void Parser::ParseRemove(Json& remove) {
+  throw std::runtime_error("unimplemented!");
+}
+
+// Loops //
 
 void Parser::ParseRepeat(Json& repeat) {
   Json& repetition = repeat["repetition"];
@@ -60,6 +82,10 @@ void Parser::ParseWhile(Json& loop) {
   stackMachine.PushBlock(jumpIf);
 }
 
+void Parser::ParseForeach(Json& loop) {
+  throw std::runtime_error("unimplemented!");
+}
+
 void Parser::ParseForever(Json& forever) {
   Json& components = forever["components"];
   if (!components.is_array()) throw std::invalid_argument("Forever components must be an array!");
@@ -71,6 +97,8 @@ void Parser::ParseForever(Json& forever) {
   Json jump = Block::Jump(-(instructions + EXTRA_INSTRUCTIONS)); // jump to the start of the forever loop
   stackMachine.PushBlock(jump);
 }
+
+// Low-level //
 
 void Parser::ParseJump(Json& jump) {
   using namespace std::string_literals;
@@ -91,6 +119,8 @@ void Parser::ParseConditionJump(Json& jump) {
   bool result = ParseCondition(condition);
   if (result) ParseJump(jump);
 }
+
+// Rendering //
 
 void Parser::ParseDrawLine(Json& draw) {
   const double x1 = ExtractValue<int>(draw["x1"]);
@@ -127,6 +157,7 @@ void Parser::ParseDrawPixel(Json& draw) {
   renderer.Present();
 }
 
+// Conditions //
 
 [[nodiscard]] bool Parser::ParseCondition(Json& condition) {
   const std::string type = condition["type"];
@@ -161,31 +192,49 @@ void Parser::ParseDrawPixel(Json& draw) {
   throw std::invalid_argument("'" + type + "' is not a valid TYPE for a UNARY conditional expression");
 }
 
-void Parser::ParsePrint(Json& print) {
-  const std::string type = print["type"];
-  if (type == "literal") {
-    const Json& value = print["expression"];
-    if (value.is_string()) ClientPrint(value.get<std::string>());
-    else if (value.is_number()) ClientPrint(value.get<double>());
-    else if (value.is_boolean()) ClientPrint(value.get<bool>());
-  } else if (type == "variable") {
-    const auto& variable = ParseVariable(print);
-    const auto primitive = variable.GetPrimitive();
+void Parser::ParseBranch(Json& branch) {
+  Json& branches = branch["branches"];
+  if (!branches.is_array()) throw std::invalid_argument("Branches must be an array!");
+  if (branches.size() > MAX_BRANCHES) throw std::invalid_argument("Branches must be an array of size 2 or less!");
 
-    if (primitive == "string") ClientPrint(variable.Get<std::string>());
-    else if (primitive == "number") ClientPrint(variable.Get<int>());
-    else if (primitive == "boolean") ClientPrint(variable.Get<bool>() ? "true" : "false");
-    else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
-  } else if (IsOperation(type)) {
-    const int result = ParseOperation(print);
-    ClientPrint(std::to_string(result));        
-  } else if (IsCondition(type)) {
-    const bool result = ParseCondition(print);
-    ClientPrint(result ? "true" : "false"); 
+  Json& condition = branch["condition"];
+  const bool evaluation = ExtractValue<bool>(condition);
+
+  const bool hasElse = branches.size() == MAX_BRANCHES;
+  if (evaluation) stackMachine.Push(branches.at(LVALUE));
+  else if (hasElse) stackMachine.Push(branches.at(RVALUE));
+}
+
+// Output //
+
+void Parser::ParsePrint(Json& print) {
+  PrintExpression(print["expression"]);
+}
+void Parser::PrintExpression(Json& expression) {
+  using namespace std::string_literals;
+  const auto& value = ExtractValue(expression);
+
+  if (std::holds_alternative<std::string>(value))
+    ClientPrint(std::get<std::string>(value));
+
+  else if (std::holds_alternative<int>(value))
+    ClientPrint(std::get<int>(value));
+
+  else if (std::holds_alternative<bool>(value))
+    ClientPrint(std::get<bool>(value) ? "true" : "false");
+
+  else if (std::holds_alternative<Json>(value)) {
+    const auto& expression = std::get<Json>(value);
+    const std::string type = expression["type"];
+    if (type == "list")
+      // recursively print each item in the list
+      for (auto item : expression["expression"])
+        PrintExpression(item);
+    else
+      throw std::invalid_argument("Invalid TYPE for PRINT expression: `"s + type + "`"s);
   } else
     throw std::invalid_argument("Invalid TYPE for PRINT expression");
 }
-
 
 void Parser::ParseClearOutput() {
 #ifdef __EMSCRIPTEN__
@@ -200,18 +249,7 @@ void Parser::ParseClearScreen() {
   renderer.Present();
 }
 
-void Parser::ParseBranch(Json& branch) {
-  Json& branches = branch["branches"];
-  if (!branches.is_array()) throw std::invalid_argument("Branches must be an array!");
-  if (branches.size() > MAX_BRANCHES) throw std::invalid_argument("Branches must be an array of size 2 or less!");
-
-  Json& condition = branch["condition"];
-  const bool evaluation = ExtractValue<bool>(condition);
-
-  const bool hasElse = branches.size() == MAX_BRANCHES;
-  if (evaluation) stackMachine.Push(branches.at(LVALUE));
-  else if (hasElse) stackMachine.Push(branches.at(RVALUE));
-}
+// Generic //
 
 void Parser::ParseComponent(Json& component) {
   const std::string type = component["type"];
@@ -222,20 +260,33 @@ void Parser::ParseComponent(Json& component) {
   
   if (type == "definition")             ParseDefinition(component);
   else if (type == "assignment")        ParseAssignment(component);
+
   else if (type == "branch")            ParseBranch(component);
-  else if (type == "print")             ParsePrint(component["expression"]);
+
+  else if (type == "print")             ParsePrint(component);
   else if (type == "clear_output")      ParseClearOutput();
   else if (type == "clear_screen")      ParseClearScreen();
+
   else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
   else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
+
   else if (type == "repeat")            ParseRepeat(component);
   else if (type == "while")             ParseWhile(component);
+  else if (type == "foreach")           ParseForeach(component);
   else if (type == "forever")           ParseForever(component);
+
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
+
+  else if (type == "push")              ParsePush(component);
+  else if (type == "pop")               ParsePop(component);
+  else if (type == "insert")            ParseInsert(component);
+  else if (type == "remove")            ParseRemove(component);
+
   else if (type == "draw_line")         ParseDrawLine(component);
   else if (type == "draw_rect")         ParseDrawRect(component);
   else if (type == "draw_pixel")        ParseDrawPixel(component);
+
   else                                  throw std::invalid_argument("Invalid TYPE provided for component: `"s + type + "`"s);
 }
 

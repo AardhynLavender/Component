@@ -4,8 +4,9 @@ import {
   CSSProperties,
   ReactNode,
   useMemo,
+  useCallback,
 } from 'react';
-import { useDrag, useDragLayer, useDrop } from 'react-dnd';
+import { DropTargetMonitor, useDrag, useDragLayer, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { Component } from 'types';
 import { CSS, keyframes, s, styled } from 'theme/stitches.config';
@@ -86,13 +87,13 @@ export namespace Drag {
     destinationId: string | null | undefined,
     locale?: string,
     dropPredicate?: (draggingComponent: Component) => boolean,
+    onDrop?: () => void,
   ) {
     const moveBlock = useMoveComponent();
     const addBlock = useAddComponent();
 
-    const [{ isOverShallow, isOver }, drop] = useDrop({
-      accept: 'component',
-      drop: (item: DragItem, monitor) => {
+    const handleDrop = useCallback(
+      (item: DragItem, monitor: DropTargetMonitor<DragItem>) => {
         const { component, action } = item;
 
         if (destinationId === undefined) return;
@@ -102,7 +103,15 @@ export namespace Drag {
         if (action === 'move')
           moveBlock(component.id, destinationId, emplacement, locale);
         else addBlock(component, destinationId, emplacement, locale);
+
+        onDrop?.();
       },
+      [dropPredicate, onDrop],
+    );
+
+    const [{ isOverShallow, isOver }, drop] = useDrop({
+      accept: 'component',
+      drop: handleDrop,
       collect: (monitor) => ({
         isOverShallow: monitor.isOver({ shallow: true }), // hovered by the cursor and *not* behind a child dropzone
         isOver: monitor.isOver(), // hovered by the cursor regardless of child dropzones
@@ -111,13 +120,7 @@ export namespace Drag {
 
     const Dropzone = useMemo(
       () =>
-        ({
-          children,
-          css,
-        }: {
-          children?: ReactElement | (ReactElement | null)[] | null;
-          css?: CSS;
-        }) =>
+        ({ children, css }: { children?: ReactNode; css?: CSS }) =>
           (
             <DropzoneRoot ref={drop} css={css}>
               {children}

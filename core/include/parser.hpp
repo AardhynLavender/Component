@@ -70,8 +70,28 @@ private:
     }
 
     template<typename T = Any>
+    [[nodiscard]] T ParseSubscript(Json& subscript) {
+        Log("Parsing `subscript` component");
+
+        const auto list = ExtractValue<Json>(subscript["list"]);
+        const auto& elements = list["expression"];
+        if (!elements.is_array()) throw std::runtime_error("value subscription must be LIST `list`!");
+
+        const int size = elements.size();
+        const int index = ExtractValue<int>(subscript["index"]); 
+        if (std::abs(index) >= size) throw std::out_of_range("Subscript INDEX is out of range!");
+
+        auto element = index >= 0 ? elements[index] : elements[size + index];
+        Log(element);
+        return ExtractValue<T>(element);
+    }
+
+    template<typename T = Any>
     [[nodiscard]] T ExtractValue(Json& expression) {
         const std::string type = expression["type"];
+
+        using namespace std::string_literals;
+        Log("extracting value from type: `"s + type + "`"s);
         
         if (type == "variable") {
             const auto& variable = ParseVariable(expression);
@@ -93,15 +113,27 @@ private:
         }
 
         if (IsOperation(type)) {
-            if constexpr (std::is_same_v<T, Any>) return ParseOperation<int>(expression);
-            else if constexpr (std::is_arithmetic_v<T>) return ParseOperation<T>(expression);
+            if constexpr (std::is_same_v<T, Any> || std::is_arithmetic_v<T>)
+                return ParseOperation<int>(expression);
             else throw std::invalid_argument("unconstrained typename T is not arithmetic; Can't process operation!");
         } 
 
         if (IsCondition(type)) {
-            if constexpr (std::is_same_v<T, Any>) return ParseCondition(expression);
-            else if constexpr (std::is_convertible_v<T, bool>) return ParseCondition(expression);
+            if constexpr (std::is_same_v<T, Any> || std::is_convertible_v<T, bool>)
+                return ParseCondition(expression);
             else throw std::invalid_argument("unconstrained typename T is not convertible to bool; Can't process condition!");
+        }
+
+        if (type == "list") {
+            if constexpr (std::is_same_v<T, Json> || std::is_same_v<T, Any>)
+                return expression;
+            else throw std::invalid_argument("unconstrained typename T is not convertible to Json; Can't process list!");
+        }
+
+        if (type == "subscript") {
+            if constexpr (std::is_same_v<T, Json> || std::is_same_v<T, Any>)
+                return ParseSubscript<T>(expression);
+            else throw std::invalid_argument("unconstrained typename T is not convertible to Json; Can't process subscript!");
         }
 
         using namespace std::string_literals;
@@ -133,9 +165,15 @@ private:
     void ParseDefinition(Json& definition);
     void ParseAssignment(Json& assignment);
 
+    void ParsePush(Json& push);
+    void ParsePop(Json& pop);
+    void ParseInsert(Json& insert);
+    void ParseRemove(Json& remove);
+
     void ParseRepeat(Json& repeat);
     void ParseForever(Json& forever);
     void ParseWhile(Json& loop);
+    void ParseForeach(Json& foreach);
 
     void ParseJump(Json& jump);
     void ParseConditionJump(Json& condition);
@@ -145,13 +183,14 @@ private:
     void ParseDrawPixel(Json& draw);
 
     void ParsePrint(Json& print);
+    void PrintExpression(Json& expression);
     void ParseClearOutput();
     void ParseClearScreen();
 
-    void ParseBranch(Json& branch) ;
+    void ParseBranch(Json& branch);
     [[nodiscard]] bool ParseCondition(Json& conditional);
 public:
-    Parser(Renderer& renderer);
+    explicit Parser(Renderer& renderer);
 
     void ParseComponent(Json& component);
     void LoadProgram(const std::string components);

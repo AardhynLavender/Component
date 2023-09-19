@@ -1,19 +1,15 @@
 import { ReactElement } from 'react';
 import { Drag } from 'util/Drag';
-import { UnaryOperation, IsLiteral } from 'types';
+import { IsLiteral } from 'types';
 import { ExpressionParent } from './types';
-import { VariableExpression } from './Variable';
+import { Component, Subscript } from '../types';
 import {
-  BinaryOperation,
-  Component,
-  Literal,
-  Subscript,
-  Variable,
-} from '../types';
-import { IsNumericVariable, IsVariable } from 'types/predicates';
+  IsList,
+  IsNumericVariable,
+  IsSubscript,
+  IsVariable,
+} from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
-import { LiteralExpression } from './Literal';
-import { BinaryExpression } from './Operation';
 import { GenericExpression } from './Expression';
 
 export function SubscriptExpression({
@@ -27,9 +23,10 @@ export function SubscriptExpression({
 }): ReactElement | null {
   const { DragHandle } = Drag.useComponentDragHandle(expression, preview);
 
-  const variablePredicate = (c: Component) => IsVariable(c);
-  const subscriptPredicate = (c: Component) =>
-    IsNumericVariable(c) || IsLiteral<number>(c);
+  const listPredicate = (c: Component) =>
+    IsVariable(c) || IsList(c) || IsSubscript(c);
+  const indexPredicate = (c: Component) =>
+    IsNumericVariable(c) || IsLiteral<number>(c) || IsSubscript(c);
 
   return (
     <ExpressionDropzone
@@ -42,19 +39,19 @@ export function SubscriptExpression({
         <GenericExpression
           parent={{
             id: expression.id,
-            dropPredicate: variablePredicate,
-            locale: 'variable',
+            dropPredicate: listPredicate,
+            locale: 'list',
           }}
-          expression={expression.variable}
+          expression={expression.list}
           preview={preview}
         />
         <span>at</span>
         <GenericExpression
-          expression={expression.expression}
+          expression={expression.index}
           parent={{
             id: expression.id,
-            locale: 'expression',
-            dropPredicate: subscriptPredicate,
+            locale: 'index',
+            dropPredicate: indexPredicate,
           }}
           options={{ literals: ['number'] }}
         />

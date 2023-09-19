@@ -28,7 +28,7 @@ const ComponentCategories = {
   rendering: renderers,
   operators,
   conditions: ['branch', ...conditions],
-  declarations: variables,
+  declarations: [...variables, 'list'],
   variables: [], // loops variable store instead
 } as const;
 type ComponentCategory = keyof typeof ComponentCategories;

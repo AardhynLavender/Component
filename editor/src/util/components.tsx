@@ -41,6 +41,28 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       component = { ...base(type), expression: '' };
       break;
 
+    // List //
+
+    case 'subscript':
+      component = {
+        ...base(type),
+        list: null,
+        index: { ...base('literal'), expression: null },
+      };
+      break;
+
+    case 'list':
+      component = {
+        ...base(type),
+        expression: [
+          {
+            ...base('literal'),
+            expression: null,
+          },
+        ],
+      };
+      break;
+
     // Blocks //
 
     case 'definition':
@@ -56,14 +78,6 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         ...base(type),
         lvalue: null,
         rvalue: { ...base('literal'), expression: '' },
-      };
-      break;
-
-    case 'subscript':
-      component = {
-        ...base(type),
-        variable: null,
-        expression: { ...base('literal'), expression: null },
       };
       break;
 

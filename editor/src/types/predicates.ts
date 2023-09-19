@@ -1,4 +1,4 @@
-import { RenderType } from 'program/components/types';
+import { List, RenderType } from 'program/components/types';
 import { Subscript } from '../program/components/types';
 import {
   Loop,
@@ -76,6 +76,10 @@ export function IsBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
 }
 
+export function IsList(component: Component): component is List {
+  return component.type === 'list';
+}
+
 // Variables //
 
 export function IsVariable(component: Component): component is Variable {
@@ -98,6 +102,8 @@ export function IsExpression(component: Component): component is Expression {
     IsCondition(component) ||
     IsOperation(component) ||
     IsLiteral(component) ||
+    IsList(component) ||
+    IsSubscript(component) ||
     IsVariable(component)
   );
 }

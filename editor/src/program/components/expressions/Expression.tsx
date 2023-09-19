@@ -8,12 +8,14 @@ import { LiteralExpression } from './Literal';
 import { ReactElement, ReactNode } from 'react';
 import { conditions } from '../types';
 import { ConditionExpression } from './Condition';
+import { ListExpression } from './List';
 
 export type GenericExpressionOptions = {
   variable: boolean;
   operation: boolean;
   conditions: boolean;
   subscript: boolean;
+  list: boolean;
   literals: PrimitiveType[] | false;
 };
 
@@ -22,21 +24,24 @@ const DEFAULT_OPTIONS: GenericExpressionOptions = {
   operation: true,
   conditions: true,
   subscript: true,
+  list: true,
   literals: ['string', 'number', 'boolean'],
 };
 
 export function GenericExpression({
   parent,
   expression,
+  placeholder,
   options,
   preview = false,
 }: {
   parent: ExpressionParent;
   expression: Expression | null;
+  placeholder?: string;
   options?: Partial<GenericExpressionOptions>;
   preview?: boolean;
 }): ReactElement | null {
-  const { variable, operation, subscript, literals } = {
+  const { variable, operation, subscript, list, literals } = {
     ...DEFAULT_OPTIONS,
     ...options,
   };
@@ -55,6 +60,15 @@ export function GenericExpression({
       <VariableExpression
         parent={parent}
         variable={expression}
+        preview={preview}
+      />
+    );
+
+  if (expression.type === 'list' && list)
+    return (
+      <ListExpression
+        parent={parent}
+        expression={expression}
         preview={preview}
       />
     );
@@ -86,6 +100,7 @@ export function GenericExpression({
     return (
       <LiteralExpression
         parent={parent}
+        placeholder={placeholder}
         expression={expression}
         types={literals}
         preview={preview}

@@ -40,7 +40,12 @@ export type RenderType = (typeof renderers)[number];
 export const variables = ['definition', 'assignment', 'subscript'] as const;
 export type VariableType = (typeof variables)[number];
 
-export const miscExpressions = ['variable', 'literal', 'comment'] as const;
+export const miscExpressions = [
+  'variable',
+  'literal',
+  'list',
+  'comment',
+] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
 
 export const blockTypes = [
@@ -68,30 +73,46 @@ export type ComponentPrimitive<T extends ComponentType, E = {}> = {
 } & E &
   object;
 
-// Literals
+// Comments //
+
+export type Comment = ComponentPrimitive<'comment', { expression: string }>;
+
+// Literals //
 
 export type Literal<T extends Primitive = Primitive> = ComponentPrimitive<
   'literal',
   { expression: T | null }
 >;
 
-// Comments
+export type ListItem =
+  | Literal
+  | Variable
+  | BinaryOperation
+  | UnaryOperation
+  | null;
 
-export type Comment = ComponentPrimitive<'comment', { expression: string }>;
+export type List = ComponentPrimitive<'list', { expression: ListItem[] }>;
 
-// Declarations and Variables
+// Variables //
 
 export const Primitives = ['string', 'number', 'boolean'] as const;
 export type PrimitiveType = (typeof Primitives)[number];
-export type Primitive = string | number | boolean | Primitive[];
-export type DefinitionRValue = Literal | Variable | BinaryOperation | Condition;
+export type Primitive = string | number | boolean;
+export type DefinitionRValue =
+  | BinaryOperation
+  | Condition
+  | Literal
+  | List
+  | Variable
+  // | Subscript
+  | null;
 
 export type Definition = ComponentPrimitive<
   'definition',
   {
     name: string;
     primitive: PrimitiveType;
-    expression: DefinitionRValue | null;
+    expression: DefinitionRValue;
   }
 >;
 
@@ -99,18 +120,21 @@ export type Assignment = ComponentPrimitive<
   'assignment',
   {
     lvalue: Variable | null;
-    rvalue: Literal | Variable | BinaryOperation | UnaryOperation | null;
+    rvalue: DefinitionRValue;
   }
 >;
 
 export type Subscript = ComponentPrimitive<
   'subscript',
-  { variable: Variable | null; expression: Literal<number> | Variable | null }
+  {
+    list: Variable | Subscript | List | null;
+    index: Literal<number> | Variable | Subscript | null;
+  }
 >;
 
 export type Variable = ComponentPrimitive<'variable', { definitionId: string }>;
 
-// Control Flow
+// Control Flow //
 
 export type UnaryBranch = [Block[] | null];
 export type BinaryBranch = [Block[] | null, Block[] | null];
@@ -193,7 +217,7 @@ export type Condition =
   | GreaterOrEqual
   | LessOrEqual;
 
-// Unary operation Math
+// Unary Operations //
 
 export type Increment = ComponentPrimitive<
   'increment',
@@ -205,7 +229,7 @@ export type Decrement = ComponentPrimitive<
 >;
 export type UnaryOperation = Increment | Decrement;
 
-// Binary operation Math
+// Binary Operations //
 
 export type Add = ComponentPrimitive<'add', { expression: NumericComparison }>;
 export type Subtract = ComponentPrimitive<
@@ -236,16 +260,16 @@ export type BinaryOperation =
   | Modulo
   | Exponent;
 
-// Output
+// Output //
 
 export type Print = ComponentPrimitive<
   'print',
-  { expression: Literal | Variable | null }
+  { expression: Literal | Variable | List | Subscript | null }
 >;
 export type ClearOutput = ComponentPrimitive<'clear_output'>;
 export type Output = Print | ClearOutput;
 
-// Renderers
+// Renderers //
 
 export type DrawLine = ComponentPrimitive<
   'draw_line',
@@ -279,7 +303,7 @@ export type ClearScreen = ComponentPrimitive<'clear_screen'>;
 
 export type Renderer = DrawLine | DrawRect | DrawPixel | ClearScreen;
 
-// Loops
+// Loops //
 
 export type Repeat = ComponentPrimitive<
   'repeat',
@@ -289,7 +313,7 @@ export type Repeat = ComponentPrimitive<
 export type While = ComponentPrimitive<
   'while',
   {
-    condition: Condition | Literal<number> | Variable | null;
+    condition: Condition | Literal<number> | Subscript | Variable | null;
     components: Block[] | null;
   }
 >;
@@ -301,25 +325,25 @@ export type Forever = ComponentPrimitive<
 
 export type Loop = Repeat | Forever | While;
 
-// General
+// Amalgamation //
 
 export type Block =
-  | Comment
-  | Output
-  | Loop
-  | Definition
   | Assignment
-  | Renderer
   | Branch
-  | ClearOutput
+  | Comment
+  | Definition
+  | Loop
+  | Output
+  | Renderer
   | UnaryOperation;
 
 export type Expression =
-  | Literal<Primitive>
+  | BinaryOperation
+  | Condition
+  | Literal
+  | List
   | Subscript
   | Variable
-  | BinaryOperation
-  | UnaryOperation
-  | Condition;
+  | UnaryOperation;
 
 export type Component = Block | Expression;
