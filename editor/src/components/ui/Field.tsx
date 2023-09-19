@@ -41,7 +41,9 @@ export default function Field({
   return (
     <FieldRoot
       css={{
-        w: dynamicSize ? `${value?.length}ch` : undefined,
+        w: dynamicSize
+          ? `${(value?.length || placeholder.length) + 1}ch`
+          : undefined,
         ...hideNumberArrows,
         ...css,
       }}

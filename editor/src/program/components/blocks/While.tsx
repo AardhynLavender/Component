@@ -5,6 +5,7 @@ import {
   IsCondition,
   IsLiteral,
   IsNumericVariable,
+  IsSubscript,
 } from 'types';
 import GenericBlockSet from './BlockSet';
 import { BlockRoot } from '../generic';
@@ -21,7 +22,7 @@ export function WhileBlock({
   preview?: boolean;
 }) {
   const dropPredicate = (c: Component) =>
-    IsCondition(c) || IsCondition(c) || IsLiteral(c);
+    IsCondition(c) || IsCondition(c) || IsLiteral(c) || IsSubscript(c);
 
   const parent = {
     id: block.id,
@@ -35,6 +36,7 @@ export function WhileBlock({
         <While />
         <GenericExpression
           parent={parent}
+          placeholder="condition"
           expression={block.condition}
           preview={preview}
           options={{ literals: ['boolean'] }}

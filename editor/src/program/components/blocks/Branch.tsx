@@ -28,6 +28,7 @@ export function BranchBlock({
         <GenericExpression
           parent={parent}
           expression={block.condition}
+          placeholder="condition"
           preview={preview}
           options={{
             literals: ['boolean'],

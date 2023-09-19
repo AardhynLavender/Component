@@ -1,7 +1,7 @@
 import { CoreApi } from 'types/api';
 import useComponentStore from 'program/store';
 import { CSS, styled } from 'theme/stitches.config';
-import Button from 'components/ui/Button';
+import { Button } from 'components/ui/Button';
 import useCoreModule from '../../hooks/useCoreModule';
 import {
   DEFAULT_CANVAS_RESOLUTION,

@@ -14,11 +14,13 @@ export function LiteralExpression({
   expression,
   parent,
   preview = false,
+  placeholder,
   types = ['number', 'string', 'boolean'],
 }: {
   expression: Literal;
   parent: ExpressionParent;
   preview?: boolean;
+  placeholder?: string;
   types?: PrimitiveType[];
 }): ReactElement | null {
   const [error, setError] = useState(false);
@@ -44,6 +46,7 @@ export function LiteralExpression({
     >
       <PrimitiveInput
         error={error}
+        placeholder={placeholder}
         setError={setError}
         primitives={types}
         value={value}
@@ -66,7 +69,7 @@ function formatNumberPrimitive(value: string) {
 }
 
 function reinterpretPrimitive(value: string): [PrimitiveType, Primitive] {
-  if (value === '') return ['string', ''];
+  if (value.trim() === '') return ['string', value]; // empty string is a string
   const number = Number(value);
   if (!isNaN(number)) return ['number', number];
   const bool = GetBoolFromString(value, { noExcept: true });
@@ -77,6 +80,7 @@ function reinterpretPrimitive(value: string): [PrimitiveType, Primitive] {
 export function PrimitiveInput({
   value,
   onChange,
+  placeholder,
   onPrimitiveChange,
   onBlur,
   error,
@@ -86,6 +90,7 @@ export function PrimitiveInput({
 }: {
   value: Primitive | null;
   onChange: (value: Primitive) => void;
+  placeholder?: string;
   onBlur: () => void;
   onPrimitiveChange?: (type: PrimitiveType) => void;
   error?: boolean;
@@ -110,13 +115,12 @@ export function PrimitiveInput({
     <Field
       value={typeof value === 'string' ? value : value?.toString() ?? ''}
       disabled={disabled}
+      placeholder={placeholder}
       onValueChange={(value) => {
         const [primitive, typedValue] = reinterpretPrimitive(value);
         setPrimitive(primitive);
         onPrimitiveChange?.(primitive);
         onChange(typedValue);
-
-        console.log(typedValue);
 
         if (!primitives.includes(primitive)) setError?.(true);
         else setError?.(false);

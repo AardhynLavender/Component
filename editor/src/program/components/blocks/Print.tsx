@@ -25,7 +25,11 @@ export function PrintBlock({
       css={{ items: 'center', direction: 'row', gap: 16 }}
     >
       <Print />
-      <GenericExpression parent={parent} expression={block.expression} />
+      <GenericExpression
+        parent={parent}
+        placeholder="message"
+        expression={block.expression}
+      />
     </BlockRoot>
   );
 }

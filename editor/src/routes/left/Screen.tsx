@@ -1,5 +1,5 @@
 import { s, styled } from 'theme/stitches.config';
-import Button from 'components/ui/Button';
+import { Button } from 'components/ui/Button';
 import Field from '../../components/ui/Field';
 import { SyntheticEvent, useState, useEffect, CSSProperties } from 'react';
 import { useScreen } from 'program';

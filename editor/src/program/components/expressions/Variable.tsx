@@ -3,7 +3,6 @@ import { ReactElement } from 'react';
 import { Variable } from 'types';
 import { ExpressionParent } from './types';
 import { useVariableDefinition } from 'program/store';
-import { styled, s } from 'theme/stitches.config';
 import Badge from 'components/ui/Badge';
 import { ExpressionDropzone } from 'program/components/dropzone';
 

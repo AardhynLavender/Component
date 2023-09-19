@@ -31,12 +31,14 @@ export default function DrawRectBlock({
       <GenericExpression
         parent={{ ...parent, locale: 'x' }}
         expression={block.x}
+        placeholder="x"
         preview={preview}
         options={{ literals: ['number'] }}
       />
       <GenericExpression
         parent={{ ...parent, locale: 'y' }}
         expression={block.y}
+        placeholder="y"
         preview={preview}
         options={{ literals: ['number'] }}
       />
@@ -44,12 +46,14 @@ export default function DrawRectBlock({
       <GenericExpression
         parent={{ ...parent, locale: 'w' }}
         expression={block.w}
+        placeholder="width"
         preview={preview}
         options={{ literals: ['number'] }}
       />
       <GenericExpression
         parent={{ ...parent, locale: 'h' }}
         expression={block.h}
+        placeholder="hight"
         preview={preview}
         options={{ literals: ['number'] }}
       />

@@ -35,11 +35,13 @@ export default function DrawLineBlock({
         parent={{ ...parent, locale: 'x1' }}
         expression={block.x1}
         preview={preview}
+        placeholder="x"
         options={{ literals: ['number'] }}
       />
       <GenericExpression
         parent={{ ...parent, locale: 'y1' }}
         expression={block.y1}
+        placeholder="y"
         preview={preview}
         options={{ literals: ['number'] }}
       />
@@ -47,12 +49,14 @@ export default function DrawLineBlock({
       <GenericExpression
         parent={{ ...parent, locale: 'x2' }}
         expression={block.x2}
+        placeholder="x"
         preview={preview}
         options={{ literals: ['number'] }}
       />
       <GenericExpression
         parent={{ ...parent, locale: 'y2' }}
         expression={block.y2}
+        placeholder="y"
         preview={preview}
         options={{ literals: ['number'] }}
       />

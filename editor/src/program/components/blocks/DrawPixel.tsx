@@ -39,11 +39,13 @@ export default function DrawPixelBlock({
         parent={{ ...parent, locale: 'x' }}
         expression={block.x}
         preview={preview}
+        placeholder="x"
         options={{ literals: ['number'] }}
       />
       <GenericExpression
         parent={{ ...parent, locale: 'y' }}
         expression={block.y}
+        placeholder="y"
         preview={preview}
         options={{ literals: ['number'] }}
       />

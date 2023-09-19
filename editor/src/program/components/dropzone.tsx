@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { EmplacementAction } from 'program';
 import { s, CSS } from 'theme/stitches.config';
 import { Drag } from 'util/Drag';
@@ -80,6 +80,7 @@ export function ExpressionDropzone({
   parentId,
   locale,
   dropPredicate = (_) => true, // allow everything by default
+  onDrop,
   children,
   error = false,
   enabled = true,
@@ -88,8 +89,9 @@ export function ExpressionDropzone({
   parentId: string | undefined;
   locale: string | undefined;
   dropPredicate?: (component: Component) => boolean;
+  onDrop?: () => void;
   error?: boolean;
-  children?: ReactElement | (ReactElement | null)[] | null;
+  children?: ReactNode;
   enabled?: boolean;
   css?: CSS;
 }) {
@@ -105,6 +107,7 @@ export function ExpressionDropzone({
     parentId,
     locale,
     dropPredicate,
+    onDrop,
   );
 
   return (
