@@ -1,22 +1,55 @@
+import { VariantProps } from '@stitches/react';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { styled } from 'theme/stitches.config';
+import { s, styled, CSS } from 'theme/stitches.config';
+import { variables } from '../../program/components/types';
 
-export default function Button({
-  color = 'primary',
-  size = 'medium',
+export function Button({
   children,
+  css,
   ...buttonProps
 }: {
-  color?: 'primary' | 'transparent' | 'neutral';
-  size?: 'small' | 'medium' | 'large' | 'expand';
+  css?: CSS;
   children: ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement>) {
+} & ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof ButtonRoot>) {
   return (
-    <ButtonRoot {...buttonProps} size={size} color={color}>
-      <span>{children}</span>
+    <ButtonRoot {...buttonProps}>
+      <s.span css={{ d: 'inline-flex', items: 'center' }}>{children}</s.span>
     </ButtonRoot>
   );
 }
+
+export function IconButton({
+  children,
+  css,
+  ...buttonProps
+}: {
+  css?: CSS;
+  children: ReactNode;
+} & ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof IconButtonRoot>) {
+  return <IconButtonRoot {...buttonProps}>{children}</IconButtonRoot>;
+}
+
+const colorVariants = {
+  color: {
+    primary: {
+      bg: '$primary',
+      c: '$onPrimary',
+      '&:hover': { background: '$primary2' },
+    },
+    transparent: {
+      bg: 'transparent',
+      c: '$primary',
+      '&:hover': { background: '$primary2' },
+    },
+    neutral: {
+      bg: '$background3',
+      c: '$text',
+      '&:hover': { background: '$background4' },
+    },
+  },
+};
 
 const ButtonRoot = styled('button', {
   all: 'unset',
@@ -29,32 +62,50 @@ const ButtonRoot = styled('button', {
   cursor: 'pointer',
   userSelect: 'none',
   r: 8,
+
+  '&:disabled': { opacity: 0.5 },
+  '&:readonly': { opacity: 0.5 },
+
   variants: {
-    color: {
-      primary: {
-        bg: '$primary',
-        c: '$onPrimary',
-        '&:hover': { background: '$primary2' },
-      },
-      transparent: {
-        bg: 'transparent',
-        c: '$primary',
-        '&:hover': { background: '$primary2' },
-      },
-      neutral: {
-        bg: '$background3',
-        c: '$text',
-        '&:hover': { background: '$background4' },
-      },
-    },
     size: {
       small: { p: '2px 8px', fontSize: 12 },
       medium: { p: '4px 16px', fontSize: 14 },
       large: { p: '8px 32px', fontSize: 24 },
       expand: { flex: 1 },
     },
+    ...colorVariants,
   },
   defaultVariants: {
     color: 'primary',
+    size: 'medium',
+  },
+});
+
+const IconButtonRoot = styled(s.button, {
+  all: 'unset',
+  d: 'inline-flex',
+  items: 'center',
+  justify: 'center',
+  h: 24,
+  w: 24,
+  r: 8,
+
+  '&:hover': { background: '$background4' },
+  '&:disabled': { opacity: 0.5 },
+  '&:readonly': { opacity: 0.5 },
+
+  aspectRatio: 1,
+
+  variants: {
+    size: {
+      small: { h: 24 },
+      medium: { h: 32 },
+      expand: { flex: 1, aspectRatio: 'unset' },
+    },
+    ...colorVariants,
+  },
+
+  defaultVariants: {
+    size: 'small',
   },
 });
