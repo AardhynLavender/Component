@@ -33,11 +33,7 @@ void Runtime::Cycle() {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
     while (!Timing::Elapsed(start, CLOCK_SPEED)) {
       if (parser.Next()) continue; // next instruction
-
-      using namespace std::string_literals;
-      ClientPrint("Program terminated"); 
       ClientPrint("<br/>"); 
-
       Terminate();
       break;
     }
