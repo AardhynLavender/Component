@@ -28,8 +28,8 @@ const ComponentCategories = {
   rendering: renderers,
   operators,
   conditions: ['branch', ...conditions],
-  declarations: [...variables, 'list'],
-  variables: [], // loops variable store instead
+  lists: ['list', 'subscript', 'append', 'size'],
+  variables,
 } as const;
 type ComponentCategory = keyof typeof ComponentCategories;
 
@@ -71,17 +71,18 @@ function ComponentListCategory({
   return (
     <CategoryRoot>
       <CategoryName>{Capitalize(category)}</CategoryName>
-      {category === 'variables' ? (
-        <VariableStoreList />
-      ) : (
-        <ComponentListRoot>
-          {components.map((type) => {
-            const component = CreateComponent(type);
-            const parent = undefined;
-            const preview = true;
-            return GetJsxComponent(component, parent, preview);
-          })}
-        </ComponentListRoot>
+      <ComponentListRoot>
+        {components.map((type) => {
+          const component = CreateComponent(type);
+          const parent = undefined;
+          const preview = true;
+          return GetJsxComponent(component, parent, preview);
+        })}
+      </ComponentListRoot>
+      {category === 'variables' && (
+        <>
+          <VariableStoreList />
+        </>
       )}
     </CategoryRoot>
   );

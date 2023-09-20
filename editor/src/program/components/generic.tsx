@@ -26,6 +26,8 @@ import DrawRectBlock from './blocks/DrawRect';
 import DrawPixelBlock from './blocks/DrawPixel';
 import { SubscriptExpression } from './expressions/Subscript';
 import { ListExpression } from './expressions/List';
+import { SizeExpression } from './expressions/Size';
+import { AppendBlock } from './expressions/Append';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -117,7 +119,7 @@ export function BlockRoot({
         fontSize: '$1',
 
         r: 4,
-        p: '4px 8px',
+        p: 6,
 
         bg: error ? '$error' : '$background',
         b: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -171,6 +173,10 @@ export function GetJsxComponent(
       return <VariableExpression variable={component} {...stdProps} />;
     case 'list':
       return <ListExpression expression={component} {...stdProps} />;
+    case 'size':
+      return <SizeExpression expression={component} {...stdProps} />;
+    case 'append':
+      return <AppendBlock block={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
     case 'clear_output':

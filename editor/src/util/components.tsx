@@ -63,6 +63,21 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       };
       break;
 
+    case 'append':
+      component = {
+        ...base(type),
+        list: null,
+        item: { ...base('literal'), expression: null },
+      };
+      break;
+
+    case 'size':
+      component = {
+        ...base(type),
+        list: null,
+      };
+      break;
+
     // Blocks //
 
     case 'definition':

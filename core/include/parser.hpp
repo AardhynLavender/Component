@@ -165,9 +165,8 @@ private:
     void ParseDefinition(Json& definition);
     void ParseAssignment(Json& assignment);
 
-    void ParsePush(Json& push);
-    void ParsePop(Json& pop);
-    void ParseInsert(Json& insert);
+    void ParseAppend(Json& push);
+    void ParseSize(Json& size);
     void ParseRemove(Json& remove);
 
     void ParseRepeat(Json& repeat);

@@ -1,3 +1,4 @@
+import { ListExpression } from './expressions/List';
 export const conditions = [
   'and',
   'or',
@@ -37,15 +38,16 @@ export const renderers = [
 ] as const;
 export type RenderType = (typeof renderers)[number];
 
-export const variables = ['definition', 'assignment', 'subscript'] as const;
+export const listExpressions = ['list', 'size', 'subscript'] as const;
+export type ListExpressionType = (typeof listExpressions)[number];
+
+export const listOperations = ['append', 'remove', 'insert'];
+export type ListOperationType = (typeof listOperations)[number];
+
+export const variables = ['definition', 'assignment'] as const;
 export type VariableType = (typeof variables)[number];
 
-export const miscExpressions = [
-  'variable',
-  'literal',
-  'list',
-  'comment',
-] as const;
+export const miscExpressions = ['variable', 'literal', 'comment'] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
 
 export const blockTypes = [
@@ -53,6 +55,7 @@ export const blockTypes = [
   ...outputs,
   ...renderers,
   ...variables,
+  ...listOperations,
   'branch',
 ] as const;
 export type BlockType = (typeof blockTypes)[number];
@@ -60,6 +63,7 @@ export type BlockType = (typeof blockTypes)[number];
 export const expressionTypes = [
   ...conditions,
   ...operators,
+  ...listExpressions,
   ...miscExpressions,
 ];
 export type ExpressionType = (typeof expressionTypes)[number];
@@ -70,8 +74,7 @@ export type ComponentType = (typeof componentTypes)[number];
 export type ComponentPrimitive<T extends ComponentType, E = {}> = {
   id: string;
   type: T;
-} & E &
-  object;
+} & E;
 
 // Comments //
 
@@ -83,15 +86,6 @@ export type Literal<T extends Primitive = Primitive> = ComponentPrimitive<
   'literal',
   { expression: T | null }
 >;
-
-export type ListItem =
-  | Literal
-  | Variable
-  | BinaryOperation
-  | UnaryOperation
-  | null;
-
-export type List = ComponentPrimitive<'list', { expression: ListItem[] }>;
 
 // Variables //
 
@@ -124,6 +118,21 @@ export type Assignment = ComponentPrimitive<
   }
 >;
 
+export type Variable = ComponentPrimitive<'variable', { definitionId: string }>;
+
+// Lists //
+
+export type ListItem =
+  | Literal
+  | Variable
+  | BinaryOperation
+  | Subscript
+  | Condition
+  | UnaryOperation
+  | null;
+
+export type List = ComponentPrimitive<'list', { expression: ListItem[] }>;
+
 export type Subscript = ComponentPrimitive<
   'subscript',
   {
@@ -132,7 +141,26 @@ export type Subscript = ComponentPrimitive<
   }
 >;
 
-export type Variable = ComponentPrimitive<'variable', { definitionId: string }>;
+export type Remove = ComponentPrimitive<
+  'remove',
+  {
+    list: Variable | Subscript | List | null;
+    index: Literal<number> | Variable | Subscript | null;
+  }
+>;
+
+export type Size = ComponentPrimitive<
+  'size',
+  { list: Variable | Subscript | List | null }
+>;
+
+export type Append = ComponentPrimitive<
+  'append',
+  { list: Variable | Subscript | List | null; item: ListItem }
+>;
+
+export type ListExpression = List | Size | Subscript;
+export type ListOperations = Remove | Append;
 
 // Control Flow //
 
@@ -335,14 +363,14 @@ export type Block =
   | Loop
   | Output
   | Renderer
+  | ListOperations
   | UnaryOperation;
 
 export type Expression =
   | BinaryOperation
   | Condition
   | Literal
-  | List
-  | Subscript
+  | ListExpression
   | Variable
   | UnaryOperation;
 

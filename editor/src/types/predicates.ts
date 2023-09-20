@@ -1,5 +1,15 @@
-import { List, RenderType } from 'program/components/types';
-import { Subscript } from '../program/components/types';
+import {
+  List,
+  listOperations,
+  RenderType,
+  variables,
+  VariableType,
+} from 'program/components/types';
+import {
+  Subscript,
+  ListOperations,
+  ListOperationType,
+} from '../program/components/types';
 import {
   Loop,
   loops,
@@ -30,14 +40,9 @@ export function IsBlock(component: Component): component is Block {
     loops.includes(component.type as LoopType) ||
     outputs.includes(component.type as OutputType) ||
     renderers.includes(component.type as RenderType) ||
-    [
-      'comment',
-      'branch',
-      'definition',
-      'assignment',
-      'increment',
-      'decrement',
-    ].includes(component.type)
+    listOperations.includes(component.type as ListOperationType) ||
+    variables.includes(component.type as VariableType) ||
+    ['comment', 'branch', 'increment', 'decrement'].includes(component.type)
   );
 }
 

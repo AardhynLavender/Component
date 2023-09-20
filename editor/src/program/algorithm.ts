@@ -58,6 +58,10 @@ export namespace algorithm {
           found ??= FindExpression(id, block.rvalue);
           found ??= FindExpression(id, block.lvalue);
           break;
+        case 'append':
+          found ??= FindExpression(id, block.list);
+          found ??= FindExpression(id, block.item);
+          break;
         case 'draw_line':
           found ??= FindExpression(id, block.x1);
           found ??= FindExpression(id, block.y1);
@@ -115,6 +119,9 @@ export namespace algorithm {
         found ??= FindExpression(id, state.list);
         found ??= FindExpression(id, state.index);
         break;
+      case 'size':
+        found ??= FindExpression(id, state.list);
+        break;
       case 'list':
         for (const expression of state.expression) {
           found ??= FindExpression(id, expression); // search expressions
@@ -171,6 +178,10 @@ export namespace algorithm {
           case 'assignment':
             draft.lvalue = RemoveExpression(id, draft.lvalue);
             draft.rvalue = RemoveExpression(id, draft.rvalue);
+            break;
+          case 'append':
+            draft.list = RemoveExpression(id, draft.list);
+            draft.item = RemoveExpression(id, draft.item);
             break;
           case 'draw_line':
             if (draft.x1) draft.x1 = RemoveExpression(id, draft.x1); // x1
@@ -284,6 +295,10 @@ export namespace algorithm {
                 mutation,
               ); // variable|literal expression
 
+            break;
+          case 'append':
+            draft.list = MutateExpression(id, draft.list, mutation);
+            draft.item = MutateExpression(id, draft.item, mutation);
             break;
           case 'assignment':
             draft.lvalue = MutateExpression(id, draft.lvalue, mutation);
@@ -464,6 +479,24 @@ export namespace algorithm {
                   )
                     draft.rvalue = component;
                   break;
+                case 'append':
+                  if (
+                    locale === 'list' &&
+                    (IsVariable(component) ||
+                      IsList(component) ||
+                      IsSubscript(component))
+                  )
+                    draft.list = component;
+                  else if (
+                    locale === 'item' &&
+                    (IsVariable(component) ||
+                      IsLiteral(component) ||
+                      IsOperation(component) ||
+                      IsCondition(component) ||
+                      IsSubscript(component))
+                  )
+                    draft.item = component;
+                  break;
                 case 'draw_line':
                   if (
                     !IsNumericVariable(component) &&
@@ -581,6 +614,12 @@ export namespace algorithm {
               if (draft.rvalue)
                 draft.rvalue = EmplaceExpression(emplacement, draft.rvalue);
               break;
+            case 'append':
+              if (draft.list)
+                draft.list = EmplaceExpression(emplacement, draft.list);
+              if (draft.item)
+                draft.item = EmplaceExpression(emplacement, draft.item);
+              break;
             case 'draw_line':
               if (draft.x1) draft.x1 = EmplaceExpression(emplacement, draft.x1);
               if (draft.y1) draft.y1 = EmplaceExpression(emplacement, draft.y1);
@@ -653,6 +692,10 @@ export namespace algorithm {
             // @ts-ignore
             if (locale === 'expression') draft.expression = component;
             break;
+          case 'size':
+            // @ts-ignore
+            if (locale === 'list') draft.list = component;
+            break;
           case 'subscript':
             // @ts-ignore
             if (locale === 'list') draft.list = component;
@@ -705,6 +748,10 @@ export namespace algorithm {
               draft.list = EmplaceExpression(emplacement, draft.list);
             if (draft.index)
               draft.index = EmplaceExpression(emplacement, draft.index);
+            break;
+          case 'size':
+            if (draft.list)
+              draft.list = EmplaceExpression(emplacement, draft.list);
             break;
           case 'list':
             if (draft.expression)

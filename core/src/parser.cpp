@@ -28,15 +28,32 @@ void Parser::ParseAssignment(Json& assignment) {
 
 // Array //
 
-void Parser::ParsePush(Json& push) {
-  throw std::runtime_error("unimplemented!");
+void Parser::ParseAppend(Json& append) {
+  const std::string type = append["list"]["type"];
+  if (type != "variable") // todo: add `subscript` type
+    throw std::invalid_argument("Append type must be either `variable`"); 
+
+  // get list
+  const std::string key = append["list"]["definitionId"];
+  auto variable = ParseVariable(append["list"]);
+  const auto primitive = variable.GetPrimitive();
+  Log(key);
+  Log(primitive);
+  if (primitive != "list") throw std::invalid_argument("Appending variable must be of `list` primitive!");
+  auto list = variable.Get<Json>();
+  if (!list["expression"].is_array()) throw std::invalid_argument("Appending variable must be an array!");
+
+  Log(list);
+  list["expression"].push_back(append["item"]);
+  Log(list);
+
+  store.Set(key, list);
+
+  using namespace std::string_literals;
+  Log("Appending to list `"s + key + "`"s);
 }
 
-void Parser::ParsePop(Json& pop) {
-  throw std::runtime_error("unimplemented!");
-}
-
-void Parser::ParseInsert(Json& insert) {
+void Parser::ParseSize(Json& pop) {
   throw std::runtime_error("unimplemented!");
 }
 
@@ -278,9 +295,8 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
 
-  else if (type == "push")              ParsePush(component);
-  else if (type == "pop")               ParsePop(component);
-  else if (type == "insert")            ParseInsert(component);
+  else if (type == "append")            ParseAppend(component);
+  else if (type == "size")              ParseSize(component);
   else if (type == "remove")            ParseRemove(component);
 
   else if (type == "draw_line")         ParseDrawLine(component);
