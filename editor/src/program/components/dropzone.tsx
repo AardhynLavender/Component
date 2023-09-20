@@ -113,18 +113,25 @@ export function ExpressionDropzone({
   return (
     <Dropzone
       css={{
-        minWidth: 24,
+        minWidth: 40,
         minHeight: 24,
 
         r: 4,
-        p: 4,
+        p: 6,
 
         d: 'inline-flex',
         fontFamily: '$mono',
+        fontSize: '$1',
         items: 'center',
         justify: 'center',
 
-        bg: isHovering ? '$background3' : error ? '$error' : '$background',
+        bg: children
+          ? isHovering
+            ? '$background3'
+            : error
+            ? '$error'
+            : '$background'
+          : '$background2',
         b: `2px solid ${error ? '$onError' : '$outline'}`,
         c: '$text',
         whiteSpace: 'nowrap',

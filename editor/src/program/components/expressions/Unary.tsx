@@ -7,14 +7,13 @@ import { Component } from '../types';
 import { IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from './Expression';
+import { BlockRoot } from '../generic';
 
 export function UnaryOperationBlock({
   block,
-  parent,
   preview = false,
 }: {
   block: UnaryOperation;
-  parent?: ExpressionParent;
   preview?: boolean;
 }): ReactElement | null {
   const { DragHandle } = Drag.useComponentDragHandle(block, preview);
@@ -28,12 +27,7 @@ export function UnaryOperationBlock({
   };
 
   return (
-    <ExpressionDropzone
-      parentId={parent?.id}
-      locale={parent?.locale}
-      dropPredicate={parent?.dropPredicate}
-      enabled={!preview}
-    >
+    <BlockRoot block={block} preview={!preview}>
       <DragHandle css={styles}>
         <span>{Operator(block.type)}</span>
         <GenericExpression
@@ -43,18 +37,17 @@ export function UnaryOperationBlock({
           options={{ literals: false, subscript: false, operation: false }}
         />
       </DragHandle>
-    </ExpressionDropzone>
+    </BlockRoot>
   );
 }
 
 function Operator(type: UnaryOperation['type']) {
-  if (type === 'increment') return '++';
-  if (type === 'decrement') return '--';
+  if (type === 'increment') return 'increment';
+  if (type === 'decrement') return 'decrement';
   throw new Error('Invalid unary operation');
 }
 
 const styles = {
-  pl: 4,
   d: 'flex',
   items: 'center',
   gap: 8,

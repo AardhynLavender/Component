@@ -61,7 +61,6 @@ export function SubscriptExpression({
 }
 
 const styles = {
-  pl: 4,
   d: 'flex',
   items: 'center',
   gap: 8,

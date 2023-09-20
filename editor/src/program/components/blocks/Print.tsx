@@ -22,7 +22,7 @@ export function PrintBlock({
     <BlockRoot
       preview={preview}
       block={block}
-      css={{ items: 'center', direction: 'row', gap: 16 }}
+      css={{ items: 'center', direction: 'row', gap: 8 }}
     >
       <Print />
       <GenericExpression

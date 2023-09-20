@@ -40,7 +40,7 @@ export function BinaryExpression({
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
     >
-      <DragHandle css={{ d: 'flex', items: 'center', gap: 16 }}>
+      <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
         <GenericExpression
           expression={left}
           parent={{ ...props, locale: 'left' }}
@@ -59,26 +59,19 @@ export function BinaryExpression({
   );
 }
 
-function NumericOperation(type: BinaryOperation['type']) {
-  switch (type) {
-    case 'add':
-      return '+';
-    case 'subtract':
-      return '-';
-    case 'multiply':
-      return '×';
-    case 'divide':
-      return '÷';
-    case 'modulo':
-      return 'mod';
-    case 'exponent':
-      return '^';
-  }
-}
-function Op({ type }: { type: BinaryOperation['type'] }) {
+type OpType = BinaryOperation['type'];
+const numericOperator: Record<OpType, string> = {
+  add: '+',
+  subtract: '-',
+  multiply: '×',
+  divide: '÷',
+  modulo: 'mod',
+  exponent: '××',
+};
+function Op({ type }: { type: OpType }) {
   return (
     <s.span css={{ d: 'flex', items: 'center' }}>
-      {NumericOperation(type)}
+      {numericOperator[type]}
     </s.span>
   );
 }

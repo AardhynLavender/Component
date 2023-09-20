@@ -1,15 +1,5 @@
 import { ReactElement } from 'react';
-import {
-  Condition,
-  Literal,
-  Variable,
-  Component,
-  IsLiteral,
-  ConditionType,
-  OutputType,
-} from 'types';
-import { VariableExpression } from './Variable';
-import { LiteralExpression } from './Literal';
+import { Condition, Component, IsLiteral, ConditionType } from 'types';
 import { Drag } from 'util/Drag';
 import {
   IsBooleanVariable,
@@ -24,7 +14,7 @@ import {
 import { ExpressionParent } from './types';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from './Expression';
-import { EqualityComparison, PrimitiveType } from '../types';
+import { PrimitiveType } from '../types';
 
 /**
  * Unary or binary comparison node
@@ -69,7 +59,7 @@ export function ConditionExpression({
       locale={parent?.locale}
       enabled={!preview}
     >
-      <DragHandle css={{ d: 'flex', items: 'center', gap: 16 }}>
+      <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
         {not && <BooleanOperation type={condition.type} />}
         <GenericExpression
           expression={left}
