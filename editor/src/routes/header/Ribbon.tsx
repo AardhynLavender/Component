@@ -19,6 +19,15 @@ import Spacer from 'components/util/Spacer';
 import { IsBlock } from '../../types/predicates';
 import { Block } from 'types';
 
+const confirmDelete = () =>
+  confirm(
+    'Are you sure you want to delete this program? This action cannot be undone.',
+  );
+const confirmUpload = () =>
+  confirm(
+    'Are you sure you want to upload a new program? The existing program will be deleted unless saved.',
+  );
+
 export default function Ribbon({ css }: { css: CSS }) {
   const [program, setProgram] = useComponentStore((state) => [
     state.program,
@@ -45,6 +54,8 @@ export default function Ribbon({ css }: { css: CSS }) {
   };
   const handleUpload = async () => {
     try {
+      if (program?.ast?.length && !confirmUpload()) return;
+
       const ast = (await loadFile('json')) as Block[];
       if (!ast.every(IsBlock)) throw new Error('Invalid file type');
       if (!program) throw new Error('No program loaded');
@@ -55,6 +66,7 @@ export default function Ribbon({ css }: { css: CSS }) {
   };
 
   const handleClear = () => {
+    if (program?.ast?.length && !confirmDelete()) return;
     if (program) setProgram({ ...program, ast: [] });
   };
 
