@@ -81,6 +81,7 @@ function ComponentListCategory({
       </ComponentListRoot>
       {category === 'variables' && (
         <>
+          <Spacer height="sm" />
           <VariableStoreList />
         </>
       )}

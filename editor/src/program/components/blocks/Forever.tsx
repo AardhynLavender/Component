@@ -13,11 +13,13 @@ export function ForeverBlock({
   return (
     <BlockRoot block={block} preview={preview} overrideStyles>
       <ForeverSection />
-      <GenericBlockSet
-        blocks={block.components ?? []}
-        locale="components"
-        parentId={block.id}
-      />
+      {!preview && (
+        <GenericBlockSet
+          blocks={block.components ?? []}
+          locale="components"
+          parentId={block.id}
+        />
+      )}
     </BlockRoot>
   );
 }

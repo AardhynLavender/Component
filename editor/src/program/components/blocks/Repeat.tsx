@@ -41,11 +41,13 @@ export function RepeatBlock({
           options={{ literals: ['number'] }}
         />
       </RepeatSection>
-      <GenericBlockSet
-        blocks={block.components ?? []}
-        locale="components"
-        parentId={block.id}
-      />
+      {!preview && (
+        <GenericBlockSet
+          blocks={block.components ?? []}
+          locale="components"
+          parentId={block.id}
+        />
+      )}
     </BlockRoot>
   );
 }

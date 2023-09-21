@@ -35,17 +35,21 @@ export function BranchBlock({
           }}
         />
       </ConditionSectionRoot>
-      <GenericBlockSet
-        parentId={block.id}
-        blocks={trueBranch ?? []}
-        locale="true"
-      />
-      <Else />
-      <GenericBlockSet
-        parentId={block.id}
-        blocks={falseBranch ?? []}
-        locale="false"
-      />
+      {!preview && (
+        <>
+          <GenericBlockSet
+            parentId={block.id}
+            blocks={trueBranch ?? []}
+            locale="true"
+          />
+          <Else />
+          <GenericBlockSet
+            parentId={block.id}
+            blocks={falseBranch ?? []}
+            locale="false"
+          />
+        </>
+      )}
     </BlockRoot>
   );
 }

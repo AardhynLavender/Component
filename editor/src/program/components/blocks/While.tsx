@@ -42,11 +42,13 @@ export function WhileBlock({
           options={{ literals: ['boolean'] }}
         />
       </ConditionSection>
-      <GenericBlockSet
-        blocks={block.components ?? []}
-        locale="components"
-        parentId={block.id}
-      />
+      {!preview && (
+        <GenericBlockSet
+          blocks={block.components ?? []}
+          locale="components"
+          parentId={block.id}
+        />
+      )}
     </BlockRoot>
   );
 }
