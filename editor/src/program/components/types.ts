@@ -15,17 +15,28 @@ export type ConditionType = (typeof conditions)[number];
 export const loops = ['repeat', 'while', 'forever'] as const;
 export type LoopType = (typeof loops)[number];
 
-export const operators = [
+export const binaryOperators = [
   'add',
   'subtract',
   'multiply',
   'divide',
   'modulo',
   'exponent',
-  'increment',
-  'decrement',
 ] as const;
-export type OperatorType = (typeof operators)[number];
+export type OperatorType = (typeof binaryOperators)[number];
+
+export const unaryOperators = [
+  'sin',
+  'cos',
+  'tan',
+  'round',
+  'floor',
+  'log',
+  'ceil',
+  'abs',
+  'sqrt',
+  'random',
+] as const;
 
 export const outputs = ['print', 'clear_output'] as const;
 export type OutputType = (typeof outputs)[number];
@@ -62,7 +73,8 @@ export type BlockType = (typeof blockTypes)[number];
 
 export const expressionTypes = [
   ...conditions,
-  ...operators,
+  ...binaryOperators,
+  ...unaryOperators,
   ...listExpressions,
   ...miscExpressions,
 ];
@@ -94,11 +106,11 @@ export type PrimitiveType = (typeof Primitives)[number];
 export type Primitive = string | number | boolean;
 export type DefinitionRValue =
   | BinaryOperation
+  | Exclude<UnaryOperation, Increment | Decrement>
   | Condition
   | Literal
   | List
   | Variable
-  // | Subscript
   | null;
 
 export type Definition = ComponentPrimitive<
@@ -128,7 +140,7 @@ export type ListItem =
   | BinaryOperation
   | Subscript
   | Condition
-  | UnaryOperation
+  | Exclude<UnaryOperation, Increment | Decrement>
   | null;
 
 export type List = ComponentPrimitive<'list', { expression: ListItem[] }>;
@@ -181,12 +193,10 @@ export type BinaryBooleanComparison = [
   Condition | Literal<boolean> | Variable | null,
   Condition | Literal<boolean> | Variable | null,
 ];
-
 export type EqualityComparison = [
   Literal | Variable | null,
   Literal | Variable | null,
 ];
-
 export type NumericComparison = [
   Literal<number> | Variable | null,
   Literal<number> | Variable | null,
@@ -255,7 +265,33 @@ export type Decrement = ComponentPrimitive<
   'decrement',
   { expression: Variable | null }
 >;
-export type UnaryOperation = Increment | Decrement;
+
+export type UnaryOperand = Variable | Literal<number> | null | Subscript;
+
+export type Sin = ComponentPrimitive<'sin', { expression: UnaryOperand }>;
+export type Cos = ComponentPrimitive<'cos', { expression: UnaryOperand }>;
+export type Tan = ComponentPrimitive<'tan', { expression: UnaryOperand }>;
+export type Round = ComponentPrimitive<'round', { expression: UnaryOperand }>;
+export type Floor = ComponentPrimitive<'floor', { expression: UnaryOperand }>;
+export type Ceil = ComponentPrimitive<'ceil', { expression: UnaryOperand }>;
+export type Abs = ComponentPrimitive<'abs', { expression: UnaryOperand }>;
+export type Sqrt = ComponentPrimitive<'sqrt', { expression: UnaryOperand }>;
+export type Log = ComponentPrimitive<'log', { expression: UnaryOperand }>;
+export type Random = ComponentPrimitive<'random', { expression: UnaryOperand }>;
+
+export type UnaryOperation =
+  | Increment
+  | Decrement
+  | Sin
+  | Cos
+  | Tan
+  | Round
+  | Floor
+  | Ceil
+  | Abs
+  | Sqrt
+  | Log
+  | Random;
 
 // Binary Operations //
 
@@ -292,39 +328,43 @@ export type BinaryOperation =
 
 export type Print = ComponentPrimitive<
   'print',
-  { expression: Literal | Variable | List | Subscript | null }
+  {
+    expression:
+      | Literal
+      | Variable
+      | BinaryOperation
+      | Exclude<UnaryOperation, Increment | Decrement>
+      | List
+      | Subscript
+      | null;
+  }
 >;
 export type ClearOutput = ComponentPrimitive<'clear_output'>;
 export type Output = Print | ClearOutput;
 
 // Renderers //
 
+type DrawParam =
+  | Literal
+  | Variable
+  | BinaryOperation
+  | Exclude<UnaryOperation, Increment | Decrement>
+  | Subscript
+  | null;
+
 export type DrawLine = ComponentPrimitive<
   'draw_line',
-  {
-    x1: Variable | BinaryOperation | Literal | null;
-    y1: Variable | BinaryOperation | Literal | null;
-    x2: Variable | BinaryOperation | Literal | null;
-    y2: Variable | BinaryOperation | Literal | null;
-  }
+  { x1: DrawParam; y1: DrawParam; x2: DrawParam; y2: DrawParam }
 >;
 
 export type DrawRect = ComponentPrimitive<
   'draw_rect',
-  {
-    x: Variable | BinaryOperation | Literal | null;
-    y: Variable | BinaryOperation | Literal | null;
-    w: Variable | BinaryOperation | Literal | null;
-    h: Variable | BinaryOperation | Literal | null;
-  }
+  { y: DrawParam; w: DrawParam; h: DrawParam; x: DrawParam }
 >;
 
 export type DrawPixel = ComponentPrimitive<
   'draw_pixel',
-  {
-    x: Variable | BinaryOperation | Literal | null;
-    y: Variable | BinaryOperation | Literal | null;
-  }
+  { x: DrawParam; y: DrawParam }
 >;
 
 export type ClearScreen = ComponentPrimitive<'clear_screen'>;
@@ -364,7 +404,7 @@ export type Block =
   | Output
   | Renderer
   | ListOperations
-  | UnaryOperation;
+  | Extract<UnaryOperation, Increment | Decrement>;
 
 export type Expression =
   | BinaryOperation
@@ -372,6 +412,6 @@ export type Expression =
   | Literal
   | ListExpression
   | Variable
-  | UnaryOperation;
+  | Exclude<UnaryOperation, Increment | Decrement>;
 
 export type Component = Block | Expression;

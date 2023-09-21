@@ -1,5 +1,11 @@
 import { ReactElement } from 'react';
-import { DrawLine, Expression, Component, IsLiteral, IsOperation } from 'types';
+import {
+  DrawLine,
+  Expression,
+  Component,
+  IsLiteral,
+  IsBinaryOperation,
+} from 'types';
 import { BlockRoot } from '../generic';
 import { s } from 'theme/stitches.config';
 import { BinaryExpression } from 'program/components/expressions/Operation';
@@ -20,7 +26,7 @@ export default function DrawLineBlock({
   preview?: boolean;
 }): ReactElement | null {
   const dropPredicate = (c: Component) =>
-    IsNumericVariable(c) || IsOperation(c) || IsLiteral(c);
+    IsNumericVariable(c) || IsBinaryOperation(c) || IsLiteral(c);
 
   const parent = { id: block.id, dropPredicate };
 

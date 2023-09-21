@@ -3,21 +3,20 @@ import { Drag } from 'util/Drag';
 import { UnaryOperation } from 'types';
 import { ExpressionParent } from './types';
 import { VariableExpression } from './Variable';
-import { Component } from '../types';
-import { IsVariable } from 'types/predicates';
+import { Component, UnaryOperand, Increment, Decrement } from '../types';
+import { IsLiteral, IsVariable, IsSubscript } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from './Expression';
 import { BlockRoot } from '../generic';
+import { IsBinaryOperation } from '../../../types/predicates';
 
 export function UnaryOperationBlock({
   block,
   preview = false,
 }: {
-  block: UnaryOperation;
+  block: Extract<UnaryOperation, Increment | Decrement>;
   preview?: boolean;
 }): ReactElement | null {
-  const { DragHandle } = Drag.useComponentDragHandle(block, preview);
-
   const dropPredicate = (c: Component) => IsVariable(c);
 
   const props = {
@@ -27,28 +26,58 @@ export function UnaryOperationBlock({
   };
 
   return (
-    <BlockRoot block={block} preview={!preview}>
-      <DragHandle css={styles}>
-        <span>{Operator(block.type)}</span>
-        <GenericExpression
-          expression={block.expression}
-          parent={props}
-          preview={preview}
-          options={{ literals: false, subscript: false, operation: false }}
-        />
-      </DragHandle>
+    <BlockRoot block={block} preview={preview} css={styles}>
+      <span>{block.type}</span>
+      <GenericExpression
+        expression={block.expression}
+        parent={props}
+        preview={preview}
+        options={{ literals: false, subscript: false, operation: false }}
+      />
     </BlockRoot>
   );
 }
 
-function Operator(type: UnaryOperation['type']) {
-  if (type === 'increment') return 'increment';
-  if (type === 'decrement') return 'decrement';
-  throw new Error('Invalid unary operation');
+export function UnaryOperationExpression({
+  expression,
+  parent,
+  preview = false,
+}: {
+  expression: Exclude<UnaryOperation, Increment | Decrement>;
+  parent?: ExpressionParent;
+  preview?: boolean;
+}) {
+  const { DragHandle } = Drag.useComponentDragHandle(expression, preview);
+
+  const dropPredicate = (c: Component) =>
+    IsVariable(c) || IsSubscript(c) || IsLiteral(c) || IsBinaryOperation(c);
+
+  return (
+    <ExpressionDropzone
+      parentId={parent?.id}
+      locale={parent?.locale}
+      dropPredicate={parent?.dropPredicate}
+      enabled={!preview}
+    >
+      <DragHandle css={styles}>
+        <span>{expression.type}</span>
+        <GenericExpression
+          parent={{
+            id: expression.id,
+            dropPredicate,
+            locale: 'expression',
+          }}
+          expression={expression.expression}
+          preview={preview}
+        />
+      </DragHandle>
+    </ExpressionDropzone>
+  );
 }
 
 const styles = {
   d: 'flex',
+  flexDirection: 'row',
   items: 'center',
   gap: 8,
 };

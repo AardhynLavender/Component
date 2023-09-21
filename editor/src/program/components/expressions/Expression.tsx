@@ -1,4 +1,9 @@
-import { Expression, IsCondition, IsOperation, PrimitiveType } from 'types';
+import {
+  Expression,
+  IsCondition,
+  IsBinaryOperation,
+  PrimitiveType,
+} from 'types';
 import { ExpressionDropzone } from '../dropzone';
 import { ExpressionParent } from './types';
 import { VariableExpression } from './Variable';
@@ -9,6 +14,8 @@ import { ReactElement, ReactNode } from 'react';
 import { conditions } from '../types';
 import { ConditionExpression } from './Condition';
 import { ListExpression } from './List';
+import { IsUnaryOperation } from '../../../types/predicates';
+import { UnaryOperationExpression } from './Unary';
 
 export type GenericExpressionOptions = {
   variable: boolean;
@@ -73,9 +80,18 @@ export function GenericExpression({
       />
     );
 
-  if (IsOperation(expression) && operation)
+  if (IsBinaryOperation(expression) && operation)
     return (
       <BinaryExpression parent={parent} block={expression} preview={preview} />
+    );
+
+  if (IsUnaryOperation(expression) && operation)
+    return (
+      <UnaryOperationExpression
+        parent={parent}
+        expression={expression}
+        preview={preview}
+      />
     );
 
   if (IsCondition(expression) && conditions)

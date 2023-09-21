@@ -1,3 +1,9 @@
+import { Decrement, Increment } from '../program/components/types';
+import {
+  UnaryOperation,
+  binaryOperators,
+  unaryOperators,
+} from '../program/components/types';
 import {
   List,
   listOperations,
@@ -21,7 +27,6 @@ import {
   conditions,
   ConditionType,
   BinaryOperation,
-  operators,
   OperatorType,
   Primitive,
   Literal,
@@ -50,10 +55,29 @@ export function IsCondition(component: Component): component is Condition {
   return conditions.includes(component.type as ConditionType);
 }
 
-export function IsOperation(
+export function IsBinaryOperation(
   component: Component,
 ): component is BinaryOperation {
-  return operators.includes(component.type as OperatorType);
+  return binaryOperators.includes(component.type as OperatorType);
+}
+
+export function IsUnaryOperation(
+  component: Component,
+): component is Exclude<UnaryOperation, Increment | Decrement> {
+  return unaryOperators.includes(
+    component.type as Exclude<
+      UnaryOperation['type'],
+      'increment' | 'decrement'
+    >,
+  );
+}
+
+export function IsOperation(
+  component: Component,
+): component is
+  | Exclude<UnaryOperation, Increment | Decrement>
+  | BinaryOperation {
+  return IsUnaryOperation(component) || IsBinaryOperation(component);
 }
 
 export function IsSubscript(component: Component): component is Subscript {

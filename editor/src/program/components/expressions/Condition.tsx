@@ -9,7 +9,7 @@ import {
   IsBoolean,
   IsNumber,
   IsPrimitive,
-  IsOperation,
+  IsBinaryOperation,
 } from 'types/predicates';
 import { ExpressionParent } from './types';
 import { ExpressionDropzone } from 'program/components/dropzone';
@@ -117,7 +117,7 @@ function GetDropPredicate(type: ConditionType) {
     case 'eq':
     case 'ne':
       return (c: Component) =>
-        IsVariable(c) || IsLiteral(c) || IsCondition(c) || IsOperation(c);
+        IsVariable(c) || IsLiteral(c) || IsCondition(c) || IsBinaryOperation(c);
     case 'gt':
     case 'lt':
     case 'ge':

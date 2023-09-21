@@ -11,6 +11,7 @@ import {
   VariableExpression,
   ClearOutputBlock,
   CommentBlock,
+  UnaryOperationExpression,
 } from './blocks';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from 'util/Drag';
@@ -210,6 +211,17 @@ export function GetJsxComponent(
     case 'increment':
     case 'decrement':
       return <UnaryOperationBlock block={component} {...stdProps} />; // todo: add parent
+    case 'sin':
+    case 'cos':
+    case 'tan':
+    case 'abs':
+    case 'sqrt':
+    case 'floor':
+    case 'ceil':
+    case 'round':
+    case 'log':
+    case 'random':
+      return <UnaryOperationExpression expression={component} {...stdProps} />;
     case 'add':
     case 'subtract':
     case 'multiply':

@@ -2,8 +2,13 @@ import { Emplacement, EmplacementAction, Mutation } from './types';
 import { Block } from 'types';
 import { Expression } from 'program/components/types';
 import produce from 'immer';
-import { IsOperation, IsVariable, IsSubscript } from '../types/predicates';
+import {
+  IsBinaryOperation,
+  IsVariable,
+  IsSubscript,
+} from '../types/predicates';
 import { IsList } from 'types/predicates';
+import { IsOperation } from '../types/predicates';
 import {
   IsBlock,
   IsCondition,
@@ -114,6 +119,18 @@ export namespace algorithm {
         const [lvalue, rvalue] = state.expression;
         found ??= FindExpression(id, lvalue); // expression lvalue
         if (rvalue) found ??= FindExpression(id, rvalue); // optional expression rvalue
+        break;
+      case 'sin':
+      case 'cos':
+      case 'tan':
+      case 'round':
+      case 'floor':
+      case 'ceil':
+      case 'abs':
+      case 'sqrt':
+      case 'log':
+      case 'random':
+        found ??= RemoveExpression(id, state.expression);
         break;
       case 'subscript':
         found ??= FindExpression(id, state.list);
@@ -235,6 +252,18 @@ export namespace algorithm {
           draft.expression[0] = RemoveExpression(id, lvalue); // expression lvalue
           if (rvalue) draft.expression[1] = RemoveExpression(id, rvalue); // optional expression rvalue
           break;
+        case 'sin':
+        case 'cos':
+        case 'tan':
+        case 'round':
+        case 'floor':
+        case 'ceil':
+        case 'abs':
+        case 'sqrt':
+        case 'log':
+        case 'random':
+          draft.expression = RemoveExpression(id, draft.expression);
+          break;
         case 'subscript':
           draft.list = RemoveExpression(id, draft.list);
           draft.index = RemoveExpression(id, draft.index);
@@ -285,7 +314,7 @@ export namespace algorithm {
             break;
           case 'increment':
           case 'decrement':
-            draft.expression = MutateExpression(id, draft.expression, mutation); // variable
+            draft.expression = MutateExpression(id, draft.expression, mutation);
             break;
           case 'print':
             if (draft.expression)
@@ -358,6 +387,18 @@ export namespace algorithm {
           if (rvalue)
             draft.expression[1] = MutateExpression(id, rvalue, mutation); // optional expression rvalue
           break;
+        case 'sin':
+        case 'cos':
+        case 'tan':
+        case 'round':
+        case 'floor':
+        case 'ceil':
+        case 'abs':
+        case 'sqrt':
+        case 'log':
+        case 'random':
+          draft.expression = MutateExpression(id, draft.expression, mutation);
+          break;
         case 'subscript':
           draft.list = MutateExpression(id, draft.list, mutation);
           draft.index = MutateExpression(id, draft.index, mutation);
@@ -420,7 +461,7 @@ export namespace algorithm {
                       IsCondition(component) ||
                       // IsSubscript(component) ||
                       IsList(component) ||
-                      IsOperation(component))
+                      IsBinaryOperation(component))
                   )
                     draft.expression = component;
                   break;
@@ -458,6 +499,7 @@ export namespace algorithm {
                   if (
                     (locale === 'expression' && IsVariable(component)) ||
                     IsLiteral(component) ||
+                    IsOperation(component) ||
                     IsSubscript(component)
                   )
                     draft.expression = component;
@@ -687,14 +729,22 @@ export namespace algorithm {
             // @ts-ignore
             else if (locale === 'right') draft.expression[1] = component;
             break;
-          case 'increment':
-          case 'decrement':
-            // @ts-ignore
-            if (locale === 'expression') draft.expression = component;
-            break;
           case 'size':
             // @ts-ignore
             if (locale === 'list') draft.list = component;
+            break;
+          case 'sin':
+          case 'cos':
+          case 'tan':
+          case 'abs':
+          case 'sqrt':
+          case 'round':
+          case 'floor':
+          case 'ceil':
+          case 'log':
+          case 'random':
+            // @ts-ignore
+            if (locale === 'expression') draft.expression = component;
             break;
           case 'subscript':
             // @ts-ignore
@@ -735,13 +785,18 @@ export namespace algorithm {
             if (rvalue)
               draft.expression[1] = EmplaceExpression(emplacement, rvalue);
             break;
-          case 'increment':
-          case 'decrement':
-            if (draft.expression)
-              draft.expression = EmplaceExpression(
-                emplacement,
-                draft.expression,
-              );
+          case 'sin':
+          case 'cos':
+          case 'tan':
+          case 'abs':
+          case 'sqrt':
+          case 'round':
+          case 'floor':
+          case 'ceil':
+          case 'log':
+          case 'random':
+            // @ts-ignore
+            if (draft.expression) draft.expression = component;
             break;
           case 'subscript':
             if (draft.list)

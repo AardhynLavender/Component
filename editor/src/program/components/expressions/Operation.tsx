@@ -8,7 +8,7 @@ import { VariableExpression } from './Variable';
 import { IsNumericVariable, IsLiteral } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 import { ExpressionDropzone } from 'program/components/dropzone';
-import { IsOperation } from '../../../types/predicates';
+import { IsBinaryOperation, IsOperation } from '../../../types/predicates';
 import { GenericExpression } from './Expression';
 
 export function BinaryExpression({

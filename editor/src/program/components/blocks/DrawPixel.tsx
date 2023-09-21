@@ -4,7 +4,7 @@ import {
   Expression,
   Component,
   IsLiteral,
-  IsOperation,
+  IsBinaryOperation,
   DrawPixel,
 } from 'types';
 import { BlockRoot } from '../generic';
@@ -15,6 +15,7 @@ import { VariableExpression } from '../expressions/Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from '../expressions/Expression';
+import { IsOperation } from '../../../types/predicates';
 
 export default function DrawPixelBlock({
   block,

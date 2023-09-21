@@ -225,7 +225,21 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'decrement':
       component = { ...base(type), expression: null };
       break;
-
+    case 'sin':
+    case 'cos':
+    case 'tan':
+    case 'abs':
+    case 'floor':
+    case 'ceil':
+    case 'round':
+    case 'sqrt':
+    case 'log':
+    case 'random':
+      component = {
+        ...base(type),
+        expression: { ...base('literal'), expression: null },
+      };
+      break;
     case 'add':
     case 'subtract':
     case 'multiply':

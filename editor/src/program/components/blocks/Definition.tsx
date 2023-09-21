@@ -9,7 +9,7 @@ import {
 } from 'program/components/types';
 import { BlockRoot } from '../generic';
 import {
-  IsOperation,
+  IsBinaryOperation,
   IsLiteral,
   IsVariable,
   IsCondition,
@@ -20,6 +20,7 @@ import {
 import Field from 'components/ui/Field';
 import Badge from 'components/ui/Badge';
 import { GenericExpression } from '../expressions/Expression';
+import { IsUnaryOperation } from '../../../types/predicates';
 
 export function DefinitionBlock({
   block,
@@ -48,7 +49,7 @@ export function DefinitionBlock({
     locale: 'expression',
     dropPredicate: (e: Component) =>
       IsLiteral(e) ||
-      IsOperation(e) ||
+      IsBinaryOperation(e) ||
       IsVariable(e) ||
       IsSubscript(e) ||
       IsCondition(e) ||
@@ -101,9 +102,8 @@ function computePrimitive(
 ) {
   if (value === null) return null;
   if (value.type === 'list') return 'list';
-  // if (value.type === 'subscript') return UNKNOWN_PRIMITIVE;
   if (IsLiteral(value)) return computeLiteralPrimitive(value);
-  if (IsOperation(value)) return 'number';
+  if (IsBinaryOperation(value) || IsUnaryOperation(value)) return 'number';
   if (IsVariable(value)) return variables[value.id].primitive;
 
   throw new Error(
