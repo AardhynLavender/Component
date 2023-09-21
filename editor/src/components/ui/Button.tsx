@@ -5,15 +5,17 @@ import { variables } from '../../program/components/types';
 
 export function Button({
   children,
-  css,
+  leadingIcon,
   ...buttonProps
 }: {
   css?: CSS;
+  leadingIcon?: ReactNode;
   children: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof ButtonRoot>) {
   return (
     <ButtonRoot {...buttonProps}>
+      {leadingIcon && leadingIcon}
       <s.span css={{ d: 'inline-flex', items: 'center' }}>{children}</s.span>
     </ButtonRoot>
   );
@@ -21,7 +23,6 @@ export function Button({
 
 export function IconButton({
   children,
-  css,
   ...buttonProps
 }: {
   css?: CSS;
@@ -55,6 +56,7 @@ const ButtonRoot = styled('button', {
   all: 'unset',
   fontFamily: 'inherit',
   d: 'inline-flex',
+  gap: 8,
   h: 24,
   color: 'inherit',
   items: 'center',
@@ -86,15 +88,14 @@ const IconButtonRoot = styled(s.button, {
   d: 'inline-flex',
   items: 'center',
   justify: 'center',
+  cursor: 'pointer',
   h: 24,
-  w: 24,
+  aspectRatio: 1,
   r: 8,
 
   '&:hover': { background: '$background4' },
   '&:disabled': { opacity: 0.5 },
   '&:readonly': { opacity: 0.5 },
-
-  aspectRatio: 1,
 
   variants: {
     size: {
