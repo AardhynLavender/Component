@@ -1,16 +1,29 @@
 import { CoreApi } from 'types/api';
 import useComponentStore from 'program/store';
 import { CSS, styled } from 'theme/stitches.config';
-import { Button } from 'components/ui/Button';
+import { Button, IconButton } from 'components/ui/Button';
 import useCoreModule from '../../hooks/useCoreModule';
 import {
   DEFAULT_CANVAS_RESOLUTION,
   DEFAULT_CANVAS_RATIO,
 } from '../../constants/program';
-import { save } from 'util/saveFile';
+import { loadFile, saveFile } from 'util/saveFile';
+import {
+  DownloadIcon,
+  PlayIcon,
+  StopIcon,
+  TrashIcon,
+  UploadIcon,
+} from '@radix-ui/react-icons';
+import Spacer from 'components/util/Spacer';
+import { IsBlock } from '../../types/predicates';
+import { Block } from 'types';
 
 export default function Ribbon({ css }: { css: CSS }) {
-  const program = useComponentStore((state) => state.program);
+  const [program, setProgram] = useComponentStore((state) => [
+    state.program,
+    state.setProgram,
+  ]);
 
   const { module: core, error } = useCoreModule();
   const handleRun = () => {
@@ -28,7 +41,21 @@ export default function Ribbon({ css }: { css: CSS }) {
   const handleDownload = () => {
     const ast = JSON.stringify(program?.ast, null, 2);
     const filename = program?.name ?? 'program';
-    save(ast, `${filename}.json`, 'json');
+    saveFile(ast, `${filename}.json`, 'json');
+  };
+  const handleUpload = async () => {
+    try {
+      const ast = (await loadFile('json')) as Block[];
+      if (!ast.every(IsBlock)) throw new Error('Invalid file type');
+      if (!program) throw new Error('No program loaded');
+      setProgram({ ...program, ast });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleClear = () => {
+    if (program) setProgram({ ...program, ast: [] });
   };
 
   error && console.error(error);
@@ -37,13 +64,23 @@ export default function Ribbon({ css }: { css: CSS }) {
     <Root css={css}>
       {core && (
         <>
-          <Button color="neutral" onClick={() => handleDownload()}>
-            Download
+          <IconButton size="medium" color="neutral" onClick={handleClear}>
+            <TrashIcon />
+          </IconButton>
+          <Spacer width="sm" />
+          <IconButton size="medium" color="neutral" onClick={handleUpload}>
+            <UploadIcon />
+          </IconButton>
+          <IconButton size="medium" color="neutral" onClick={handleDownload}>
+            <DownloadIcon />
+          </IconButton>
+          <Spacer width="sm" />
+          <IconButton size="medium" color="neutral" onClick={handleTerminate}>
+            <StopIcon />
+          </IconButton>
+          <Button leadingIcon={<PlayIcon />} onClick={handleRun}>
+            <span>Run</span>
           </Button>
-          <Button color="neutral" onClick={() => handleTerminate()}>
-            Stop
-          </Button>
-          <Button onClick={() => handleRun()}>Run</Button>
         </>
       )}
     </Root>
@@ -55,6 +92,6 @@ const Root = styled('section', {
   display: 'flex',
   justify: 'end',
   items: 'center',
-  gap: 16,
+  gap: 8,
   bb: '1px solid $outline',
 });
