@@ -27,6 +27,7 @@ export default function Main({ css }: { css?: CSS }) {
 
 const Root = styled(s.section, {
   d: 'flex',
+  overflowX: 'hidden',
   fd: 'column',
 });
 
