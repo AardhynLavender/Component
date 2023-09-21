@@ -55,7 +55,7 @@ make run-editor     # run on the configured port
 
 ### Native Core
 
-> Requires [`GCC`](https://gcc.gnu.org/) (Compiler collection), [`SDL2`](https://www.libsdl.org/), and [`GNU Make`](https://www.gnu.org/software/make/) (agnostic build tool)
+> Requires [`GCC`](https://gcc.gnu.org/) (Compiler collection), [`SDL2`](https://www.libsdl.org/) (cross-platform software development library), and [`GNU Make`](https://www.gnu.org/software/make/) (agnostic build tool)
 
 It's possible to build the core as a headless CLI native executable.
 
