@@ -796,7 +796,11 @@ export namespace algorithm {
           case 'log':
           case 'random':
             // @ts-ignore
-            if (draft.expression) draft.expression = component;
+            if (draft.expression)
+              draft.expression = EmplaceExpression(
+                emplacement,
+                draft.expression,
+              );
             break;
           case 'subscript':
             if (draft.list)
