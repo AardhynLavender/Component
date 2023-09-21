@@ -52,7 +52,8 @@ const ScrollAreaScrollbar = styled(ScrollArea.Scrollbar, {
 
 const ScrollAreaThumb = styled(ScrollArea.Thumb, {
   flex: 1,
-  bg: '$outline',
+  bg: '$text',
+  opacity: 0.3,
   r: SCROLLBAR_SIZE,
   z: 16, // ensure scrollbar is on top of content
 
