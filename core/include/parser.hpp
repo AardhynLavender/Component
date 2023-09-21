@@ -34,37 +34,63 @@ private:
     void ParseUnaryArithmetic(Json& expression) {
         const auto key = expression["definitionId"];
         const auto& variable = store.Get(key);
-        const auto primitive = variable.GetPrimitive();
 
-        if (primitive == "number") ApplyUnaryArithmetic<O>(key, variable.Get<int>());
-        else if (primitive == "double") ApplyUnaryArithmetic<O>(key, variable.Get<double>());
-        else throw std::invalid_argument("Invalid TYPE for UNARY ARITHMETIC expression!");
+        const auto primitive = variable.GetPrimitive();
+        if (primitive != "number")
+            throw std::invalid_argument("Invalid TYPE for UNARY ARITHMETIC expression!");
+
+        ApplyUnaryArithmetic<O>(key, variable.Get<double>());
     }
 
     template<Block::ArithmeticOperation O, Block::Arithmetic T>
     void ApplyUnaryArithmetic(const std::string key, const T& value) {
         T result;
-        if constexpr (O == Block::ArithmeticOperation::INC) result = value + 1;
-        else if constexpr (O == Block::ArithmeticOperation::DEC) result = value - 1;
+        if constexpr (O == Block::ArithmeticOperation::INC) result = value + 1.0;
+        else if constexpr (O == Block::ArithmeticOperation::DEC) result = value - 1.0;
         else throw std::invalid_argument("Invalid arithmetic operation provided!");
 
         store.Set(key, result);
     }
 
-    template<Block::Arithmetic T = int>
+    template<Block::Arithmetic T = double>
     [[nodiscard]] T ParseOperation(Json& operation) {
         const std::string type = operation["type"];
         auto expression = operation["expression"];
 
-        const T lvalue = ExtractValue<T>(expression[LVALUE]);
+        const T lvalue = ExtractValue<T>(expression.is_array() ? expression[LVALUE] : expression);
+
+        if (type == "sin")          return std::sin(lvalue);
+        if (type == "cos")          return std::cos(lvalue);
+        if (type == "tan")          return std::tan(lvalue);
+        if (type == "asin")         return std::asin(lvalue);
+        if (type == "acos")         return std::acos(lvalue);
+        if (type == "atan")         return std::atan(lvalue);
+
+        if (type == "log")          return std::log(lvalue);
+        if (type == "log10")        return std::log10(lvalue);
+        if (type == "log2")         return std::log2(lvalue);
+
+        if (type == "sqrt")         return std::sqrt(lvalue);
+        if (type == "cbrt")         return std::cbrt(lvalue);
+
+        if (type == "abs")          return std::abs(lvalue);
+        if (type == "round")        return std::round(lvalue);
+        if (type == "ceil")         return std::ceil(lvalue);
+        if (type == "floor")        return std::floor(lvalue);
+
         const T rvalue = ExtractValue<T>(expression[RVALUE]);
 
-        if (type == "add")      return lvalue + rvalue;
-        if (type == "subtract") return lvalue - rvalue;
-        if (type == "multiply") return lvalue * rvalue;
-        if (type == "divide")   return lvalue / rvalue;
-        if (type == "modulo")   return lvalue % rvalue;
-        if (type == "exponent") return std::pow(lvalue, rvalue);
+        if (type == "add")          return lvalue + rvalue;
+        if (type == "subtract")     return lvalue - rvalue;
+        if (type == "multiply")     return lvalue * rvalue;
+        if (type == "divide")       return lvalue / rvalue;
+        if (type == "modulo")       return (int)lvalue % (int)rvalue; // only integers can be modded
+        if (type == "exponent")     return std::pow(lvalue, rvalue);
+
+        if (type == "min")          return std::min(lvalue, rvalue);
+        if (type == "max")          return std::max(lvalue, rvalue);
+
+
 
         throw std::invalid_argument("Invalid operation TYPE provided!");
     }
@@ -103,7 +129,7 @@ private:
         if (type == "literal") {
             if constexpr (std::is_same_v<T, Any>) {
                 const auto value = expression["expression"];
-                if (value.is_number_integer()) return value.get<int>();
+                if (value.is_number_integer()) return value.get<double>(); // let's just assume that all numbers are doubles...
                 if (value.is_number_float()) return value.get<double>();
                 if (value.is_boolean()) return value.get<bool>();
                 if (value.is_string()) return value.get<std::string>();
@@ -114,7 +140,7 @@ private:
 
         if (IsOperation(type)) {
             if constexpr (std::is_same_v<T, Any> || std::is_arithmetic_v<T>)
-                return ParseOperation<int>(expression);
+                return ParseOperation<double>(expression);
             else throw std::invalid_argument("unconstrained typename T is not arithmetic; Can't process operation!");
         } 
 
@@ -146,7 +172,24 @@ private:
             || type == "multiply"
             || type == "divide"
             || type == "modulo"
-            || type == "exponent";
+            || type == "exponent"
+            || type == "sin"
+            || type == "cos"
+            || type == "tan"
+            || type == "asin"
+            || type == "acos"
+            || type == "atan"
+            || type == "log"
+            || type == "log10"
+            || type == "log2"
+            || type == "sqrt"
+            || type == "cbrt"
+            || type == "abs"
+            || type == "round"
+            || type == "ceil"
+            || type == "floor"
+            || type == "min"
+            || type == "max";
     }
 
     [[nodiscard]] constexpr inline bool IsCondition(std::string_view type) const {
