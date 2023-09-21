@@ -149,7 +149,6 @@ void Parser::ParseDrawLine(Json& draw) {
   const Vec2 end{ x2, y2 };
 
   renderer.DrawLine(start, end);
-  renderer.Present();
 }
 
 void Parser::ParseDrawRect(Json& draw) {
@@ -161,7 +160,6 @@ void Parser::ParseDrawRect(Json& draw) {
   const Rec2 rect{ { x, y }, { w, h } };
 
   renderer.DrawRect(rect);
-  renderer.Present();
 }
 
 void Parser::ParseDrawPixel(Json& draw) {
@@ -171,7 +169,6 @@ void Parser::ParseDrawPixel(Json& draw) {
   const Vec2 pixel{ x, y };
 
   renderer.DrawPixel(pixel);
-  renderer.Present();
 }
 
 // Conditions //

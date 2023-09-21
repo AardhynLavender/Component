@@ -31,6 +31,7 @@ void Runtime::Cycle() {
 
   try {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
+    PresentCanvas();
     while (!Timing::Elapsed(start, CLOCK_SPEED)) {
       if (parser.Next()) continue; // next instruction
       ClientPrint("<br/>"); 
