@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import {
-  DrawLine,
+  DrawRect,
   Expression,
   Component,
   IsLiteral,
@@ -13,22 +13,19 @@ import { LiteralExpression } from '../expressions/Literal';
 import { VariableExpression } from '../expressions/Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
-import {
-  GenericExpression,
-  GenericExpressionOptions,
-} from '../expressions/Expression';
+import { GenericExpression } from '../expressions/Expression';
 
-export default function DrawLineBlock({
+export default function DrawRectBlock({
   block,
   preview = false,
 }: {
-  block: DrawLine;
+  block: DrawRect;
   preview?: boolean;
 }): ReactElement | null {
-  const dropPredicate = (c: Component) =>
+  const predicate = (c: Component) =>
     IsNumericVariable(c) || IsBinaryOperation(c) || IsLiteral(c);
 
-  const parent = { id: block.id, dropPredicate };
+  const parent = { id: block.id, dropPredicate: predicate };
 
   return (
     <BlockRoot
@@ -36,33 +33,33 @@ export default function DrawLineBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <DrawLine />
+      <DrawRect />
       <GenericExpression
-        parent={{ ...parent, locale: 'x1' }}
-        expression={block.x1}
-        preview={preview}
-        placeholder="x"
-        options={{ literals: ['number'] }}
-      />
-      <GenericExpression
-        parent={{ ...parent, locale: 'y1' }}
-        expression={block.y1}
-        placeholder="y"
-        preview={preview}
-        options={{ literals: ['number'] }}
-      />
-      <To />
-      <GenericExpression
-        parent={{ ...parent, locale: 'x2' }}
-        expression={block.x2}
+        parent={{ ...parent, locale: 'x' }}
+        expression={block.x}
         placeholder="x"
         preview={preview}
         options={{ literals: ['number'] }}
       />
       <GenericExpression
-        parent={{ ...parent, locale: 'y2' }}
-        expression={block.y2}
+        parent={{ ...parent, locale: 'y' }}
+        expression={block.y}
         placeholder="y"
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
+      <Of />
+      <GenericExpression
+        parent={{ ...parent, locale: 'w' }}
+        expression={block.w}
+        placeholder="width"
+        preview={preview}
+        options={{ literals: ['number'] }}
+      />
+      <GenericExpression
+        parent={{ ...parent, locale: 'h' }}
+        expression={block.h}
+        placeholder="hight"
         preview={preview}
         options={{ literals: ['number'] }}
       />
@@ -70,5 +67,5 @@ export default function DrawLineBlock({
   );
 }
 
-const DrawLine = () => <s.span>draw line</s.span>;
-const To = () => <s.span>to</s.span>;
+const DrawRect = () => <s.span>draw rect</s.span>;
+const Of = () => <s.span>of</s.span>;

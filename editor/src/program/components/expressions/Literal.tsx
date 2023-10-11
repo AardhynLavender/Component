@@ -2,34 +2,32 @@ import { CSS } from 'theme/stitches.config';
 import { ReactElement, FocusEvent, useState } from 'react';
 import { useMutateComponent } from 'program';
 import { Literal, Primitive, PrimitiveType } from 'types';
-import { ExpressionParent } from '../expressions/types';
+import { ExpressionParent } from './types';
 import { GetBoolFromString } from 'util/string';
 import Field, {
   FieldBlurHandler,
   FieldKeyEventHandler,
 } from 'components/ui/Field';
 import { ExpressionDropzone } from 'program/components/dropzone';
-import { Primitives } from '../types';
-import { setDefaultResultOrder } from 'dns';
 
 export function LiteralExpression({
   expression,
   parent,
   preview = false,
-  types = ['string', 'number', 'boolean'],
+  placeholder,
+  types = ['number', 'string', 'boolean'],
 }: {
   expression: Literal;
   parent: ExpressionParent;
   preview?: boolean;
+  placeholder?: string;
   types?: PrimitiveType[];
 }): ReactElement | null {
   const [error, setError] = useState(false);
 
   // local state for editing
   const [value, setValue] = useState(expression.expression);
-  const handleChange = (value: Primitive) => {
-    if (value !== expression.expression) setValue(value);
-  };
+  const handleChange = (value: Primitive) => setValue(value);
 
   // apply mutation to the ast
   const mutate = useMutateComponent();
@@ -48,11 +46,13 @@ export function LiteralExpression({
     >
       <PrimitiveInput
         error={error}
+        placeholder={placeholder}
         setError={setError}
         primitives={types}
         value={value}
         onChange={handleChange}
         onBlur={handleApplyMutation}
+        disabled={preview}
       />
     </ExpressionDropzone>
   );
@@ -69,6 +69,7 @@ function formatNumberPrimitive(value: string) {
 }
 
 function reinterpretPrimitive(value: string): [PrimitiveType, Primitive] {
+  if (value.trim() === '') return ['string', value]; // empty string is a string
   const number = Number(value);
   if (!isNaN(number)) return ['number', number];
   const bool = GetBoolFromString(value, { noExcept: true });
@@ -79,19 +80,23 @@ function reinterpretPrimitive(value: string): [PrimitiveType, Primitive] {
 export function PrimitiveInput({
   value,
   onChange,
+  placeholder,
   onPrimitiveChange,
   onBlur,
   error,
   setError,
   primitives,
+  disabled,
 }: {
   value: Primitive | null;
   onChange: (value: Primitive) => void;
+  placeholder?: string;
   onBlur: () => void;
   onPrimitiveChange?: (type: PrimitiveType) => void;
   error?: boolean;
   setError?: (error: boolean) => void;
   primitives: PrimitiveType[];
+  disabled?: boolean;
 }) {
   const [primitive, setPrimitive] = useState<PrimitiveType | null>(null);
 
@@ -108,7 +113,9 @@ export function PrimitiveInput({
 
   return (
     <Field
-      value={value?.toString() ?? ''}
+      value={typeof value === 'string' ? value : value?.toString() ?? ''}
+      disabled={disabled}
+      placeholder={placeholder}
       onValueChange={(value) => {
         const [primitive, typedValue] = reinterpretPrimitive(value);
         setPrimitive(primitive);

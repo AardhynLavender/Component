@@ -2,8 +2,10 @@
 
 Renderer::Renderer(Window& window, Flags flags, ScaleQuality interpolation)
 : window(window), flags(flags) {
-  renderer = SDL_CreateRenderer(window.GetWindow(), 1, NULL); // using `1` for the driver as `-1` and `0` cause a crash?
+  renderer = SDL_CreateRenderer(window.GetWindow(), 1, DEFAULT_FLAGS); // tofix: using `1` for the driver as `-1` and `0` cause a crash?
   if (!renderer) throw SDL2Exception(SDL_GetError());
+
+  SDL_RenderSetIntegerScale(renderer, SDL_bool::SDL_TRUE);
 
   SetScaleQuality(interpolation);
   Clear(); // replace the default black with the brand dark blue
@@ -41,4 +43,10 @@ void Renderer::DrawRect(const Rec2 rect, const Color color, const Color fill) {
     const auto r = toSDLRect(rect);
     if (SDL_RenderFillRect(renderer, &r)) throw SDL2Exception(SDL_GetError());
   }
+}
+
+void Renderer::DrawPixel(const Vec2 vec, const Color color) {
+  SetColor(color);
+  if (SDL_RenderDrawPoint(renderer, (int)vec.x, (int)vec.y))
+    throw SDL2Exception(SDL_GetError());
 }

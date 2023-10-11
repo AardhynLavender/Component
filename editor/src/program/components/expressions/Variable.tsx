@@ -1,9 +1,8 @@
 import { Drag } from 'util/Drag';
 import { ReactElement } from 'react';
 import { Variable } from 'types';
-import { ExpressionParent } from '../expressions/types';
+import { ExpressionParent } from './types';
 import { useVariableDefinition } from 'program/store';
-import { styled, s } from 'theme/stitches.config';
 import Badge from 'components/ui/Badge';
 import { ExpressionDropzone } from 'program/components/dropzone';
 
@@ -32,21 +31,29 @@ export function VariableExpression({
         {definition ? (
           <>
             <span>{definition.name}</span>
-            <span>:</span>
+            <Colon />
             <Badge color="neutral" size="small">
               {definition.primitive}
             </Badge>
           </>
         ) : (
-          <>
-            <span>unknown</span>
-            <span>:</span>
-            <Badge color="neutral" size="small">
-              never
-            </Badge>
-          </>
+          <Unknown />
         )}
       </DragHandle>
     </ExpressionDropzone>
+  );
+}
+
+const Colon = () => <span>:</span>;
+
+function Unknown() {
+  return (
+    <>
+      <span>unknown</span>
+      <span>:</span>
+      <Badge color="neutral" size="small">
+        never
+      </Badge>
+    </>
   );
 }

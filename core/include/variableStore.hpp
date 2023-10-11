@@ -1,18 +1,21 @@
 #pragma once
 
+#include <json.hpp>
+
 #include <array>
 #include <variant>
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <stdexcept>
 
-typedef std::variant<std::string, int, double, bool> Any;
+typedef std::variant<std::string, int, double, bool, Json> Any;
 
 class BadDefinition final : public std::exception {
 private:
     std::string message;
 public:
-    explicit BadDefinition(const std::string name, const std::string primitive) {
+    BadDefinition(const std::string name, const std::string primitive) {
         using namespace std::string_literals;
         message = "Bad Definition: [primitive] "s + primitive + ", [name] "s + name;
     }
@@ -31,8 +34,8 @@ public:
 
     void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
 
-    [[nodiscard]] inline constexpr std::string GetName() const { return name; }
-    [[nodiscard]] inline constexpr std::string GetPrimitive() const { return primitive; }
+    [[nodiscard]] inline std::string GetName() const { return name; }
+    [[nodiscard]] inline std::string GetPrimitive() const { return primitive; }
 
     template<typename T = Any>
     [[nodiscard]] inline constexpr const T& Get() const { 
@@ -41,7 +44,9 @@ public:
     } // throws `std::bad_variant_access`
 
     template<typename T = Any>
-    inline constexpr void Set(const T value) { Variable::value = value; }
+    inline constexpr void Set(const T value) {
+        Variable::value = value;
+    }
 
     // todo: add operators (including assignment `=`)
 };
@@ -53,7 +58,8 @@ private:
     int stored;
 
     inline void WriteCheck() const { 
-        if (stored > MAX_VARIABLE_STORE) throw std::overflow_error("Variable store is full!"); 
+        if (stored > MAX_VARIABLE_STORE)
+            throw std::overflow_error("Variable store is full!"); 
     }
 public:
     VariableStore();

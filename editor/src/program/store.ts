@@ -40,10 +40,10 @@ type ProgramStore = {
    */
   rename(name: string): void;
   /**
-   * Set the program AST
-   * @param blocks The new program AST
+   * Set the program
+   * @param program The new program
    */
-  setProgram(blocks: Program): void;
+  setProgram(program: Program): void;
   /**
    * Find a component in the program AST
    * @param id The id of the component to find

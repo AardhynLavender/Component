@@ -5,22 +5,22 @@ import {
   Definition,
   DefinitionRValue,
   Literal,
-  Primitive,
   PrimitiveType,
 } from 'program/components/types';
 import { BlockRoot } from '../generic';
 import {
-  IsOperation,
+  IsBinaryOperation,
   IsLiteral,
   IsVariable,
+  IsCondition,
   IsPrimitive,
+  IsSubscript,
+  IsList,
 } from 'types/predicates';
-import { BinaryExpression } from '../expressions/Operation';
-import { LiteralExpression } from './Literal';
-import { ExpressionParent } from '../expressions/types';
 import Field from 'components/ui/Field';
 import Badge from 'components/ui/Badge';
-import { VariableExpression } from './Variable';
+import { GenericExpression } from '../expressions/Expression';
+import { IsUnaryOperation } from '../../../types/predicates';
 
 export function DefinitionBlock({
   block,
@@ -44,8 +44,17 @@ export function DefinitionBlock({
     handlePrimitiveChange();
   }, [primitive, block.primitive]);
 
-  const dropPredicate = (expression: Component) =>
-    IsLiteral(expression) || IsOperation(expression) || IsVariable(expression);
+  const parent = {
+    id: block.id,
+    locale: 'expression',
+    dropPredicate: (e: Component) =>
+      IsLiteral(e) ||
+      IsBinaryOperation(e) ||
+      IsVariable(e) ||
+      IsSubscript(e) ||
+      IsCondition(e) ||
+      IsList(e),
+  };
 
   return (
     <BlockRoot
@@ -63,13 +72,10 @@ export function DefinitionBlock({
       <Colon />
       <PrimitiveBadge primitive={primitive} />
       <Equals />
-      <Expression
+      <GenericExpression
         expression={block.expression}
-        parent={{
-          id: block.id,
-          locale: 'expression',
-          dropPredicate,
-        }}
+        parent={parent}
+        preview={preview}
       />
     </BlockRoot>
   );
@@ -79,8 +85,10 @@ const Let = () => <span>{'let'}</span>;
 const Equals = () => <span>{'='}</span>;
 const Colon = () => <span>{':'}</span>;
 
+export type DefinitionPrimitive = PrimitiveType | 'list' | null;
+
 const UNKNOWN_PRIMITIVE = 'unknown';
-function PrimitiveBadge({ primitive }: { primitive: PrimitiveType | null }) {
+function PrimitiveBadge({ primitive }: { primitive: DefinitionPrimitive }) {
   return (
     <Badge color="neutral" size="small">
       {primitive ?? UNKNOWN_PRIMITIVE}
@@ -93,8 +101,10 @@ function computePrimitive(
   variables: VariableStore,
 ) {
   if (value === null) return null;
+  if (value.type === 'list') return 'list';
   if (IsLiteral(value)) return computeLiteralPrimitive(value);
-  if (IsOperation(value)) return 'number';
+  if (IsBinaryOperation(value) || IsUnaryOperation(value)) return 'number';
+  if (IsCondition(value)) return 'boolean';
   if (IsVariable(value)) return variables[value.id].primitive;
 
   throw new Error(
@@ -105,7 +115,7 @@ function useComputedPrimitive(
   rvalue: DefinitionRValue | null,
   enabled: boolean = true,
 ) {
-  const [primitive, setPrimitive] = useState<PrimitiveType | null>(null);
+  const [primitive, setPrimitive] = useState<DefinitionPrimitive>(null);
   const { variables } = useVariableStore();
 
   useEffect(() => {
@@ -132,27 +142,4 @@ function useVariableDefinition(block: Definition, enabled: boolean = true) {
     if (enabled) declare(block.id, block); // declare the variable
     return () => declare(block.id, undefined); // un-declare the variable on unmount
   }, [block.id, block.name, block.primitive, enabled]);
-}
-
-function Expression({
-  expression,
-  preview,
-  parent,
-}: {
-  expression: DefinitionRValue | null;
-  preview?: boolean;
-  parent: ExpressionParent;
-}): ReactElement | null {
-  if (expression === null) return null;
-
-  if (IsLiteral(expression))
-    return <LiteralExpression expression={expression} parent={parent} />;
-
-  if (IsVariable(expression))
-    return <VariableExpression variable={expression} parent={parent} />;
-
-  if (IsOperation(expression))
-    return <BinaryExpression block={expression} parent={parent} />;
-
-  return null;
 }

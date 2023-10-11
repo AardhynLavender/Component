@@ -28,6 +28,7 @@ namespace Colors {
 class Renderer final {
 public:
   enum class ScaleQuality { nearest, linear };
+  static constexpr int DEFAULT_FLAGS = 0;
   struct Flags { // https://wiki.libsdl.org/SDL2/SDL_RendererFlags
     bool software = false;
     bool accelerated = false;
@@ -51,6 +52,7 @@ public:
 
   void DrawLine(const Vec2 a, const Vec2 b, const Color color = Colors::white);
   void DrawRect(const Rec2 rect, const Color color = Colors::white, const Color fill = Colors::transparent);
+  void DrawPixel(const Vec2 vec, const Color color = Colors::white);
 
   inline Vec2 GetSize() const {
     if (auto size = SDL_Rect{}; !SDL_GetRendererOutputSize(renderer, &size.w, &size.h))

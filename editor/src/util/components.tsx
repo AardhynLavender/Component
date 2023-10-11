@@ -38,9 +38,47 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
   let component: Component;
   switch (type) {
     case 'comment':
+      component = { ...base(type), expression: '' };
+      break;
+
+    case 'exit':
+      component = base(type);
+      break;
+
+    // List //
+
+    case 'subscript':
       component = {
         ...base(type),
-        expression: '',
+        list: null,
+        index: { ...base('literal'), expression: null },
+      };
+      break;
+
+    case 'list':
+      component = {
+        ...base(type),
+        expression: [
+          {
+            ...base('literal'),
+            expression: null,
+          },
+        ],
+      };
+      break;
+
+    case 'append':
+      component = {
+        ...base(type),
+        list: null,
+        item: { ...base('literal'), expression: null },
+      };
+      break;
+
+    case 'size':
+      component = {
+        ...base(type),
+        list: null,
       };
       break;
 
@@ -51,20 +89,14 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         ...base(type),
         name: 'var',
         primitive: 'string',
-        expression: {
-          ...base('literal'),
-          expression: '',
-        },
+        expression: { ...base('literal'), expression: '' },
       };
       break;
     case 'assignment':
       component = {
         ...base(type),
         lvalue: null,
-        rvalue: {
-          ...base('literal'),
-          expression: '',
-        },
+        rvalue: { ...base('literal'), expression: '' },
       };
       break;
 
@@ -73,10 +105,7 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'repeat':
       component = {
         ...base(type),
-        repetition: {
-          ...base('literal'),
-          expression: 1,
-        },
+        repetition: { ...base('literal'), expression: 1 },
         components: [],
       };
       break;
@@ -84,16 +113,13 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'while':
       component = {
         ...base(type),
-        condition: null,
+        condition: { ...base('literal'), expression: null },
         components: [],
       };
       break;
 
     case 'forever':
-      component = {
-        ...base(type),
-        components: [],
-      };
+      component = { ...base(type), components: [] };
       break;
 
     // Output  //
@@ -101,10 +127,7 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'print':
       component = {
         ...base(type),
-        expression: {
-          ...base('literal'),
-          expression: '',
-        },
+        expression: { ...base('literal'), expression: '' },
       };
       break;
 
@@ -117,7 +140,10 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'branch':
       component = {
         ...base(type),
-        condition: null,
+        condition: {
+          ...base('literal'),
+          expression: null,
+        },
         branches: [[], []],
       };
       break;
@@ -127,14 +153,17 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'not':
       component = {
         ...base(type),
-        expression: [null],
+        expression: [{ ...base('literal'), expression: null }],
       };
       break;
     case 'and':
     case 'or':
       component = {
         ...base(type),
-        expression: [null, null],
+        expression: [
+          { ...base('literal'), expression: null },
+          { ...base('literal'), expression: null },
+        ],
       };
       break;
     case 'eq':
@@ -142,14 +171,8 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       component = {
         ...base(type),
         expression: [
-          {
-            ...base('literal'),
-            expression: null,
-          },
-          {
-            ...base('literal'),
-            expression: null,
-          },
+          { ...base('literal'), expression: null },
+          { ...base('literal'), expression: null },
         ],
       };
       break;
@@ -160,14 +183,8 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       component = {
         ...base(type),
         expression: [
-          {
-            ...base('literal'),
-            expression: null,
-          },
-          {
-            ...base('literal'),
-            expression: null,
-          },
+          { ...base('literal'), expression: null },
+          { ...base('literal'), expression: null },
         ],
       };
       break;
@@ -177,22 +194,28 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'draw_line':
       component = {
         ...base(type),
-        x1: {
-          ...base('literal'),
-          expression: null,
-        },
-        y1: {
-          ...base('literal'),
-          expression: null,
-        },
-        x2: {
-          ...base('literal'),
-          expression: null,
-        },
-        y2: {
-          ...base('literal'),
-          expression: null,
-        },
+        x1: { ...base('literal'), expression: null },
+        y1: { ...base('literal'), expression: null },
+        x2: { ...base('literal'), expression: null },
+        y2: { ...base('literal'), expression: null },
+      };
+      break;
+
+    case 'draw_rect':
+      component = {
+        ...base(type),
+        x: { ...base('literal'), expression: null },
+        y: { ...base('literal'), expression: null },
+        w: { ...base('literal'), expression: null },
+        h: { ...base('literal'), expression: null },
+      };
+      break;
+
+    case 'draw_pixel':
+      component = {
+        ...base(type),
+        x: { ...base('literal'), expression: null },
+        y: { ...base('literal'), expression: null },
       };
       break;
 
@@ -204,12 +227,23 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
 
     case 'increment':
     case 'decrement':
+      component = { ...base(type), expression: null };
+      break;
+    case 'sin':
+    case 'cos':
+    case 'tan':
+    case 'abs':
+    case 'floor':
+    case 'ceil':
+    case 'round':
+    case 'sqrt':
+    case 'log':
+    case 'random':
       component = {
         ...base(type),
-        expression: null,
+        expression: { ...base('literal'), expression: null },
       };
       break;
-
     case 'add':
     case 'subtract':
     case 'multiply':
@@ -219,14 +253,8 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       component = {
         ...base(type),
         expression: [
-          {
-            ...base('literal'),
-            expression: null,
-          },
-          {
-            ...base('literal'),
-            expression: null,
-          },
+          { ...base('literal'), expression: null },
+          { ...base('literal'), expression: null },
         ],
       };
       break;

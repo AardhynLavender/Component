@@ -2,7 +2,8 @@ import { s, styled } from 'theme/stitches.config';
 import { ComponentType } from 'types';
 import {
   conditions,
-  operators,
+  binaryOperators,
+  unaryOperators,
   outputs,
   loops,
   Variable,
@@ -26,10 +27,17 @@ const ComponentCategories = {
   output: outputs,
   loops,
   rendering: renderers,
-  operators,
+  operators: [
+    ...binaryOperators,
+    '',
+    ...unaryOperators,
+    '',
+    'increment',
+    'decrement',
+  ],
   conditions: ['branch', ...conditions],
-  declarations: variables,
-  variables: [], // loops variable store instead
+  lists: ['list', 'subscript', 'append', 'size'],
+  variables,
 } as const;
 type ComponentCategory = keyof typeof ComponentCategories;
 
@@ -53,7 +61,7 @@ export default function ComponentList() {
               components={types}
             />
           ))}
-          <Spacer height="lg" />
+          <Spacer height="xl" />
         </ErrorBoundary>
       </DeleteDropzone>
     </Root>
@@ -71,17 +79,20 @@ function ComponentListCategory({
   return (
     <CategoryRoot>
       <CategoryName>{Capitalize(category)}</CategoryName>
-      {category === 'variables' ? (
-        <VariableStoreList />
-      ) : (
-        <ComponentListRoot>
-          {components.map((type) => {
-            const component = CreateComponent(type);
-            const parent = undefined;
-            const preview = true;
-            return GetJsxComponent(component, parent, preview);
-          })}
-        </ComponentListRoot>
+      <ComponentListRoot>
+        {components.map((type, index) => {
+          if (!type) return <Spacer key={index} height="sm" />;
+          const component = CreateComponent(type);
+          const parent = undefined;
+          const preview = true;
+          return GetJsxComponent(component, parent, preview);
+        })}
+      </ComponentListRoot>
+      {category === 'variables' && (
+        <>
+          <Spacer height="sm" />
+          <VariableStoreList />
+        </>
       )}
     </CategoryRoot>
   );

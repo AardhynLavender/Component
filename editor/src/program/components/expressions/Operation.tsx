@@ -2,12 +2,14 @@ import { Drag } from 'util/Drag';
 import { ReactElement } from 'react';
 import { uuid } from 'util/uuid';
 import { BinaryOperation, Component, Literal, Variable } from '../types';
-import { LiteralExpression } from '../blocks/Literal';
+import { LiteralExpression } from './Literal';
 import { ExpressionParent } from './types';
-import { VariableExpression } from '../blocks/Variable';
+import { VariableExpression } from './Variable';
 import { IsNumericVariable, IsLiteral } from 'types/predicates';
 import { s } from 'theme/stitches.config';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import { IsBinaryOperation, IsOperation } from '../../../types/predicates';
+import { GenericExpression } from './Expression';
 
 export function BinaryExpression({
   parent,
@@ -22,10 +24,14 @@ export function BinaryExpression({
     block,
     preview,
   );
-  const dropPredicate = (c: Component) =>
-    IsNumericVariable(c) || IsLiteral<number>(c);
 
   const [left, right] = block.expression;
+
+  const props = {
+    id: block.id,
+    dropPredicate: (c: Component) =>
+      IsNumericVariable(c) || IsLiteral<number>(c) || IsOperation(c),
+  };
 
   return (
     <ExpressionDropzone
@@ -33,75 +39,39 @@ export function BinaryExpression({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
-      css={{ d: isDragging ? 'none' : 'flex' }}
     >
-      <DragHandle css={{ d: 'flex', items: 'center', gap: 16 }}>
-        <Side
+      <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
+        <GenericExpression
           expression={left}
-          parent={{
-            id: block.id,
-            locale: 'left',
-            dropPredicate,
-          }}
+          parent={{ ...props, locale: 'left' }}
+          options={{ literals: ['number'] }}
+          preview={preview}
         />
-        <s.span css={{ d: 'flex', items: 'center' }}>
-          {NumericOperation(block.type)}
-        </s.span>
-        <Side
+        <Op type={block.type} />
+        <GenericExpression
           expression={right}
-          parent={{
-            id: block.id,
-            locale: 'right',
-            dropPredicate,
-          }}
+          parent={{ ...props, locale: 'right' }}
+          options={{ literals: ['number'] }}
+          preview={preview}
         />
       </DragHandle>
     </ExpressionDropzone>
   );
 }
 
-function Side({
-  parent,
-  expression,
-}: {
-  parent: ExpressionParent;
-  expression: Literal | Variable | BinaryOperation | null;
-}) {
-  if (!expression)
-    return (
-      <LiteralExpression
-        types={['number']}
-        parent={parent}
-        expression={{ id: uuid(), type: 'literal', expression: null }}
-      />
-    );
-
-  if (expression.type === 'variable')
-    return <VariableExpression variable={expression} parent={parent} />;
-  else if (expression.type === 'literal')
-    return (
-      <LiteralExpression
-        expression={expression}
-        parent={parent}
-        types={['number']}
-      />
-    );
-  else return <BinaryExpression block={expression} parent={parent} />;
-}
-
-function NumericOperation(type: BinaryOperation['type']) {
-  switch (type) {
-    case 'add':
-      return '+';
-    case 'subtract':
-      return '-';
-    case 'multiply':
-      return '×';
-    case 'divide':
-      return '÷';
-    case 'modulo':
-      return 'mod';
-    case 'exponent':
-      return '^';
-  }
+type OpType = BinaryOperation['type'];
+const numericOperator: Record<OpType, string> = {
+  add: '+',
+  subtract: '-',
+  multiply: '×',
+  divide: '÷',
+  modulo: 'mod',
+  exponent: '××',
+};
+function Op({ type }: { type: OpType }) {
+  return (
+    <s.span css={{ d: 'flex', items: 'center' }}>
+      {numericOperator[type]}
+    </s.span>
+  );
 }

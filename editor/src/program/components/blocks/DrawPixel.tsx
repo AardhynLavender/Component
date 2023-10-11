@@ -1,10 +1,11 @@
 import { ReactElement } from 'react';
 import {
-  DrawLine,
+  DrawRect,
   Expression,
   Component,
   IsLiteral,
   IsBinaryOperation,
+  DrawPixel,
 } from 'types';
 import { BlockRoot } from '../generic';
 import { s } from 'theme/stitches.config';
@@ -13,20 +14,18 @@ import { LiteralExpression } from '../expressions/Literal';
 import { VariableExpression } from '../expressions/Variable';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
-import {
-  GenericExpression,
-  GenericExpressionOptions,
-} from '../expressions/Expression';
+import { GenericExpression } from '../expressions/Expression';
+import { IsOperation } from '../../../types/predicates';
 
-export default function DrawLineBlock({
+export default function DrawPixelBlock({
   block,
   preview = false,
 }: {
-  block: DrawLine;
+  block: DrawPixel;
   preview?: boolean;
 }): ReactElement | null {
   const dropPredicate = (c: Component) =>
-    IsNumericVariable(c) || IsBinaryOperation(c) || IsLiteral(c);
+    IsNumericVariable(c) || IsOperation(c) || IsLiteral(c);
 
   const parent = { id: block.id, dropPredicate };
 
@@ -36,32 +35,17 @@ export default function DrawLineBlock({
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
-      <DrawLine />
+      <DrawPixel />
       <GenericExpression
-        parent={{ ...parent, locale: 'x1' }}
-        expression={block.x1}
+        parent={{ ...parent, locale: 'x' }}
+        expression={block.x}
         preview={preview}
         placeholder="x"
         options={{ literals: ['number'] }}
       />
       <GenericExpression
-        parent={{ ...parent, locale: 'y1' }}
-        expression={block.y1}
-        placeholder="y"
-        preview={preview}
-        options={{ literals: ['number'] }}
-      />
-      <To />
-      <GenericExpression
-        parent={{ ...parent, locale: 'x2' }}
-        expression={block.x2}
-        placeholder="x"
-        preview={preview}
-        options={{ literals: ['number'] }}
-      />
-      <GenericExpression
-        parent={{ ...parent, locale: 'y2' }}
-        expression={block.y2}
+        parent={{ ...parent, locale: 'y' }}
+        expression={block.y}
         placeholder="y"
         preview={preview}
         options={{ literals: ['number'] }}
@@ -70,5 +54,4 @@ export default function DrawLineBlock({
   );
 }
 
-const DrawLine = () => <s.span>draw line</s.span>;
-const To = () => <s.span>to</s.span>;
+const DrawPixel = () => <s.span>draw pixel</s.span>;

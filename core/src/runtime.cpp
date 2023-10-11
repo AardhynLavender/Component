@@ -6,7 +6,7 @@
 #include <timing.hpp>
 
 Runtime::Runtime()
-: window{ "Component", { }, { DEFAULT_RESOLUTION, DEFAULT_RESOLUTION / DEFAULT_ASPECT_RATIO }, { .opengl = true } },
+: window{ "Component", Window::centered, { DEFAULT_RESOLUTION, DEFAULT_RESOLUTION / DEFAULT_ASPECT_RATIO }, { .opengl = true } },
   renderer{ window, { } }, 
   parser{ renderer },
   running{ false } {
@@ -16,24 +16,36 @@ Runtime::Runtime()
 Runtime::~Runtime() { Terminate(); }
 
 void Runtime::Daemon() {
+  running = true;
+#ifdef __EMSCRIPTEN__
+  // todo: bind cycle to emscripten main loop
+#else
+  while (running) Cycle();
+#endif // __EMSCRIPTEN__
+}
+
+void Runtime::Cycle() {
   using namespace std::chrono_literals;
-  const auto CLOCK_SPEED = 10ms; // 1 instruction every 10 milliseconds
+  const auto CLOCK_SPEED = 10ms;
   const auto start = Timing::Now();
 
   try {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
+    PresentCanvas();
     while (!Timing::Elapsed(start, CLOCK_SPEED)) {
       if (parser.Next()) continue; // next instruction
-
-      using namespace std::string_literals;
-      ClientPrint("Program terminated"); 
       ClientPrint("<br/>"); 
-
       Terminate();
       break;
     }
   } catch (const std::exception& e) { 
     ClientPrint(e.what()); 
+#ifdef __NOEXCEPT__
+#if __NOEXCEPT__ == 1
+    Terminate();
+    Log("An exception was raised; terminating runtime");
+#endif // __NOEXCEPT__ == 1
+#endif // __NOEXCEPT__
   } catch (...) { 
     ClientPrint("An UNHANDLED exception was thrown while parsing AST"); 
   }

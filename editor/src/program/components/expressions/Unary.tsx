@@ -1,0 +1,83 @@
+import { ReactElement } from 'react';
+import { Drag } from 'util/Drag';
+import { UnaryOperation } from 'types';
+import { ExpressionParent } from './types';
+import { VariableExpression } from './Variable';
+import { Component, UnaryOperand, Increment, Decrement } from '../types';
+import { IsLiteral, IsVariable, IsSubscript } from 'types/predicates';
+import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from './Expression';
+import { BlockRoot } from '../generic';
+import { IsBinaryOperation } from '../../../types/predicates';
+
+export function UnaryOperationBlock({
+  block,
+  preview = false,
+}: {
+  block: Extract<UnaryOperation, Increment | Decrement>;
+  preview?: boolean;
+}): ReactElement | null {
+  const dropPredicate = (c: Component) => IsVariable(c);
+
+  const props = {
+    id: block.id,
+    locale: 'expression',
+    dropPredicate,
+  };
+
+  return (
+    <BlockRoot block={block} preview={preview} css={styles}>
+      <span>{block.type}</span>
+      <GenericExpression
+        expression={block.expression}
+        parent={props}
+        preview={preview}
+        options={{ literals: false, subscript: false, operation: false }}
+      />
+    </BlockRoot>
+  );
+}
+
+export function UnaryOperationExpression({
+  expression,
+  parent,
+  preview = false,
+}: {
+  expression: Exclude<UnaryOperation, Increment | Decrement>;
+  parent?: ExpressionParent;
+  preview?: boolean;
+}) {
+  const { DragHandle } = Drag.useComponentDragHandle(expression, preview);
+
+  const dropPredicate = (c: Component) =>
+    IsVariable(c) || IsSubscript(c) || IsLiteral(c) || IsBinaryOperation(c);
+
+  return (
+    <ExpressionDropzone
+      parentId={parent?.id}
+      locale={parent?.locale}
+      dropPredicate={parent?.dropPredicate}
+      enabled={!preview}
+    >
+      <DragHandle css={styles}>
+        <span>{expression.type}</span>
+        <GenericExpression
+          parent={{
+            id: expression.id,
+            dropPredicate,
+            locale: 'expression',
+          }}
+          expression={expression.expression}
+          preview={preview}
+        />
+      </DragHandle>
+    </ExpressionDropzone>
+  );
+}
+
+const styles = {
+  d: 'flex',
+  flexDirection: 'row',
+  items: 'center',
+  gap: 8,
+};

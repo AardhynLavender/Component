@@ -1,4 +1,21 @@
-import { RenderType } from 'program/components/types';
+import { Decrement, Increment } from '../program/components/types';
+import {
+  UnaryOperation,
+  binaryOperators,
+  unaryOperators,
+} from '../program/components/types';
+import {
+  List,
+  listOperations,
+  RenderType,
+  variables,
+  VariableType,
+} from 'program/components/types';
+import {
+  Subscript,
+  ListOperations,
+  ListOperationType,
+} from '../program/components/types';
 import {
   Loop,
   loops,
@@ -10,7 +27,6 @@ import {
   conditions,
   ConditionType,
   BinaryOperation,
-  operators,
   OperatorType,
   Primitive,
   Literal,
@@ -29,14 +45,11 @@ export function IsBlock(component: Component): component is Block {
     loops.includes(component.type as LoopType) ||
     outputs.includes(component.type as OutputType) ||
     renderers.includes(component.type as RenderType) ||
-    [
-      'comment',
-      'branch',
-      'definition',
-      'assignment',
-      'increment',
-      'decrement',
-    ].includes(component.type)
+    listOperations.includes(component.type as ListOperationType) ||
+    variables.includes(component.type as VariableType) ||
+    ['comment', 'exit', 'branch', 'increment', 'decrement'].includes(
+      component.type,
+    )
   );
 }
 
@@ -44,10 +57,33 @@ export function IsCondition(component: Component): component is Condition {
   return conditions.includes(component.type as ConditionType);
 }
 
-export function IsOperation(
+export function IsBinaryOperation(
   component: Component,
 ): component is BinaryOperation {
-  return operators.includes(component.type as OperatorType);
+  return binaryOperators.includes(component.type as OperatorType);
+}
+
+export function IsUnaryOperation(
+  component: Component,
+): component is Exclude<UnaryOperation, Increment | Decrement> {
+  return unaryOperators.includes(
+    component.type as Exclude<
+      UnaryOperation['type'],
+      'increment' | 'decrement'
+    >,
+  );
+}
+
+export function IsOperation(
+  component: Component,
+): component is
+  | Exclude<UnaryOperation, Increment | Decrement>
+  | BinaryOperation {
+  return IsUnaryOperation(component) || IsBinaryOperation(component);
+}
+
+export function IsSubscript(component: Component): component is Subscript {
+  return component.type === 'subscript';
 }
 
 // Literals //
@@ -69,6 +105,10 @@ export function IsString(value: unknown): value is string {
 }
 export function IsBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
+}
+
+export function IsList(component: Component): component is List {
+  return component.type === 'list';
 }
 
 // Variables //
@@ -93,6 +133,8 @@ export function IsExpression(component: Component): component is Expression {
     IsCondition(component) ||
     IsOperation(component) ||
     IsLiteral(component) ||
+    IsList(component) ||
+    IsSubscript(component) ||
     IsVariable(component)
   );
 }

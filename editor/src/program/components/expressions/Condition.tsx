@@ -1,15 +1,5 @@
 import { ReactElement } from 'react';
-import {
-  Condition,
-  Literal,
-  Variable,
-  Component,
-  IsLiteral,
-  ConditionType,
-  OutputType,
-} from 'types';
-import { VariableExpression } from '../blocks/Variable';
-import { LiteralExpression } from '../blocks/Literal';
+import { Condition, Component, IsLiteral, ConditionType } from 'types';
 import { Drag } from 'util/Drag';
 import {
   IsBooleanVariable,
@@ -19,16 +9,19 @@ import {
   IsBoolean,
   IsNumber,
   IsPrimitive,
-  IsOperation,
+  IsBinaryOperation,
 } from 'types/predicates';
 import { ExpressionParent } from './types';
 import { ExpressionDropzone } from 'program/components/dropzone';
+import { GenericExpression } from './Expression';
+import { PrimitiveType } from '../types';
+import { IsSubscript, IsOperation } from '../../../types/predicates';
 
 /**
  * Unary or binary comparison node
  * Used in Branches and Loops
  */
-export function ConditionBlock({
+export function ConditionExpression({
   parent,
   condition,
   preview = false,
@@ -42,8 +35,23 @@ export function ConditionBlock({
     preview,
   );
   const dropPredicate = GetDropPredicate(condition.type);
-
   const [left, right] = condition?.expression ?? [];
+  const not = condition.type === 'not';
+
+  const props = {
+    id: condition.id,
+    dropPredicate: GetDropPredicate(condition.type),
+  };
+
+  const numericCondition = ['gt', 'lt', 'ge', 'le'].includes(condition.type);
+  const equalityComparison = ['eq', 'ne'].includes(condition.type);
+  const literals = (
+    numericCondition
+      ? ['number']
+      : equalityComparison
+      ? ['boolean', 'number', 'string']
+      : ['boolean']
+  ) as PrimitiveType[];
 
   return (
     <ExpressionDropzone
@@ -51,76 +59,29 @@ export function ConditionBlock({
       dropPredicate={dropPredicate}
       locale={parent?.locale}
       enabled={!preview}
-      css={{
-        d: isDragging && !preview ? 'none' : 'flex',
-      }}
     >
-      <DragHandle
-        css={{
-          d: 'flex',
-          items: 'center',
-          gap: 16,
-        }}
-      >
-        <>
-          {condition.type === 'not' && (
-            <BooleanOperation type={condition.type} />
-          )}
-        </>
-        <Side
+      <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
+        {not && <BooleanOperation type={condition.type} />}
+        <GenericExpression
           expression={left}
-          parent={{
-            id: condition.id,
-            locale: 'left',
-            dropPredicate: GetDropPredicate(condition.type),
-          }}
+          parent={{ ...props, locale: 'left' }}
+          preview={preview}
+          options={{ literals }}
         />
-        <>
-          {condition.type !== 'not' && (
-            <>
-              <BooleanOperation type={condition.type} />
-              <Side
-                expression={right}
-                parent={{
-                  id: condition.id,
-                  locale: 'right',
-                  dropPredicate: GetDropPredicate(condition.type),
-                }}
-              />
-            </>
-          )}
-        </>
+        {!not && (
+          <>
+            <BooleanOperation type={condition.type} />
+            <GenericExpression
+              parent={{ ...props, locale: 'right' }}
+              expression={right ?? null}
+              preview={preview}
+              options={{ literals }}
+            />
+          </>
+        )}
       </DragHandle>
     </ExpressionDropzone>
   );
-}
-
-function Side({
-  parent,
-  expression,
-}: {
-  parent: ExpressionParent;
-  expression: Literal | Variable | Condition | null | undefined;
-}) {
-  if (!expression)
-    return (
-      <ExpressionDropzone
-        parentId={parent.id}
-        locale={parent.locale}
-        enabled={true}
-      />
-    );
-
-  if (expression.type === 'variable')
-    return <VariableExpression variable={expression} parent={parent} />;
-  if (expression.type === 'literal')
-    return <LiteralExpression expression={expression} parent={parent} />;
-
-  // nested condition
-  if (IsCondition(expression))
-    return <ConditionBlock condition={expression} parent={parent} />;
-
-  throw new Error(`Failed to render side! Unknown type '${expression}'`);
 }
 
 function BooleanOperation({ type }: { type: ConditionType }) {
@@ -153,42 +114,26 @@ function GetDropPredicate(type: ConditionType) {
     case 'and':
     case 'or':
     case 'not':
-      return (c: Component) => IsBooleanVariable(c) || IsCondition(c);
+      return (c: Component) =>
+        IsBooleanVariable(c) || IsCondition(c) || IsSubscript(c);
     case 'eq':
     case 'ne':
       return (c: Component) =>
-        IsVariable(c) || IsLiteral(c) || IsCondition(c) || IsOperation(c);
+        IsVariable(c) ||
+        IsLiteral(c) ||
+        IsCondition(c) ||
+        IsOperation(c) ||
+        IsSubscript(c);
     case 'gt':
     case 'lt':
     case 'ge':
     case 'le':
-      return (c: Component) => IsNumericVariable(c) || IsLiteral<number>(c);
+      return (c: Component) =>
+        IsNumericVariable(c) ||
+        IsLiteral<number>(c) ||
+        IsSubscript(c) ||
+        IsOperation(c);
     default:
       throw new Error(`Failed to get drop predicate! Unknown type ${type}`);
-  }
-}
-
-/**
- *
- * @param type
- * @returns
- */
-export function GetLiteralPredicate(type: ConditionType | OutputType) {
-  switch (type) {
-    case 'and':
-    case 'or':
-    case 'not':
-      return IsBoolean;
-    case 'gt':
-    case 'lt':
-    case 'ge':
-    case 'le':
-      return IsNumber;
-    case 'eq':
-    case 'ne':
-    case 'print':
-      return IsPrimitive; // any primitive
-    default:
-      throw new Error(`Failed to get literal predicate! Unknown type ${type}`);
   }
 }

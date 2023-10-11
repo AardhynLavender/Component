@@ -1,16 +1,17 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { PrintBlock } from './blocks/Print';
 import { Block } from './types';
 import { IsBlock, Component } from 'types';
 import {
   BranchBlock,
-  ConditionBlock,
+  ConditionExpression,
   DefinitionBlock,
   UnaryOperationBlock,
   RepeatBlock,
   VariableExpression,
   ClearOutputBlock,
   CommentBlock,
+  UnaryOperationExpression,
 } from './blocks';
 import { CSS } from 'theme/stitches.config';
 import { Drag } from 'util/Drag';
@@ -22,6 +23,13 @@ import { ClearScreenBlock } from './blocks/ClearScreen';
 import { AssignmentBlock } from './blocks/Assignment';
 import { BlockDropzone } from 'program/components/dropzone';
 import { WhileBlock } from './blocks/While';
+import DrawRectBlock from './blocks/DrawRect';
+import DrawPixelBlock from './blocks/DrawPixel';
+import { SubscriptExpression } from './expressions/Subscript';
+import { ListExpression } from './expressions/List';
+import { SizeExpression } from './expressions/Size';
+import { AppendBlock } from './expressions/Append';
+import { ExitBlock } from './blocks/Exit';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -91,7 +99,7 @@ export function BlockRoot({
   css,
 }: {
   block: Block;
-  children?: ReactElement | (ReactElement | null | undefined)[];
+  children?: ReactNode | null;
   preview?: boolean;
   overrideStyles?: boolean;
   error?: boolean;
@@ -113,7 +121,7 @@ export function BlockRoot({
         fontSize: '$1',
 
         r: 4,
-        p: '4px 8px',
+        p: 6,
 
         bg: error ? '$error' : '$background',
         b: `2px solid ${error ? '$onError' : '$outline'}`,
@@ -126,7 +134,7 @@ export function BlockRoot({
       data-dragging={isDragging} // enables parents to select based on the dragging state of their children
       css={{
         c: '$text',
-        opacity: isDragging ? 0 : 1,
+        visibility: isDragging ? 'hidden' : 'visible',
         ...styles,
         ...css,
       }}
@@ -157,12 +165,22 @@ export function GetJsxComponent(
   switch (component.type) {
     case 'comment':
       return <CommentBlock block={component} {...stdProps} />;
+    case 'exit':
+      return <ExitBlock block={component} {...stdProps} />;
     case 'definition':
       return <DefinitionBlock block={component} {...stdProps} />;
     case 'assignment':
       return <AssignmentBlock block={component} {...stdProps} />;
+    case 'subscript':
+      return <SubscriptExpression expression={component} {...stdProps} />;
     case 'variable':
       return <VariableExpression variable={component} {...stdProps} />;
+    case 'list':
+      return <ListExpression expression={component} {...stdProps} />;
+    case 'size':
+      return <SizeExpression expression={component} {...stdProps} />;
+    case 'append':
+      return <AppendBlock block={component} {...stdProps} />;
     case 'print':
       return <PrintBlock block={component} {...stdProps} />;
     case 'clear_output':
@@ -177,6 +195,10 @@ export function GetJsxComponent(
       return <BranchBlock block={component} {...stdProps} />;
     case 'draw_line':
       return <DrawLineBlock block={component} {...stdProps} />;
+    case 'draw_rect':
+      return <DrawRectBlock block={component} {...stdProps} />;
+    case 'draw_pixel':
+      return <DrawPixelBlock block={component} {...stdProps} />;
     case 'clear_screen':
       return <ClearScreenBlock block={component} {...stdProps} />;
     case 'not':
@@ -188,10 +210,21 @@ export function GetJsxComponent(
     case 'gt':
     case 'le':
     case 'ge':
-      return <ConditionBlock condition={component} {...stdProps} />; // todo: add parent
+      return <ConditionExpression condition={component} {...stdProps} />; // todo: add parent
     case 'increment':
     case 'decrement':
       return <UnaryOperationBlock block={component} {...stdProps} />; // todo: add parent
+    case 'sin':
+    case 'cos':
+    case 'tan':
+    case 'abs':
+    case 'sqrt':
+    case 'floor':
+    case 'ceil':
+    case 'round':
+    case 'log':
+    case 'random':
+      return <UnaryOperationExpression expression={component} {...stdProps} />;
     case 'add':
     case 'subtract':
     case 'multiply':

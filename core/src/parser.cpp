@@ -1,6 +1,8 @@
 #include <parser.hpp>
 #include <vec2.hpp>
 
+// Variable and Definition //
+
 void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
@@ -20,22 +22,51 @@ void Parser::ParseAssignment(Json& assignment) {
   using namespace std::string_literals;
   Log("Parsing assignment of definition id `"s + key + "`"s);
 
-  const auto rvalue = ExtractValue(right); // todo: why is the 1st arg not const?
+  const auto rvalue = ExtractValue(right); 
   store.Set(key, rvalue);
 }
+
+// Array //
+
+void Parser::ParseAppend(Json& append) {
+  const std::string type = append["list"]["type"];
+  if (type != "variable") // todo: add `subscript` type
+    throw std::invalid_argument("Append type must be either `variable`"); 
+
+  // get list
+  const std::string key = append["list"]["definitionId"];
+  auto variable = ParseVariable(append["list"]);
+  const auto primitive = variable.GetPrimitive();
+  Log(key);
+  Log(primitive);
+  if (primitive != "list") throw std::invalid_argument("Appending variable must be of `list` primitive!");
+  auto list = variable.Get<Json>();
+  if (!list["expression"].is_array()) throw std::invalid_argument("Appending variable must be an array!");
+
+  Log(list);
+  list["expression"].push_back(append["item"]);
+  Log(list);
+
+  store.Set(key, list);
+
+  using namespace std::string_literals;
+  Log("Appending to list `"s + key + "`"s);
+}
+
+void Parser::ParseSize(Json& pop) {
+  throw std::runtime_error("unimplemented!");
+}
+
+void Parser::ParseRemove(Json& remove) {
+  throw std::runtime_error("unimplemented!");
+}
+
+// Loops //
 
 void Parser::ParseRepeat(Json& repeat) {
   Json& repetition = repeat["repetition"];
 
-  // todo:  If `times` is a variable, modifing it within the repeat block 
-  //        will not update the number of iterations as it is read at the 
-  //        start of the loop. Probably should read it each iteration...
-  // todo:  support `operators` for times
-  int times;
-  const std::string repetitionType = repetition["type"];
-  if (repetitionType == "literal") times = repetition["expression"].get<int>();
-  else if (repetitionType == "variable") times = ParseVariable(repetition).Get<int>();
-  else throw std::invalid_argument("Invalid expression TYPE provided for REPEAT!");
+  const int times = ExtractValue<int>(repetition);
 
   Json& components = repeat["components"];
   if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
@@ -68,6 +99,10 @@ void Parser::ParseWhile(Json& loop) {
   stackMachine.PushBlock(jumpIf);
 }
 
+void Parser::ParseForeach(Json& loop) {
+  throw std::runtime_error("unimplemented!");
+}
+
 void Parser::ParseForever(Json& forever) {
   Json& components = forever["components"];
   if (!components.is_array()) throw std::invalid_argument("Forever components must be an array!");
@@ -79,6 +114,8 @@ void Parser::ParseForever(Json& forever) {
   Json jump = Block::Jump(-(instructions + EXTRA_INSTRUCTIONS)); // jump to the start of the forever loop
   stackMachine.PushBlock(jump);
 }
+
+// Low-level //
 
 void Parser::ParseJump(Json& jump) {
   using namespace std::string_literals;
@@ -100,117 +137,73 @@ void Parser::ParseConditionJump(Json& jump) {
   if (result) ParseJump(jump);
 }
 
-void Parser::ParseDrawLine(Json& line) {
-  const auto x1 = (double)ExtractValue<int>(line["x1"]);
-  const auto y1 = (double)ExtractValue<int>(line["y1"]);
-  const auto x2 = (double)ExtractValue<int>(line["x2"]);
-  const auto y2 = (double)ExtractValue<int>(line["y2"]);
+// Rendering //
+
+void Parser::ParseDrawLine(Json& draw) {
+  const auto x1 = ExtractValue<double>(draw["x1"]);
+  const auto y1 = ExtractValue<double>(draw["y1"]);
+  const auto x2 = ExtractValue<double>(draw["x2"]);
+  const auto y2 = ExtractValue<double>(draw["y2"]);
 
   const Vec2 start{ x1, y1 };
   const Vec2 end{ x2, y2 };
 
   renderer.DrawLine(start, end);
-  renderer.Present();
 }
+
+void Parser::ParseDrawRect(Json& draw) {
+  const auto x = ExtractValue<double>(draw["x"]);
+  const auto y = ExtractValue<double>(draw["y"]);
+  const auto w = ExtractValue<double>(draw["w"]);
+  const auto h = ExtractValue<double>(draw["h"]);
+
+  const Rec2 rect{ { x, y }, { w, h } };
+
+  renderer.DrawRect(rect);
+}
+
+void Parser::ParseDrawPixel(Json& draw) {
+  const auto x = ExtractValue<double>(draw["x"]);
+  const auto y = ExtractValue<double>(draw["y"]);
+
+  const Vec2 pixel{ x, y };
+
+  renderer.DrawPixel(pixel);
+}
+
+// Conditions //
 
 [[nodiscard]] bool Parser::ParseCondition(Json& condition) {
   const std::string type = condition["type"];
+  Json& expression = condition["expression"];
 
   using namespace std::string_literals;
   Log("Parsing conditional expression of type '"s + type + "'"s);
 
-  Json& expression = condition["expression"];
-  Json::value_type lvalue, rvalue;
+  auto left = expression.at(LVALUE);
+  const auto lvalue = ExtractValue(left);
 
-  // parse left-hand operand
-  Log("Parsing lhs expression");
-  Json& left = expression.at(0);
-  if (left["type"] == "literal") lvalue = left["expression"];
-  else if (left["type"] == "variable") {
-    const auto& variable = ParseVariable(left);
-    const auto primitive = variable.GetPrimitive();
+  if (type == "not") return !std::get<bool>(lvalue);
 
-    if (primitive == "string") lvalue = ParseVariable(left).Get<std::string>();
-    else if (primitive == "number") lvalue = ParseVariable(left).Get<int>();
-    else if (primitive == "boolean") lvalue = ParseVariable(left).Get<bool>();
-    else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
-  }
-  else lvalue = ParseCondition(left);
+  if (expression.size() == MAX_BRANCHES) {
+    auto right = expression.at(RVALUE);
+    const auto rvalue = ExtractValue(right);
+    Log("Performing '"s + type + "' on `"s + left.dump() + "` and `"s + right.dump() + "`"s);
 
-  // parse right-hand operand
-  if (expression.size() == 2) {
-    Log("Parsing lhs expression");
-
-    Json& right = expression.at(1);
-    if (right["type"] == "literal") rvalue = right["expression"];
-    else if (right["type"] == "variable") {
-      const auto& variable = ParseVariable(right);
-      const auto primitive = variable.GetPrimitive();
-
-      if (primitive == "string") rvalue = ParseVariable(right).Get<std::string>();
-      else if (primitive == "number") rvalue = ParseVariable(right).Get<int>();
-      else if (primitive == "boolean") rvalue = ParseVariable(right).Get<bool>();
-      else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
-    }
-    else rvalue = ParseCondition(right);
-
-    // perform binary conditional operation
-    using namespace std::string_literals;
-    Log("Performing '"s + type + "' on `"s + lvalue.dump() + "` and `"s + rvalue.dump() + "`"s);
-    if (type == "and") return lvalue && rvalue;
-    if (type == "or") return lvalue && rvalue;
-    if (type == "xor") return (lvalue || rvalue) && (lvalue != rvalue);
-    if (type == "eq") return lvalue == rvalue;
-    if (type == "ne") return lvalue != rvalue;
-    if (type == "gt") return lvalue > rvalue;
-    if (type == "ge") return lvalue >= rvalue;
-    if (type == "lt") return lvalue < rvalue;
-    if (type == "le") return lvalue <= rvalue;
-
+    if (type == "and")  return std::get<bool>(lvalue) && std::get<bool>(rvalue);
+    if (type == "or")   return std::get<bool>(lvalue) || std::get<bool>(rvalue);
+    if (type == "xor")  return (std::get<bool>(lvalue) || std::get<bool>(rvalue)) && (std::get<bool>(lvalue) != std::get<bool>(rvalue));
+    if (type == "eq")   return lvalue == rvalue;
+    if (type == "ne")   return lvalue != rvalue;
+    if (type == "gt")   return lvalue > rvalue;
+    if (type == "ge")   return lvalue >= rvalue;
+    if (type == "lt")   return lvalue < rvalue;
+    if (type == "le")   return lvalue <= rvalue;
+    
     throw std::invalid_argument("'" + type + "' is not a valid TYPE for a BINARY conditional expression");
-  } else 
-    Log("No rhs expression to parse");
-
-  if (type == "not") return !lvalue;
-  if (type == "truthy") return lvalue;
+  }
 
   throw std::invalid_argument("'" + type + "' is not a valid TYPE for a UNARY conditional expression");
-}
-
-void Parser::ParsePrint(Json& print) {
-  const std::string type = print["type"];
-  if (type == "literal") {
-    const Json& value = print["expression"];
-    if (value.is_string()) ClientPrint(value.get<std::string>());
-    else if (value.is_number()) ClientPrint(value.get<double>());
-    else if (value.is_boolean()) ClientPrint(value.get<bool>());
-  } else if (type == "variable") {
-    const auto& variable = ParseVariable(print);
-    const auto primitive = variable.GetPrimitive();
-
-    if (primitive == "string") ClientPrint(variable.Get<std::string>());
-    else if (primitive == "number") ClientPrint(variable.Get<int>());
-    else if (primitive == "boolean") ClientPrint(variable.Get<bool>() ? "true" : "false");
-    else throw std::invalid_argument("Invalid primitive TYPE provided for VARIABLE");
-  } else if (IsOperation(type)) {
-    const int result = ParseOperation(print);
-    ClientPrint(std::to_string(result));        
-  } else
-    throw std::invalid_argument("Invalid TYPE for PRINT expression");
-}
-
-
-void Parser::ParseClearOutput() {
-#ifdef __EMSCRIPTEN__
-  ClientClearOutput(); 
-#else
-  // todo: some native clear
-#endif // __EMSCRIPTEN__
-}
-
-void Parser::ParseClearScreen() {
-  renderer.Clear();
-  renderer.Present();
 }
 
 void Parser::ParseBranch(Json& branch) {
@@ -219,34 +212,102 @@ void Parser::ParseBranch(Json& branch) {
   if (branches.size() > MAX_BRANCHES) throw std::invalid_argument("Branches must be an array of size 2 or less!");
 
   Json& condition = branch["condition"];
-  const bool hasElse = branches.size() == 2;
-  const bool evaluation = ParseCondition(condition);
-  if (evaluation) stackMachine.Push(branches.at(0));
-  else if (hasElse) stackMachine.Push(branches.at(1));
+  const bool evaluation = ExtractValue<bool>(condition);
+
+  const bool hasElse = branches.size() == MAX_BRANCHES;
+  if (evaluation) stackMachine.Push(branches.at(LVALUE));
+  else if (hasElse) stackMachine.Push(branches.at(RVALUE));
 }
 
-void Parser::ParseComponent(Json& component) {
+// Output //
+
+void Parser::ParsePrint(Json& print) {
+  PrintExpression(print["expression"]);
+}
+void Parser::PrintExpression(Json& expression) {
+  using namespace std::string_literals;
+  const auto& value = ExtractValue(expression);
+
+  if (std::holds_alternative<std::string>(value))
+    ClientPrint(std::get<std::string>(value));
+
+  else if (std::holds_alternative<int>(value))
+    ClientPrint(std::get<int>(value));
+  
+  else if (std::holds_alternative<double>(value))
+    ClientPrint(std::get<double>(value));
+
+  else if (std::holds_alternative<bool>(value))
+    ClientPrint(std::get<bool>(value) ? "true" : "false");
+
+  else if (std::holds_alternative<Json>(value)) {
+    const auto& expression = std::get<Json>(value);
+    const std::string type = expression["type"];
+    if (type == "list")
+      // recursively print each item in the list
+      for (auto item : expression["expression"])
+        PrintExpression(item);
+    else
+      throw std::invalid_argument("Invalid TYPE for PRINT expression: `"s + type + "`"s);
+  } else
+    throw std::invalid_argument("Invalid TYPE for PRINT expression");
+}
+
+void Parser::ParseClearOutput() {
+#ifdef __EMSCRIPTEN__
+  ClientClearOutput(); 
+#else
+  // todo: some native clear implementation
+#endif // __EMSCRIPTEN__
+}
+
+void Parser::ParseClearScreen() {
+  renderer.Clear();
+  renderer.Present();
+}
+
+// Generic //
+
+bool Parser::ParseComponent(Json& component) {
   const std::string type = component["type"];
-  if (type == "comment") return; // todo: tempted to strip comments from the json before parsing, might just wait for Bytecode parsing later...
   
   using std::string_literals::operator""s;
   Log("Parsing `"s + type + "` component"s);
+
+  if (type == "comment")                return true; // ignore comments
+  else if (type == "exit")              return false; // stop parsing
   
-  if (type == "definition")             ParseDefinition(component);
+  else if (type == "definition")        ParseDefinition(component);
   else if (type == "assignment")        ParseAssignment(component);
+
   else if (type == "branch")            ParseBranch(component);
-  else if (type == "print")             ParsePrint(component["expression"]);
+
+  else if (type == "print")             ParsePrint(component);
   else if (type == "clear_output")      ParseClearOutput();
   else if (type == "clear_screen")      ParseClearScreen();
+
   else if (type == "increment")         ParseUnaryArithmetic<Block::ArithmeticOperation::INC>(component["expression"]);
   else if (type == "decrement")         ParseUnaryArithmetic<Block::ArithmeticOperation::DEC>(component["expression"]);
+
   else if (type == "repeat")            ParseRepeat(component);
   else if (type == "while")             ParseWhile(component);
+  else if (type == "foreach")           ParseForeach(component);
   else if (type == "forever")           ParseForever(component);
+
   else if (type == "jump")              ParseJump(component);
   else if (type == "conditional_jump")  ParseConditionJump(component);
+
+  else if (type == "append")            ParseAppend(component);
+  else if (type == "size")              ParseSize(component);
+  else if (type == "remove")            ParseRemove(component);
+
   else if (type == "draw_line")         ParseDrawLine(component);
+  else if (type == "draw_rect")         ParseDrawRect(component);
+  else if (type == "draw_pixel")        ParseDrawPixel(component);
+
   else                                  throw std::invalid_argument("Invalid TYPE provided for component: `"s + type + "`"s);
+
+  return true; // continue parsing
 }
 
 // API //
@@ -263,11 +324,8 @@ void Parser::LoadProgram(const std::string components) {
 }
 
 bool Parser::Next() {
-  if (Json* component = stackMachine.Next()) {
-    ParseComponent(*component);
-    return true;
-  }
-
+  if (Json* component = stackMachine.Next())
+    return ParseComponent(*component);
   return false;
 }
 
