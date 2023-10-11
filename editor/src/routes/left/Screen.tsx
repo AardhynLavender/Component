@@ -1,10 +1,11 @@
 import { s, styled } from 'theme/stitches.config';
-import { Button } from 'components/ui/Button';
+import { Button, IconButton } from 'components/ui/Button';
 import Field from '../../components/ui/Field';
 import { SyntheticEvent, useState, useEffect, CSSProperties } from 'react';
 import { useScreen } from 'program';
 import useCoreModule from '../../hooks/useCoreModule';
 import Checkbox from 'components/ui/Checkbox';
+import { ResetIcon } from '@radix-ui/react-icons';
 
 export const SCREEN_RATIO = 16 / 9;
 const canvasStyles: CSSProperties = {
@@ -117,9 +118,9 @@ function Functions() {
 
   return (
     <s.div css={{ d: 'flex', gap: 4 }}>
-      <Button size="small" onClick={clearCanvas}>
-        Clear
-      </Button>
+      <IconButton size="medium" color="neutral" onClick={clearCanvas}>
+        <ResetIcon />
+      </IconButton>
     </s.div>
   );
 }

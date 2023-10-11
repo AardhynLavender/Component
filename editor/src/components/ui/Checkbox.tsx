@@ -16,12 +16,12 @@ const Root = styled(CheckboxPrimitive.Root, {
   all: 'unset',
   d: 'flex',
   justify: 'center',
-  w: 24,
-  h: 24,
-  r: 8,
+  w: 20,
+  h: 20,
+  r: 4,
   color: '$primary',
-  outline: '1px solid $outline',
-  '&:hover': { backgroundColor: '$background3' },
+  backgroundColor: '$background',
+  '&:hover': { bg: '$background3' },
   '&:focus': { boxShadow: '0 0 0 2px $primary' },
 });
 
