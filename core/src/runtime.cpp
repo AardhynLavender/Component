@@ -40,6 +40,12 @@ void Runtime::Cycle() {
     }
   } catch (const std::exception& e) { 
     ClientPrint(e.what()); 
+#ifdef __NOEXCEPT__
+#if __NOEXCEPT__ == 1
+    Terminate();
+    Log("An exception was raised; terminating runtime");
+#endif // __NOEXCEPT__ == 1
+#endif // __NOEXCEPT__
   } catch (...) { 
     ClientPrint("An UNHANDLED exception was thrown while parsing AST"); 
   }

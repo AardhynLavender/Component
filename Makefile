@@ -7,8 +7,9 @@ medium_optimization = -O2
 full_optimization = -O3 # use release builds
 
 # variables
-debug_mode = 1
-optimization_level = $(no_optimization)
+debug_mode = 0
+no_except = 1
+optimization_level = $(full_optimization)
 cpp_std = c++20
 module_name = LoadModule
 
@@ -47,6 +48,7 @@ build-core: core
 			src/stackMachine.cpp \
 			src/variableStore.cpp \
 			-D __DEBUG__=$(debug_mode) \
+			-D __NOEXCEPT__=$(no_except) \
 			-o out/core.mjs \
 			-I include \
 			--pre-js pre/pre.js \
@@ -91,6 +93,7 @@ build-core-native: core
 			-l SDL2 \
 			$(optimization_level) \
 			-D __DEBUG__=$(debug_mode) \
+			-D __NOEXCEPT__=$(no_except) \
 			-std=$(cpp_std)	\
 			-o out/component \
 
