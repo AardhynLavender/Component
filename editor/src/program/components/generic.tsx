@@ -29,6 +29,7 @@ import { SubscriptExpression } from './expressions/Subscript';
 import { ListExpression } from './expressions/List';
 import { SizeExpression } from './expressions/Size';
 import { AppendBlock } from './expressions/Append';
+import { ExitBlock } from './blocks/Exit';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -164,6 +165,8 @@ export function GetJsxComponent(
   switch (component.type) {
     case 'comment':
       return <CommentBlock block={component} {...stdProps} />;
+    case 'exit':
+      return <ExitBlock block={component} {...stdProps} />;
     case 'definition':
       return <DefinitionBlock block={component} {...stdProps} />;
     case 'assignment':

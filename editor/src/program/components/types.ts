@@ -58,7 +58,12 @@ export type ListOperationType = (typeof listOperations)[number];
 export const variables = ['definition', 'assignment'] as const;
 export type VariableType = (typeof variables)[number];
 
-export const miscExpressions = ['variable', 'literal', 'comment'] as const;
+export const miscExpressions = [
+  'variable',
+  'literal',
+  'comment',
+  'exit',
+] as const;
 export type MiscExpressionType = (typeof miscExpressions)[number];
 
 export const blockTypes = [
@@ -88,9 +93,10 @@ export type ComponentPrimitive<T extends ComponentType, E = {}> = {
   type: T;
 } & E;
 
-// Comments //
+// Misc. //
 
 export type Comment = ComponentPrimitive<'comment', { expression: string }>;
+export type Exit = ComponentPrimitive<'exit'>;
 
 // Literals //
 
@@ -399,6 +405,7 @@ export type Block =
   | Assignment
   | Branch
   | Comment
+  | Exit
   | Definition
   | Loop
   | Output

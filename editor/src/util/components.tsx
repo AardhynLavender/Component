@@ -41,6 +41,10 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
       component = { ...base(type), expression: '' };
       break;
 
+    case 'exit':
+      component = base(type);
+      break;
+
     // List //
 
     case 'subscript':

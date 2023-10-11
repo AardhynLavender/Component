@@ -500,6 +500,7 @@ export namespace algorithm {
                     (locale === 'expression' && IsVariable(component)) ||
                     IsLiteral(component) ||
                     IsOperation(component) ||
+                    IsCondition(component) ||
                     IsSubscript(component)
                   )
                     draft.expression = component;
@@ -517,6 +518,7 @@ export namespace algorithm {
                     locale === 'rvalue' &&
                     (IsVariable(component) ||
                       IsLiteral(component) ||
+                      IsCondition(component) ||
                       IsOperation(component))
                   )
                     draft.rvalue = component;

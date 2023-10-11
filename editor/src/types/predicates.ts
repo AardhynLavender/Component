@@ -47,7 +47,9 @@ export function IsBlock(component: Component): component is Block {
     renderers.includes(component.type as RenderType) ||
     listOperations.includes(component.type as ListOperationType) ||
     variables.includes(component.type as VariableType) ||
-    ['comment', 'branch', 'increment', 'decrement'].includes(component.type)
+    ['comment', 'exit', 'branch', 'increment', 'decrement'].includes(
+      component.type,
+    )
   );
 }
 
