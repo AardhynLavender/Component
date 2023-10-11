@@ -108,5 +108,6 @@ const IconButtonRoot = styled(s.button, {
 
   defaultVariants: {
     size: 'small',
+    color: 'neutral',
   },
 });

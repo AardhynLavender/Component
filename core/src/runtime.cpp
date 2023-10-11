@@ -5,6 +5,10 @@
 #endif // __EMSCRIPTEN__
 #include <timing.hpp>
 
+constexpr auto doneMessage = "<span style=\"color:var(--colors-text2);\">program completed</span><br/><br/>";
+constexpr auto errorMessageStart = "<div style=\"color:var(--colors-onError);background-color:var(--colors-error);border-radius:8px;padding:8px\"><strong>Component</strong> encountered an error:<div style=\"padding:8px;\">";
+constexpr auto errorMessageEnd = "</div></div><br/><br/>";
+
 Runtime::Runtime()
 : window{ "Component", Window::centered, { DEFAULT_RESOLUTION, DEFAULT_RESOLUTION / DEFAULT_ASPECT_RATIO }, { .opengl = true } },
   renderer{ window, { } }, 
@@ -31,17 +35,19 @@ void Runtime::Cycle() {
 
   try {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
-    PresentCanvas();
     while (!Timing::Elapsed(start, CLOCK_SPEED)) {
       if (parser.Next()) continue; // next instruction
-      ClientPrint("<br/>"); 
+      ClientPrint(doneMessage); 
       Terminate();
-      break;
+      break; // no more instructions, terminate
     }
+    PresentCanvas();
   } catch (const std::exception& e) { 
-    ClientPrint(e.what()); 
+    const auto message = std::string{errorMessageStart} + std::string{e.what()} + std::string{errorMessageEnd};
+    ClientPrint(message); 
 #ifdef __NOEXCEPT__
 #if __NOEXCEPT__ == 1
+    // no recovery from exceptions, just terminate
     Terminate();
     Log("An exception was raised; terminating runtime");
 #endif // __NOEXCEPT__ == 1

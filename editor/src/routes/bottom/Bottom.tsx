@@ -2,8 +2,9 @@ import { s, CSS, styled } from 'theme/stitches.config';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 import DragHandle from 'components/util/DragHandle';
 import { useRef } from 'react';
-import { Button } from 'components/ui/Button';
+import { Button, IconButton } from 'components/ui/Button';
 import { H5 } from 'theme/Typography';
+import { ResetIcon } from '@radix-ui/react-icons';
 
 export default function BottomPane() {
   const { bind, rangeConstraint, size } = useDragPanePrimitive(
@@ -31,9 +32,9 @@ export default function BottomPane() {
       >
         <Ribbon>
           <H5>Output</H5>
-          <Button size="small" onClick={handleClear}>
-            Clear
-          </Button>
+          <IconButton size="medium" onClick={handleClear}>
+            <ResetIcon />
+          </IconButton>
         </Ribbon>
         <Console ref={consoleRef} id="component:console" />
       </Content>
@@ -60,6 +61,7 @@ const Ribbon = styled('div', {
 
 const Console = styled('div', {
   display: 'flex',
+  gap: 4,
   flexDirection: 'column',
   overflowY: 'auto',
 });
