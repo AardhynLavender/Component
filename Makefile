@@ -10,7 +10,7 @@ full_optimization = -O3 # use release builds
 debug_mode = 0
 no_except = 1
 optimization_level = $(full_optimization)
-cpp_std = c++20
+cpp_std = c++23
 module_name = LoadModule
 
 start:
