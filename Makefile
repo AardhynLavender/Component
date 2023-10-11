@@ -1,15 +1,15 @@
-.PHONY: state build stop clean rebuild
+.PHONY: start build stop clean rebuild
 
 # https://emscripten.org/docs/optimizing/Optimizing-Code.html
-no_optimization = -O0 # use development builds
+no_optimization = -O0 # for development builds
 low_optimization = -O1
 medium_optimization = -O2
-full_optimization = -O3 # use release builds
+full_optimization = -O3 # for release builds
 
 # variables
-debug_mode = 0
+debug_mode = 1
 no_except = 1
-optimization_level = $(full_optimization)
+optimization_level = $(low_optimization)
 cpp_std = c++23
 module_name = LoadModule
 
