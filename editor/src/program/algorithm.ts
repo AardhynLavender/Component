@@ -497,11 +497,12 @@ export namespace algorithm {
                   break;
                 case 'print':
                   if (
-                    (locale === 'expression' && IsVariable(component)) ||
-                    IsLiteral(component) ||
-                    IsOperation(component) ||
-                    IsCondition(component) ||
-                    IsSubscript(component)
+                    locale === 'expression' &&
+                    (IsVariable(component) ||
+                      IsLiteral(component) ||
+                      IsOperation(component) ||
+                      IsCondition(component) ||
+                      IsSubscript(component))
                   )
                     draft.expression = component;
                   break;

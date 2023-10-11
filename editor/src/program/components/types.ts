@@ -339,6 +339,7 @@ export type Print = ComponentPrimitive<
       | Literal
       | Variable
       | BinaryOperation
+      | Condition
       | Exclude<UnaryOperation, Increment | Decrement>
       | List
       | Subscript
