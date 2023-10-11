@@ -6,7 +6,7 @@ import { s } from 'theme/stitches.config';
 import { Assignment, Component } from 'types';
 import { useVariableDefinition } from 'program';
 import { GenericExpression } from '../expressions/Expression';
-import { IsOperation } from '../../../types/predicates';
+import { IsOperation, IsCondition } from '../../../types/predicates';
 
 export function AssignmentBlock({
   block,
@@ -17,7 +17,7 @@ export function AssignmentBlock({
 }): ReactElement | null {
   const lValuePredicate = (c: Component) => IsVariable(c);
   const rValuePredicate = (c: Component) =>
-    IsVariable(c) || IsOperation(c) || IsLiteral(c);
+    IsVariable(c) || IsOperation(c) || IsLiteral(c) || IsCondition(c);
 
   const definition = useVariableDefinition(block.lvalue?.definitionId);
   const assignableLiteral = definition?.primitive ?? 'string';

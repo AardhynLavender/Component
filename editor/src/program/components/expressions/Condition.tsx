@@ -15,6 +15,7 @@ import { ExpressionParent } from './types';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from './Expression';
 import { PrimitiveType } from '../types';
+import { IsSubscript, IsOperation } from '../../../types/predicates';
 
 /**
  * Unary or binary comparison node
@@ -113,16 +114,25 @@ function GetDropPredicate(type: ConditionType) {
     case 'and':
     case 'or':
     case 'not':
-      return (c: Component) => IsBooleanVariable(c) || IsCondition(c);
+      return (c: Component) =>
+        IsBooleanVariable(c) || IsCondition(c) || IsSubscript(c);
     case 'eq':
     case 'ne':
       return (c: Component) =>
-        IsVariable(c) || IsLiteral(c) || IsCondition(c) || IsBinaryOperation(c);
+        IsVariable(c) ||
+        IsLiteral(c) ||
+        IsCondition(c) ||
+        IsOperation(c) ||
+        IsSubscript(c);
     case 'gt':
     case 'lt':
     case 'ge':
     case 'le':
-      return (c: Component) => IsNumericVariable(c) || IsLiteral<number>(c);
+      return (c: Component) =>
+        IsNumericVariable(c) ||
+        IsLiteral<number>(c) ||
+        IsSubscript(c) ||
+        IsOperation(c);
     default:
       throw new Error(`Failed to get drop predicate! Unknown type ${type}`);
   }

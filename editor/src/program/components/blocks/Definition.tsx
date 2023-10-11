@@ -104,6 +104,7 @@ function computePrimitive(
   if (value.type === 'list') return 'list';
   if (IsLiteral(value)) return computeLiteralPrimitive(value);
   if (IsBinaryOperation(value) || IsUnaryOperation(value)) return 'number';
+  if (IsCondition(value)) return 'boolean';
   if (IsVariable(value)) return variables[value.id].primitive;
 
   throw new Error(

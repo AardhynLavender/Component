@@ -50,9 +50,9 @@ const colorVariants = {
       '&:hover': { background: '$background4' },
     },
   },
-};
+} as const;
 
-const ButtonRoot = styled('button', {
+const ButtonRoot = styled(s.button, {
   all: 'unset',
   fontFamily: 'inherit',
   d: 'inline-flex',

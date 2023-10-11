@@ -11,6 +11,7 @@ import {
 } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from './Expression';
+import { IsOperation } from '../../../types/predicates';
 
 export function SubscriptExpression({
   expression,
@@ -26,7 +27,10 @@ export function SubscriptExpression({
   const listPredicate = (c: Component) =>
     IsVariable(c) || IsList(c) || IsSubscript(c);
   const indexPredicate = (c: Component) =>
-    IsNumericVariable(c) || IsLiteral<number>(c) || IsSubscript(c);
+    IsNumericVariable(c) ||
+    IsLiteral<number>(c) ||
+    IsSubscript(c) ||
+    IsOperation(c);
 
   return (
     <ExpressionDropzone

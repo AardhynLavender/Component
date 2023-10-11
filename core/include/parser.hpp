@@ -104,7 +104,7 @@ private:
         if (!elements.is_array()) throw std::runtime_error("value subscription must be LIST `list`!");
 
         const int size = elements.size();
-        const int index = ExtractValue<int>(subscript["index"]); 
+        const auto index = (int)ExtractValue<double>(subscript["index"]); 
         if (std::abs(index) >= size) throw std::out_of_range("Subscript INDEX is out of range!");
 
         auto element = index >= 0 ? elements[index] : elements[size + index];
@@ -122,7 +122,7 @@ private:
         if (type == "variable") {
             const auto& variable = ParseVariable(expression);
             if constexpr (std::is_same_v<T, Any>) return variable.Get();
-            else return ParseVariable(expression).Get<T>();
+            else return variable.Get<T>();
             // todo: have some fun with `std::view`...
         }
         
@@ -234,7 +234,7 @@ private:
 public:
     explicit Parser(Renderer& renderer);
 
-    void ParseComponent(Json& component);
+    bool ParseComponent(Json& component);
     void LoadProgram(const std::string components);
     bool Next();
 };

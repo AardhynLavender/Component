@@ -231,7 +231,10 @@ void Parser::PrintExpression(Json& expression) {
   if (std::holds_alternative<std::string>(value))
     ClientPrint(std::get<std::string>(value));
 
-  else if (std::holds_alternative<int>(value) || std::holds_alternative<double>(value))
+  else if (std::holds_alternative<int>(value))
+    ClientPrint(std::get<int>(value));
+  
+  else if (std::holds_alternative<double>(value))
     ClientPrint(std::get<double>(value));
 
   else if (std::holds_alternative<bool>(value))
@@ -265,14 +268,16 @@ void Parser::ParseClearScreen() {
 
 // Generic //
 
-void Parser::ParseComponent(Json& component) {
+bool Parser::ParseComponent(Json& component) {
   const std::string type = component["type"];
-  if (type == "comment") return; // todo: tempted to strip comments from the json before parsing, might just wait for Bytecode parsing later...
   
   using std::string_literals::operator""s;
   Log("Parsing `"s + type + "` component"s);
+
+  if (type == "comment")                return true; // ignore comments
+  else if (type == "exit")              return false; // stop parsing
   
-  if (type == "definition")             ParseDefinition(component);
+  else if (type == "definition")        ParseDefinition(component);
   else if (type == "assignment")        ParseAssignment(component);
 
   else if (type == "branch")            ParseBranch(component);
@@ -301,6 +306,8 @@ void Parser::ParseComponent(Json& component) {
   else if (type == "draw_pixel")        ParseDrawPixel(component);
 
   else                                  throw std::invalid_argument("Invalid TYPE provided for component: `"s + type + "`"s);
+
+  return true; // continue parsing
 }
 
 // API //
@@ -317,11 +324,8 @@ void Parser::LoadProgram(const std::string components) {
 }
 
 bool Parser::Next() {
-  if (Json* component = stackMachine.Next()) {
-    ParseComponent(*component);
-    return true;
-  }
-
+  if (Json* component = stackMachine.Next())
+    return ParseComponent(*component);
   return false;
 }
 
