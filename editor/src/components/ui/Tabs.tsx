@@ -10,7 +10,7 @@ export const TabRoot = styled(TabsPrimitive.Root, {
 
 export const TabsList = styled(TabsPrimitive.List, {
   flexShrink: 0,
-  display: 'flex',
+  d: 'flex',
 });
 
 export const TabsTrigger = styled(TabsPrimitive.Trigger, {
@@ -22,8 +22,8 @@ export const TabsTrigger = styled(TabsPrimitive.Trigger, {
   justify: 'center',
   userSelect: 'none',
 
-  c: '$text',
-  '&[data-state="active"]': { color: '$primary' },
+  c: '$text4',
+  '&[data-state="active"]': { c: '$text' },
 });
 
 export const TabsContent = styled(TabsPrimitive.Content, {});

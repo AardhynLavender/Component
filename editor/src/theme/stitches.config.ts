@@ -20,6 +20,7 @@ export const lightTheme = createTheme('light', {
     text: '#24292e',
     text2: '#6a737c',
     text3: '#959da5',
+    text4: '#d1d5da',
 
     primary: '#117dff',
     primary2: '#0f69d5',
@@ -79,6 +80,7 @@ export const darkTheme = createTheme('dark', {
     text: '#fff',
     text2: '#c6cbd1',
     text3: '#959da5',
+    text4: '#6a737d',
 
     primary: '#117dff',
     primary2: '#0f69d5',

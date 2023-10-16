@@ -29,11 +29,6 @@ const tabs = [
     component: <Components />,
   },
   {
-    label: 'AST',
-    icon: <CodeBracketIcon {...SIZING} />,
-    component: <Ast />,
-  },
-  {
     label: 'assets',
     icon: <PhotoIcon {...SIZING} />,
     component: <></>,
@@ -42,6 +37,11 @@ const tabs = [
     label: 'details',
     icon: <Cog6ToothIcon {...SIZING} />,
     component: <></>,
+  },
+  {
+    label: 'AST',
+    icon: <CodeBracketIcon {...SIZING} />,
+    component: <Ast />,
   },
 ] as const;
 const DEFAULT_TAB: (typeof tabs)[number]['label'] = 'Components';
