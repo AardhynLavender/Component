@@ -10,7 +10,13 @@ export function ClearScreenBlock({
   preview?: boolean;
 }) {
   return (
-    <BlockRoot block={block} preview={preview}>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      color="$orange"
+      colorTonal="$orangeTonal"
+      onColor="$onOrange"
+    >
       <s.span>clear screen</s.span>
     </BlockRoot>
   );

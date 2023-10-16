@@ -4,6 +4,7 @@ import { s, CSS } from 'theme/stitches.config';
 import { Drag } from 'util/Drag';
 import { Component } from './types';
 import If from 'util/util';
+import { createTheme } from '@stitches/react';
 
 export const DROPZONE_HEIGHT = 24;
 
@@ -85,6 +86,9 @@ export function ExpressionDropzone({
   error = false,
   enabled = true,
   css,
+  color,
+  onColor,
+  colorTonal,
 }: {
   parentId: string | undefined;
   locale: string | undefined;
@@ -94,6 +98,9 @@ export function ExpressionDropzone({
   children?: ReactNode;
   enabled?: boolean;
   css?: CSS;
+  color?: string;
+  onColor?: string;
+  colorTonal?: string;
 }) {
   // establish invariant
   if (enabled && !parentId)
@@ -110,8 +117,17 @@ export function ExpressionDropzone({
     onDrop,
   );
 
+  const theme = createTheme({
+    colors: {
+      componentBackground: color ?? 'inherit',
+      componentTonal: colorTonal ?? 'inherit',
+      componentOnColor: onColor ?? 'inherit',
+    },
+  });
+
   return (
     <Dropzone
+      className={theme}
       css={{
         minWidth: 40,
         minHeight: 24,
@@ -127,13 +143,15 @@ export function ExpressionDropzone({
 
         bg: children
           ? isHovering
-            ? '$background3'
+            ? '$background2'
             : error
             ? '$error'
-            : '$background'
-          : '$background2',
-        b: `2px solid ${error ? '$onError' : '$outline'}`,
-        c: '$text',
+            : '$componentBackground'
+          : 'background2',
+        b: `2px ${children ? 'solid' : 'dashed'} ${
+          error ? '$onError' : '$componentTonal'
+        }`,
+        c: '$componentOnColor',
         whiteSpace: 'nowrap',
 
         ...css,

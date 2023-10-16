@@ -20,7 +20,14 @@ export function CommentBlock({
   };
 
   return (
-    <BlockRoot block={block} preview={preview} css={{ bg: '$background2' }}>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      css={{ bg: '$background2' }}
+      color="$background2"
+      colorTonal="$outline"
+      onColor="$text"
+    >
       <s.div css={{ d: 'flex', gap: 4, items: 'center' }}>
         <s.span css={{ c: '$text2' }}>//</s.span>
         <Field

@@ -26,7 +26,14 @@ export function UnaryOperationBlock({
   };
 
   return (
-    <BlockRoot block={block} preview={preview} css={styles}>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      css={styles}
+      color="$cyan"
+      colorTonal="$cyanTonal"
+      onColor="$onCyan"
+    >
       <span>{block.type}</span>
       <GenericExpression
         expression={block.expression}
@@ -58,6 +65,9 @@ export function UnaryOperationExpression({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
+      color="$cyan"
+      colorTonal="$cyanTonal"
+      onColor="$onCyan"
     >
       <DragHandle css={styles}>
         <span>{expression.type}</span>

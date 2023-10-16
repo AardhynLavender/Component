@@ -30,6 +30,7 @@ import { ListExpression } from './expressions/List';
 import { SizeExpression } from './expressions/Size';
 import { AppendBlock } from './expressions/Append';
 import { ExitBlock } from './blocks/Exit';
+import { createTheme } from '@stitches/react';
 
 /**
  * Render component as a JSX element with dropzones for neighboring emplacements
@@ -97,6 +98,9 @@ export function BlockRoot({
   preview = false,
   overrideStyles = false,
   css,
+  color,
+  colorTonal,
+  onColor,
 }: {
   block: Block;
   children?: ReactNode | null;
@@ -104,14 +108,26 @@ export function BlockRoot({
   overrideStyles?: boolean;
   error?: boolean;
   css?: CSS;
+  color?: string;
+  colorTonal?: string;
+  onColor?: string;
 }) {
   const { isDragging, DragHandle } = Drag.useComponentDragHandle(
     block,
     preview,
   );
 
+  const theme = createTheme({
+    colors: {
+      componentBackground: color ?? 'inherit',
+      componentTonal: colorTonal ?? 'inherit',
+      componentOnColor: onColor ?? 'inherit',
+    },
+  });
+
   const styles: CSS = !overrideStyles
     ? {
+        visibility: isDragging ? 'hidden' : 'visible',
         d: 'inline-flex',
         align: 'flex-start',
         flexDirection: 'column',
@@ -123,18 +139,18 @@ export function BlockRoot({
         r: 4,
         p: 6,
 
-        bg: error ? '$error' : '$background',
-        b: `2px solid ${error ? '$onError' : '$outline'}`,
+        bg: error ? '$error' : '$componentBackground',
+        b: `2px solid ${error ? '$onError' : '$componentTonal'}`,
+        c: '$componentOnColor',
       }
     : {};
 
   return (
     <DragHandle
       key={block.id}
+      className={theme}
       data-dragging={isDragging} // enables parents to select based on the dragging state of their children
       css={{
-        c: '$text',
-        visibility: isDragging ? 'hidden' : 'visible',
         ...styles,
         ...css,
       }}

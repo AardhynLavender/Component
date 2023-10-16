@@ -20,6 +20,7 @@ const Root = styled(s.span, {
     color: {
       neutral: { bg: '$background3', c: '$text' },
       primary: { bg: '$background3', c: '$primary' },
+      component: { out: '2px solid $componentTonal', c: '$componentOnColor' },
       error: { bg: '$error', c: '$onError' },
     },
     shape: {
@@ -27,10 +28,7 @@ const Root = styled(s.span, {
       card: { r: 8 },
     },
     size: {
-      small: {
-        fontSize: '$0',
-        p: '2px 4px',
-      },
+      small: { fontSize: '$0', p: '2px 4px' },
       regular: { h: 24, px: 16, fontWeight: '$medium' },
       large: {
         h: 32,

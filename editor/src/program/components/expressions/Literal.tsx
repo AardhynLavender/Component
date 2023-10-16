@@ -100,17 +100,6 @@ export function PrimitiveInput({
 }) {
   const [primitive, setPrimitive] = useState<PrimitiveType | null>(null);
 
-  const stdProps: {
-    onBlur: FieldBlurHandler;
-    css: CSS;
-  } = {
-    onBlur,
-    css: {
-      bg: error ? '$error' : undefined,
-      c: error ? '$onError' : undefined,
-    },
-  };
-
   return (
     <Field
       value={typeof value === 'string' ? value : value?.toString() ?? ''}
@@ -137,7 +126,14 @@ export function PrimitiveInput({
         }
       }}
       dynamicSize
-      {...stdProps}
+      onBlur={onBlur}
+      css={{
+        c: error ? '$onError' : '$componentOnColor',
+        '&::placeholder': {
+          c: '$componentOnColor',
+          opacity: 0.8,
+        },
+      }}
     />
   );
 }

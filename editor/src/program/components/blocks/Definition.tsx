@@ -60,6 +60,9 @@ export function DefinitionBlock({
     <BlockRoot
       block={block}
       preview={preview}
+      color="$yellow"
+      colorTonal="$yellowTonal"
+      onColor="$onYellow"
       css={{ fd: 'row', items: 'center' }}
     >
       <Let />
@@ -90,7 +93,7 @@ export type DefinitionPrimitive = PrimitiveType | 'list' | null;
 const UNKNOWN_PRIMITIVE = 'unknown';
 function PrimitiveBadge({ primitive }: { primitive: DefinitionPrimitive }) {
   return (
-    <Badge color="neutral" size="small">
+    <Badge color="component" size="small">
       {primitive ?? UNKNOWN_PRIMITIVE}
     </Badge>
   );

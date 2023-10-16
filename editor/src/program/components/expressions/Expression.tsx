@@ -59,6 +59,7 @@ export function GenericExpression({
         parentId={parent.id}
         locale={parent.locale}
         dropPredicate={parent.dropPredicate}
+        enabled={!preview}
       />
     );
 

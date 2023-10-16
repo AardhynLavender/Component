@@ -12,6 +12,7 @@ import { Component } from 'types';
 import { CSS, keyframes, s, styled } from 'theme/stitches.config';
 import { GetJsxComponent } from 'program/components/blocks';
 import { EmplacementAction } from 'program/types';
+import { HTMLAttributes } from 'react';
 import {
   useRemoveComponent,
   useAddComponent,
@@ -50,10 +51,11 @@ export namespace Drag {
         ({
           children,
           css,
+          ...divProps
         }: {
           children?: ReactNode | ReactNode[];
           css?: CSS;
-        }) =>
+        } & HTMLAttributes<HTMLDivElement>) =>
           (
             <s.div
               ref={drag}
@@ -61,6 +63,7 @@ export namespace Drag {
                 ...css,
                 touchAction: 'none', // prevent scrolling while dragging on mobile
               }}
+              {...divProps}
             >
               {children}
             </s.div>
@@ -120,9 +123,16 @@ export namespace Drag {
 
     const Dropzone = useMemo(
       () =>
-        ({ children, css }: { children?: ReactNode; css?: CSS }) =>
+        ({
+          children,
+          css,
+          ...divProps
+        }: {
+          children?: ReactNode;
+          css?: CSS;
+        } & HTMLAttributes<HTMLDivElement>) =>
           (
-            <DropzoneRoot ref={drop} css={css}>
+            <DropzoneRoot ref={drop} css={css} {...divProps}>
               {children}
             </DropzoneRoot>
           ),

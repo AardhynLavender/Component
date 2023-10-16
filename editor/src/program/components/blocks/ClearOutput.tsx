@@ -10,7 +10,13 @@ export function ClearOutputBlock({
   preview?: boolean;
 }) {
   return (
-    <BlockRoot block={block} preview={preview}>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      color="$blue"
+      colorTonal="$blueTonal"
+      onColor="$onBlue"
+    >
       <s.span>clear output</s.span>
     </BlockRoot>
   );

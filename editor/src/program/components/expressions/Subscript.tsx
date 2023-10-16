@@ -37,6 +37,9 @@ export function SubscriptExpression({
       parentId={parent?.id}
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
+      color="$violet"
+      colorTonal="$violetTonal"
+      onColor="$onViolet"
       enabled={!preview}
     >
       <DragHandle css={styles}>

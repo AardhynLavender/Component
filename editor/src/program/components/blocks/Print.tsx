@@ -23,12 +23,16 @@ export function PrintBlock({
       preview={preview}
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
+      color="$blue"
+      onColor="$onBlue"
+      colorTonal="$blueTonal"
     >
       <Print />
       <GenericExpression
         parent={parent}
         placeholder="message"
         expression={block.expression}
+        preview={preview}
       />
     </BlockRoot>
   );

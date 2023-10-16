@@ -21,6 +21,9 @@ export function AppendBlock({
     <BlockRoot
       block={block}
       preview={preview}
+      color="$violet"
+      colorTonal="$violetTonal"
+      onColor="$onViolet"
       css={{ items: 'center', direction: 'row', gap: 8 }}
     >
       <GenericExpression

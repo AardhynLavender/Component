@@ -1,7 +1,7 @@
 import { VariantProps } from '@stitches/react';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { s, styled, CSS } from 'theme/stitches.config';
-import { variables } from '../../program/components/types';
+import { variables, componentTypes } from '../../program/components/types';
 
 export function Button({
   children,
@@ -48,6 +48,11 @@ const colorVariants = {
       bg: '$background3',
       c: '$text',
       '&:hover': { background: '$background4' },
+    },
+    component: {
+      bg: '$componentTonal',
+      c: '$componentOnColor',
+      '&:hover': { bg: '$componentOnColor', c: '$componentBackground' },
     },
   },
 } as const;

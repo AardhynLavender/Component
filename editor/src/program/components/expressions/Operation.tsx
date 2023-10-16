@@ -39,6 +39,9 @@ export function BinaryExpression({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
+      color="$cyan"
+      colorTonal="$cyanTonal"
+      onColor="$onCyan"
     >
       <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
         <GenericExpression

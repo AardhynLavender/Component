@@ -22,7 +22,14 @@ export function BranchBlock({
   };
 
   return (
-    <BlockRoot block={block} preview={preview} overrideStyles>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      color="$lime"
+      colorTonal="$limeTonal"
+      onColor="$onLime"
+      overrideStyles
+    >
       <ConditionSectionRoot>
         <If />
         <GenericExpression
@@ -62,8 +69,9 @@ const ConditionSectionRoot = styled(s.div, {
   r: 4,
   fontFamily: '$mono',
   fontSize: '$1',
-  outline: '2px solid $outline',
-  bg: '$background',
+  c: '$componentOnColor',
+  outline: '2px solid $componentTonal',
+  bg: '$componentBackground',
 });
 
 const If = () => <s.span>if</s.span>;
@@ -78,8 +86,9 @@ function Else() {
         r: 4,
         fontFamily: '$mono',
         fontSize: '$1',
-        outline: '2px solid $outline',
-        bg: '$background',
+        c: '$componentOnColor',
+        outline: '2px solid $componentTonal',
+        bg: '$componentBackground',
       }}
     >
       else

@@ -59,6 +59,9 @@ export function ConditionExpression({
       dropPredicate={dropPredicate}
       locale={parent?.locale}
       enabled={!preview}
+      color="$green"
+      colorTonal="$greenTonal"
+      onColor="$onGreen"
     >
       <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
         {not && <BooleanOperation type={condition.type} />}
@@ -93,9 +96,9 @@ function BooleanOperation({ type }: { type: ConditionType }) {
     case 'not':
       return <span>not</span>;
     case 'eq':
-      return <span>equals</span>;
+      return <span>equal</span>;
     case 'ne':
-      return <span>is not</span>;
+      return <span>not equal</span>;
     case 'gt':
       return <span>{'>'}</span>;
     case 'lt':

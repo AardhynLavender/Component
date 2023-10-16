@@ -23,7 +23,14 @@ export function AssignmentBlock({
   const assignableLiteral = definition?.primitive ?? 'string';
 
   return (
-    <BlockRoot preview={preview} block={block} css={styles}>
+    <BlockRoot
+      preview={preview}
+      block={block}
+      css={styles}
+      color="$yellow"
+      colorTonal="$yellowTonal"
+      onColor="$onYellow"
+    >
       <GenericExpression
         parent={{
           id: block.id,

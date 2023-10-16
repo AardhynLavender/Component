@@ -16,44 +16,119 @@ export const lightTheme = createTheme('light', {
   colors: {
     light: '#fff',
     dark: '#24292e',
+
     text: '#24292e',
     text2: '#6a737c',
     text3: '#959da5',
+
     primary: '#117dff',
     primary2: '#0f69d5',
     onPrimary: '#fff',
+
     tonal: '#cfe4fc',
     tonal2: '#cfe4fc',
     outline: '#d0d7de',
     outline2: '#e6edf5',
+
     background: '#fff',
     background2: '#f6f8fa',
     background3: '#e1e4e8',
     background4: '#d1d5da',
+
     error: '#f2e1e3',
     onError: '#e35557',
+
+    blue: '#DFE7FF',
+    onBlue: '#0646FE',
+    blueTonal: '#7496F5',
+
+    green: '#B0FFD9',
+    onGreen: '#00891e',
+    greenTonal: '#4FD67D',
+
+    lime: '#D5FF9F',
+    onLime: '#3B520A',
+    limeTonal: '#B3D64F',
+
+    orange: '#ffe3d7',
+    onOrange: '#6D400A',
+    orangeTonal: '#FCA86B',
+
+    purple: '#efdbff',
+    onPurple: '#6B33B3',
+    purpleTonal: '#C57CFF',
+
+    yellow: '#FFEFB4',
+    onYellow: '#876900',
+    yellowTonal: '#FBD13A',
+
+    cyan: '#BBFBFF',
+    onCyan: '#004E52',
+    cyanTonal: '#04D9D9',
+
+    violet: '#E6DEFF',
+    onViolet: '#4F35BA',
+    violetTonal: '#A9A2FC',
   },
 });
 export const darkTheme = createTheme('dark', {
   colors: {
     light: '#fff',
     dark: '#12141a',
+
     text: '#fff',
     text2: '#c6cbd1',
     text3: '#959da5',
+
     primary: '#117dff',
     primary2: '#0f69d5',
     onPrimary: '#fff',
+
     tonal: '#cfe4fc',
     tonal2: '#fff',
+
     outline: '#1b1f23',
     outline2: '#2f363d',
+
     background: '#24292e',
     background2: '#1f2428',
     background3: '#2f363d',
     background4: '#3f4448',
+
     error: '#392d33',
     onError: '#f85c58',
+
+    blue: '#142046',
+    onBlue: '#D9E3FF',
+    blueTonal: '#3257BE',
+
+    green: '#0B3520',
+    onGreen: '#B3FFC4',
+    greenTonal: '#339955',
+
+    lime: '#313B25',
+    onLime: '#DEFF97',
+    limeTonal: '#87A62F',
+
+    orange: '#432102',
+    onOrange: '#FFD4A2',
+    orangeTonal: '#A54A2D',
+
+    purple: '#2A154D',
+    onPurple: '#E793FC',
+    purpleTonal: '#9C40E5',
+
+    yellow: '#382D05',
+    onYellow: '#FFEAA1',
+    yellowTonal: '#A7891D',
+
+    cyan: '#223B3C',
+    onCyan: '#B9FBFF',
+    cyanTonal: '#5B8F8F',
+
+    violet: '#1A173F',
+    onViolet: '#ECDEFF',
+    violetTonal: '#5A2CDD',
   },
 });
 
@@ -143,6 +218,7 @@ const config = createStitches({
       backgroundColor,
     }),
     c: (color: CssProp['color']) => ({ color }),
+    o: (opacity: CssProp['opacity']) => ({ opacity }),
 
     // Border
 
@@ -152,6 +228,7 @@ const config = createStitches({
     bb: (borderBottom: CssProp['borderBottom']) => ({ borderBottom }),
     bl: (borderLeft: CssProp['borderLeft']) => ({ borderLeft }),
     br: (borderRight: CssProp['borderRight']) => ({ borderRight }),
+    out: (outline: CssProp['outline']) => ({ outline }),
 
     // Shadow
 

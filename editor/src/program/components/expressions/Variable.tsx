@@ -26,13 +26,16 @@ export function VariableExpression({
       dropPredicate={parent?.dropPredicate}
       enabled={!preview}
       error={!variable}
+      color="$yellow"
+      colorTonal="$yellowTonal"
+      onColor="$onYellow"
     >
       <DragHandle css={{ d: 'flex', items: 'center', gap: 4 }}>
         {definition ? (
           <>
             <span>{definition.name}</span>
             <Colon />
-            <Badge color="neutral" size="small">
+            <Badge color="component" size="small">
               {definition.primitive}
             </Badge>
           </>

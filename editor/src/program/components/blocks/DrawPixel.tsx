@@ -34,6 +34,9 @@ export default function DrawPixelBlock({
       preview={preview}
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
+      color="$orange"
+      colorTonal="$orangeTonal"
+      onColor="$onOrange"
     >
       <DrawPixel />
       <GenericExpression

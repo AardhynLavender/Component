@@ -51,15 +51,23 @@ export function ListExpression({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       onDrop={handleNewItem}
+      color="$violet"
+      colorTonal="$violetTonal"
+      onColor="$onViolet"
       enabled={!preview}
     >
       <DragHandle css={styles}>
         {!preview && (
           <>
-            <IconButton css={newItemStyles} onClick={handleNewItem}>
+            <IconButton
+              color="component"
+              css={newItemStyles}
+              onClick={handleNewItem}
+            >
               <PlusIcon />
             </IconButton>
             <IconButton
+              color="component"
               css={newItemStyles}
               onClick={handleRemoveItem}
               disabled={expression.expression.length < 2}
@@ -101,5 +109,4 @@ const newItemStyles = {
   w: 48,
   h: 24,
   r: 4,
-  bg: '$background3',
 };

@@ -11,7 +11,14 @@ export function ForeverBlock({
   preview?: boolean;
 }) {
   return (
-    <BlockRoot block={block} preview={preview} overrideStyles>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      color="$purple"
+      colorTonal="$purpleTonal"
+      onColor="$onPurple"
+      overrideStyles
+    >
       <ForeverSection />
       {!preview && (
         <GenericBlockSet
@@ -36,8 +43,9 @@ function ForeverSection() {
         fontFamily: '$mono',
         fontSize: '$1',
 
-        bg: '$background',
-        outline: '2px solid $outline',
+        c: '$componentOnColor',
+        bg: '$componentBackground',
+        outline: '2px solid $componentTonal',
       }}
     >
       forever

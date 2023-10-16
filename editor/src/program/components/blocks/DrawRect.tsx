@@ -32,6 +32,9 @@ export default function DrawRectBlock({
       preview={preview}
       block={block}
       css={{ items: 'center', direction: 'row', gap: 8 }}
+      color="$orange"
+      colorTonal="$orangeTonal"
+      onColor="$onOrange"
     >
       <DrawRect />
       <GenericExpression

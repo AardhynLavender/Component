@@ -31,7 +31,14 @@ export function RepeatBlock({
   };
 
   return (
-    <BlockRoot block={block} preview={preview} overrideStyles>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      color="$purple"
+      colorTonal="$purpleTonal"
+      onColor="$onPurple"
+      overrideStyles
+    >
       <RepeatSection>
         <Repeat />
         <GenericExpression
@@ -62,6 +69,7 @@ const RepeatSection = styled('div', {
   fontFamily: '$mono',
   fontSize: '$1',
 
-  bg: '$background',
-  outline: '2px solid $outline',
+  c: '$componentOnColor',
+  bg: '$componentBackground',
+  outline: '2px solid $componentTonal',
 });
