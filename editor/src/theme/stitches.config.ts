@@ -87,8 +87,8 @@ export const darkTheme = createTheme('dark', {
     tonal: '#cfe4fc',
     tonal2: '#fff',
 
-    outline: '#1b1f23',
-    outline2: '#2f363d',
+    outline: '#505961',
+    outline2: '#3c434a',
 
     background: '#24292e',
     background2: '#1f2428',
