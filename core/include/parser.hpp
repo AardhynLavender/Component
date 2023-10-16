@@ -235,6 +235,6 @@ public:
     explicit Parser(Renderer& renderer);
 
     bool ParseComponent(Json& component);
-    void LoadProgram(const std::string components);
+    void ParseComponents(const std::string components);
     bool Next();
 };

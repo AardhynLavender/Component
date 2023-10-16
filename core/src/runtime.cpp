@@ -53,6 +53,7 @@ void Runtime::Cycle() {
 #endif // __NOEXCEPT__ == 1
 #endif // __NOEXCEPT__
   } catch (...) { 
+    // should never happen as all exceptions should derive `std::exception`...
     ClientPrint("An UNHANDLED exception was thrown while parsing AST"); 
   }
 }
@@ -67,7 +68,7 @@ void Runtime::Terminate() {
 void Runtime::Load(std::string ast) {
   try {
     if (ast.empty()) throw std::runtime_error("No program to load");
-    parser.LoadProgram(ast);
+    parser.ParseComponents(ast);
     Log("Load Successful");
   } catch(const std::exception& e) {
     Log(e.what());

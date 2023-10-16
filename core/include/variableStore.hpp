@@ -66,6 +66,11 @@ public:
 
     void Add(const std::string key, Variable variable);
 
+    inline void Empty() { 
+        store.clear();
+        stored = 0;
+    }
+
     template<typename T = Any>
     [[nodiscard]] std::string Add(const T value) {
         std::string primitive;

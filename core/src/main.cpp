@@ -67,7 +67,7 @@ void terminate() {
     runtime.Terminate();
 }
 
-void parse(std::string ast) {
+void load(std::string ast) {
     runtime.Load(ast);
     terminate();
     emscripten_set_main_loop(&mainLoop, USE_BROWSER_FPS, SIMULATE_INFINITE_LOOP);
@@ -102,7 +102,7 @@ void setSize(int width, int height) {
 }
 
 EMSCRIPTEN_BINDINGS(parser) { 
-    emscripten::function("Parse", &parse); 
+    emscripten::function("Load", &load); 
     emscripten::function("Terminate", &terminate);
 
     emscripten::function("ClearCanvas", &clearCanvas);

@@ -11,7 +11,7 @@ export type ScaleQuality = (typeof scaleQualities)[number];
  * @fn ClearCanvas Clears the canvas
  */
 export type CoreApi = {
-  readonly Parse: (program: string) => void;
+  readonly Load: (program: string) => void;
   readonly Terminate: () => void;
   readonly SetCanvasSize: (width: number, height: number) => void;
   readonly GetCanvasWidth: () => number;

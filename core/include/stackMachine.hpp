@@ -26,6 +26,7 @@ public:
   [[nodiscard]] Json* Next();
   void Push(Json& components);
   void Push();
+  inline void Empty() { while (!stacks.empty()) Pop(); }
   inline void PushBlock(Json& block) { stacks.top().Push(block); } // push a new block onto the top stack 
   inline void Jump(int instructions) { stacks.top().Jump(instructions); } // Jump `instructions` in the top stack
   [[nodiscard]] inline int Size() const { return stacks.size(); } // Get the number of stacks in the stack machine

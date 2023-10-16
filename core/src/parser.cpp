@@ -312,12 +312,16 @@ bool Parser::ParseComponent(Json& component) {
 
 // API //
 
-void Parser::LoadProgram(const std::string components) {
+void Parser::ParseComponents(const std::string components) {
   if (components.empty()) throw std::invalid_argument("Program must not be empty!");
   program = jsn::json::parse(components);
 
   if (!program.is_array()) throw std::invalid_argument("Program must be an array!");
   if (program.empty()) return;
+
+  // clear the environment
+  stackMachine.Empty();
+  store.Empty();
 
   // push the top stack
   stackMachine.Push(program); 
