@@ -218,7 +218,7 @@ export namespace Drag {
       isDragging: monitor.isDragging(),
     }));
 
-    if (!isDragging || !item) return null;
+    if (!isDragging || !item || !('component' in item)) return null;
 
     const position: CSSProperties = {
       left: currentOffset?.x,
