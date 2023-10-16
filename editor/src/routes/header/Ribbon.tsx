@@ -1,8 +1,7 @@
-import { CoreApi } from 'types/api';
 import useComponentStore from 'program/store';
 import { CSS, styled } from 'theme/stitches.config';
 import { IconButton } from 'components/ui/Button';
-import { loadFile, saveFile } from 'util/saveFile';
+import { loadFile, saveFile } from 'util/filesystem';
 import { DownloadIcon, TrashIcon, UploadIcon } from '@radix-ui/react-icons';
 import Spacer from 'components/util/Spacer';
 import { IsBlock } from '../../types/predicates';
