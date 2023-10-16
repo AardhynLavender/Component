@@ -49,7 +49,7 @@ export function BranchBlock({
             blocks={trueBranch ?? []}
             locale="true"
           />
-          <Else />
+          <Else used={!!falseBranch?.length} />
           <GenericBlockSet
             parentId={block.id}
             blocks={falseBranch ?? []}
@@ -76,19 +76,18 @@ const ConditionSectionRoot = styled(s.div, {
 
 const If = () => <s.span>if</s.span>;
 
-function Else() {
+function Else({ used }: { used: boolean }) {
   return (
     <s.span
       css={{
         d: 'inline-flex',
-        justify: 'lex-start',
         p: '4px 8px',
         r: 4,
         fontFamily: '$mono',
         fontSize: '$1',
-        c: '$componentOnColor',
-        outline: '2px solid $componentTonal',
-        bg: '$componentBackground',
+        c: used ? '$componentOnColor' : '$componentTonal',
+        outline: `2px ${used ? 'solid' : 'dashed'} $componentTonal`,
+        bg: used ? '$componentBackground' : 'transparent',
       }}
     >
       else
