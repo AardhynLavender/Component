@@ -1,10 +1,11 @@
-import { s, CSS, styled } from 'theme/stitches.config';
+import { styled } from 'theme/stitches.config';
 import useDragPanePrimitive from 'hooks/useDragPanePrimitive';
 import DragHandle from 'components/util/DragHandle';
-import { useRef } from 'react';
-import { Button, IconButton } from 'components/ui/Button';
+import { useRef, useEffect, useState } from 'react';
+import { IconButton } from 'components/ui/Button';
 import { H5 } from 'theme/Typography';
-import { ResetIcon } from '@radix-ui/react-icons';
+import { ArrowDownIcon, ResetIcon } from '@radix-ui/react-icons';
+import ScrollArea from 'components/ui/Scroll';
 
 export default function BottomPane() {
   const { bind, rangeConstraint, size } = useDragPanePrimitive(
@@ -21,6 +22,14 @@ export default function BottomPane() {
     else console.error('console reference was `null`!');
   };
 
+  const consoleWrapperRef = useRef<HTMLDivElement>(null);
+  const handleScrollEnd = () => {
+    if (consoleWrapperRef.current) {
+      consoleWrapperRef.current.scrollTop =
+        consoleWrapperRef.current.scrollHeight;
+    } else console.error('console wrapper reference was `null`!');
+  };
+
   return (
     <Root>
       <DragHandle {...bind()} size={4} anchor="top" />
@@ -32,11 +41,16 @@ export default function BottomPane() {
       >
         <Ribbon>
           <H5>Output</H5>
-          <IconButton size="medium" onClick={handleClear}>
+          <IconButton onClick={handleScrollEnd}>
+            <ArrowDownIcon />
+          </IconButton>
+          <IconButton onClick={handleClear}>
             <ResetIcon />
           </IconButton>
         </Ribbon>
-        <Console ref={consoleRef} id="component:console" />
+        <ScrollArea ref={consoleWrapperRef} css={{ pos: 'relative' }}>
+          <Console ref={consoleRef} id="component:console" />
+        </ScrollArea>
       </Content>
     </Root>
   );
@@ -56,7 +70,8 @@ const Content = styled('div', {
 
 const Ribbon = styled('div', {
   d: 'grid',
-  gridTemplateColumns: '1fr auto',
+  gap: 8,
+  gridTemplateColumns: '1fr auto auto',
 });
 
 const Console = styled('div', {
@@ -64,4 +79,12 @@ const Console = styled('div', {
   gap: 4,
   flexDirection: 'column',
   overflowY: 'auto',
+});
+
+const More = styled('div', {
+  pos: 'sticky',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 32,
 });

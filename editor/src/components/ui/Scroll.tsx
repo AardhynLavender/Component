@@ -1,29 +1,34 @@
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { ComponentProps } from '@stitches/react';
-import { ReactNode } from 'react';
-import { styled } from 'theme/stitches.config';
+import { forwardRef, ReactNode } from 'react';
+import { styled, CSS } from 'theme/stitches.config';
 
+type ScrollAreaProps = { children: ReactNode; css: CSS } & ComponentProps<
+  typeof ScrollArea.Root
+>;
 /**
  * ## Scroll
  * Augments native scroll functionality for custom, cross-browser styling.
  * @see https://www.radix-ui.com/primitives/docs/components/scroll-area
  */
-export default function Scroll({
-  children,
-  ...scrollRootProps
-}: { children: ReactNode } & ComponentProps<typeof ScrollAreaRoot>) {
-  return (
-    <ScrollAreaRoot {...scrollRootProps}>
-      <ScrollAreaViewport>{children}</ScrollAreaViewport>
-      <ScrollAreaScrollbar orientation="vertical">
-        <ScrollAreaThumb />
-      </ScrollAreaScrollbar>
-      <ScrollAreaScrollbar orientation="horizontal">
-        <ScrollAreaThumb />
-      </ScrollAreaScrollbar>
-    </ScrollAreaRoot>
-  );
-}
+const Scroll = forwardRef<HTMLDivElement, ScrollAreaProps>(
+  ({ children, css, ...scrollRootProps }, ref) => {
+    return (
+      <ScrollAreaRoot {...scrollRootProps}>
+        <ScrollAreaViewport ref={ref} css={css}>
+          {children}
+        </ScrollAreaViewport>
+        <ScrollAreaScrollbar orientation="vertical">
+          <ScrollAreaThumb />
+        </ScrollAreaScrollbar>
+        <ScrollAreaScrollbar orientation="horizontal">
+          <ScrollAreaThumb />
+        </ScrollAreaScrollbar>
+      </ScrollAreaRoot>
+    );
+  },
+);
+export default Scroll;
 
 export const SCROLLBAR_SIZE = 8;
 
