@@ -59,16 +59,11 @@ export function ListExpression({
       <DragHandle css={styles}>
         {!preview && (
           <>
-            <IconButton
-              color="component"
-              css={newItemStyles}
-              onClick={handleNewItem}
-            >
+            <IconButton color="component" onClick={handleNewItem}>
               <PlusIcon />
             </IconButton>
             <IconButton
               color="component"
-              css={newItemStyles}
               onClick={handleRemoveItem}
               disabled={expression.expression.length < 2}
             >
@@ -102,11 +97,4 @@ const styles = {
   d: 'flex',
   items: 'center',
   gap: 8,
-};
-
-const newItemStyles = {
-  b: 'none',
-  w: 48,
-  h: 24,
-  r: 4,
 };

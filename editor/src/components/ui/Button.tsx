@@ -94,9 +94,7 @@ const IconButtonRoot = styled(s.button, {
   items: 'center',
   justify: 'center',
   cursor: 'pointer',
-  h: 24,
   aspectRatio: 1,
-  r: 8,
 
   '&:hover': { background: '$background4' },
   '&:disabled': { opacity: 0.5 },
@@ -104,8 +102,8 @@ const IconButtonRoot = styled(s.button, {
 
   variants: {
     size: {
-      small: { h: 24 },
-      medium: { h: 32 },
+      small: { h: 24, w: 24, r: 4 },
+      medium: { h: 32, w: 32, r: 8 },
       expand: { flex: 1, aspectRatio: 'unset' },
     },
     ...colorVariants,
