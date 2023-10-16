@@ -16,7 +16,7 @@ export default function useAbstractSyntaxTree() {
   // load test program on mount
   const loadAst = (json: string) => {
     setAstString(json); // update local state regardless successful parse
-    ParserAst(json)
+    ParseAst(json)
       .then((program) => {
         loadProgram(program); // load program if parse is successful
         setError(false);
@@ -46,7 +46,7 @@ export default function useAbstractSyntaxTree() {
   };
 }
 
-function ParserAst(jsonAstString: string) {
+function ParseAst(jsonAstString: string) {
   return new Promise<Program>((resolve, reject) => {
     try {
       resolve(JSON.parse(jsonAstString));
