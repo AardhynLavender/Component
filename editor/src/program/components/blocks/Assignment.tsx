@@ -27,9 +27,9 @@ export function AssignmentBlock({
       preview={preview}
       block={block}
       css={styles}
-      color="$yellow"
-      colorTonal="$yellowTonal"
-      onColor="$onYellow"
+      color="$violet"
+      colorTonal="$violetTonal"
+      onColor="$onViolet"
     >
       <GenericExpression
         parent={{

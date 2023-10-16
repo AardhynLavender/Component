@@ -51,9 +51,9 @@ export function ListExpression({
       locale={parent?.locale}
       dropPredicate={parent?.dropPredicate}
       onDrop={handleNewItem}
-      color="$violet"
-      colorTonal="$violetTonal"
-      onColor="$onViolet"
+      color="$yellow"
+      colorTonal="$yellowTonal"
+      onColor="$onYellow"
       enabled={!preview}
     >
       <DragHandle css={styles}>

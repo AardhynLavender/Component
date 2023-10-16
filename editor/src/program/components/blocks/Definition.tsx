@@ -60,9 +60,9 @@ export function DefinitionBlock({
     <BlockRoot
       block={block}
       preview={preview}
-      color="$yellow"
-      colorTonal="$yellowTonal"
-      onColor="$onYellow"
+      color="$violet"
+      colorTonal="$violetTonal"
+      onColor="$onViolet"
       css={{ fd: 'row', items: 'center' }}
     >
       <Let />
