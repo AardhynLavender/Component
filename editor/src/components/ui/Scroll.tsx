@@ -3,7 +3,7 @@ import { ComponentProps } from '@stitches/react';
 import { forwardRef, ReactNode } from 'react';
 import { styled, CSS } from 'theme/stitches.config';
 
-type ScrollAreaProps = { children: ReactNode; css: CSS } & ComponentProps<
+type ScrollAreaProps = { children: ReactNode; css?: CSS } & ComponentProps<
   typeof ScrollArea.Root
 >;
 /**
