@@ -1,20 +1,9 @@
 import { CoreApi } from 'types/api';
 import useComponentStore from 'program/store';
 import { CSS, styled } from 'theme/stitches.config';
-import { Button, IconButton } from 'components/ui/Button';
-import useCoreModule from '../../hooks/useCoreModule';
-import {
-  DEFAULT_CANVAS_RESOLUTION,
-  DEFAULT_CANVAS_RATIO,
-} from '../../constants/program';
+import { IconButton } from 'components/ui/Button';
 import { loadFile, saveFile } from 'util/saveFile';
-import {
-  DownloadIcon,
-  PlayIcon,
-  StopIcon,
-  TrashIcon,
-  UploadIcon,
-} from '@radix-ui/react-icons';
+import { DownloadIcon, TrashIcon, UploadIcon } from '@radix-ui/react-icons';
 import Spacer from 'components/util/Spacer';
 import { IsBlock } from '../../types/predicates';
 import { Block } from 'types';
@@ -33,19 +22,6 @@ export default function Ribbon({ css }: { css: CSS }) {
     state.program,
     state.setProgram,
   ]);
-
-  const { module: core, error } = useCoreModule();
-  const handleRun = () => {
-    const ast = JSON.stringify(program?.ast);
-    core?.SetCanvasSize(
-      program?.canvas?.width ?? DEFAULT_CANVAS_RESOLUTION,
-      program?.canvas?.height ??
-        DEFAULT_CANVAS_RESOLUTION /
-          (DEFAULT_CANVAS_RESOLUTION / DEFAULT_CANVAS_RATIO),
-    );
-    core?.Parse(ast);
-  };
-  const handleTerminate = () => core?.Terminate();
 
   const handleDownload = () => {
     const ast = JSON.stringify(program?.ast, null, 2);
@@ -70,31 +46,18 @@ export default function Ribbon({ css }: { css: CSS }) {
     if (program) setProgram({ ...program, ast: [] });
   };
 
-  error && console.error(error);
-
   return (
     <Root css={css}>
-      {core && (
-        <>
-          <IconButton size="medium" color="neutral" onClick={handleClear}>
-            <TrashIcon />
-          </IconButton>
-          <Spacer width="sm" />
-          <IconButton size="medium" color="neutral" onClick={handleUpload}>
-            <UploadIcon />
-          </IconButton>
-          <IconButton size="medium" color="neutral" onClick={handleDownload}>
-            <DownloadIcon />
-          </IconButton>
-          <Spacer width="sm" />
-          <IconButton size="medium" color="neutral" onClick={handleTerminate}>
-            <StopIcon />
-          </IconButton>
-          <Button leadingIcon={<PlayIcon />} onClick={handleRun}>
-            <span>Run</span>
-          </Button>
-        </>
-      )}
+      <IconButton size="medium" color="neutral" onClick={handleClear}>
+        <TrashIcon />
+      </IconButton>
+      <Spacer width="sm" />
+      <IconButton size="medium" color="neutral" onClick={handleUpload}>
+        <UploadIcon />
+      </IconButton>
+      <IconButton size="medium" color="neutral" onClick={handleDownload}>
+        <DownloadIcon />
+      </IconButton>
     </Root>
   );
 }

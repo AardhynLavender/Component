@@ -1,3 +1,4 @@
+import { VariantProps } from '@stitches/react';
 import { s, CSS, styled } from 'theme/stitches.config';
 
 export const FIELD_HEIGHT = 16;
@@ -26,6 +27,7 @@ export default function Field({
   readOnly = false,
   disabled = false,
   css,
+  ...fieldProps
 }: {
   value: string;
   onValueChange?: (value: string) => void;
@@ -37,7 +39,7 @@ export default function Field({
   readOnly?: boolean;
   disabled?: boolean;
   css?: CSS;
-}) {
+} & VariantProps<typeof FieldRoot>) {
   return (
     <FieldRoot
       css={{
@@ -61,20 +63,31 @@ export default function Field({
       }
       onBlur={(e) => onBlur?.(e.target.value)}
       onChange={(e) => onValueChange?.(e.target.value)}
+      {...fieldProps}
     />
   );
 }
 const FieldRoot = styled(s.input, {
   all: 'unset',
   h: FIELD_HEIGHT,
+  d: 'inline-flex',
+  items: 'center',
   minW: 32,
   p: 4,
-  r: 4,
-  bg: '$background2',
   '&::placeholder': { c: '$text3' },
+
+  variants: {
+    variant: {
+      stealth: {},
+      tonal: { bg: '$background', r: 4 },
+      outlined: { r: 4, border: '1px solid $outline' },
+    },
+  },
+
+  defaultVariants: { variant: 'tonal' },
 });
 
-// @see https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp
+// see: https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp
 const hideNumberArrows: CSS = {
   '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
     '-webkit-appearance': 'none',

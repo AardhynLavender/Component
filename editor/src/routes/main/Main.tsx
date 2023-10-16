@@ -8,14 +8,44 @@ import Field from 'components/ui/Field';
 import Scroll from 'components/ui/Scroll';
 import BottomPane from 'routes/bottom/Bottom';
 import ErrorBoundary from 'exception/ErrorBoundary';
+import useCoreModule from '../../hooks/useCoreModule';
+import {
+  DEFAULT_CANVAS_RESOLUTION,
+  DEFAULT_CANVAS_RATIO,
+} from '../../constants/program';
+import { Button, IconButton } from 'components/ui/Button';
+import { PlayIcon, StopIcon } from '@radix-ui/react-icons';
 
 export default function Main({ css }: { css?: CSS }) {
-  // write changes persistently
+  const program = useComponentStore((state) => state.program);
+
+  const { module: core, error } = useCoreModule();
+  const handleRun = () => {
+    const ast = JSON.stringify(program?.ast);
+    core?.SetCanvasSize(
+      program?.canvas?.width ?? DEFAULT_CANVAS_RESOLUTION,
+      program?.canvas?.height ??
+        DEFAULT_CANVAS_RESOLUTION /
+          (DEFAULT_CANVAS_RESOLUTION / DEFAULT_CANVAS_RATIO),
+    );
+    core?.Parse(ast);
+  };
+  const handleTerminate = () => core?.Terminate();
+
   return (
     <Root css={css}>
       <Ribbon>
         <ProgramName />
-        <FakeNewProgramComponent />
+        {core && (
+          <>
+            <IconButton size="medium" color="neutral" onClick={handleTerminate}>
+              <StopIcon />
+            </IconButton>
+            <Button leadingIcon={<PlayIcon />} onClick={handleRun}>
+              <span>Run</span>
+            </Button>
+          </>
+        )}
       </Ribbon>
       <Scroll>
         <Canvas />
@@ -36,7 +66,8 @@ const Ribbon = styled(s.div, {
   gap: 8,
   h: 48,
   p: 8,
-  items: 'start',
+  justify: 'center',
+  items: 'center',
   bb: '1px solid $outline',
 });
 
@@ -75,32 +106,25 @@ function ProgramName() {
   ]);
 
   return (
-    <Field
-      css={{ bg: '$background2', p: 8 }}
-      value={name ?? 'untitled program'}
-      onValueChange={(value) => {
-        if (value !== name) {
-          setName(value);
-        }
-      }}
-    />
-  );
-}
-
-// todo: delete this
-function FakeNewProgramComponent() {
-  return (
-    <Field
-      value={'+'}
-      css={{
-        p: 8,
-        minW: 0,
-        w: 16,
-        textAlign: 'center',
-        c: '$text2',
-        pointerEvents: 'none',
-      }}
-      dynamicSize
-    />
+    <s.div css={{ flex: 1, d: 'flex', items: 'center', overflow: 'hidden' }}>
+      <Field
+        variant="stealth"
+        value={name ?? 'untitled program'}
+        dynamicSize
+        css={{
+          fontWeight: 700,
+          fontSize: 18,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          lineClamp: 1,
+          whiteSpace: 'nowrap',
+        }}
+        onValueChange={(value) => {
+          if (value !== name) {
+            setName(value);
+          }
+        }}
+      />
+    </s.div>
   );
 }
