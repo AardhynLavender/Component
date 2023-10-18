@@ -10,7 +10,13 @@ export function ExitBlock({
   preview?: boolean;
 }) {
   return (
-    <BlockRoot block={block} preview={preview}>
+    <BlockRoot
+      block={block}
+      preview={preview}
+      color="$background2"
+      colorTonal="$outline"
+      onColor="$text"
+    >
       <s.span>exit</s.span>
     </BlockRoot>
   );
