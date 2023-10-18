@@ -22,6 +22,7 @@ export const binaryOperators = [
   'divide',
   'modulo',
   'exponent',
+  'random',
 ] as const;
 export type OperatorType = (typeof binaryOperators)[number];
 
@@ -35,7 +36,6 @@ export const unaryOperators = [
   'ceil',
   'abs',
   'sqrt',
-  'random',
 ] as const;
 
 export const outputs = ['print', 'clear_output'] as const;
@@ -145,6 +145,7 @@ export type ListItem =
   | Variable
   | BinaryOperation
   | Subscript
+  | List
   | Condition
   | Exclude<UnaryOperation, Increment | Decrement>
   | null;
@@ -283,7 +284,6 @@ export type Ceil = ComponentPrimitive<'ceil', { expression: UnaryOperand }>;
 export type Abs = ComponentPrimitive<'abs', { expression: UnaryOperand }>;
 export type Sqrt = ComponentPrimitive<'sqrt', { expression: UnaryOperand }>;
 export type Log = ComponentPrimitive<'log', { expression: UnaryOperand }>;
-export type Random = ComponentPrimitive<'random', { expression: UnaryOperand }>;
 
 export type UnaryOperation =
   | Increment
@@ -296,8 +296,7 @@ export type UnaryOperation =
   | Ceil
   | Abs
   | Sqrt
-  | Log
-  | Random;
+  | Log;
 
 // Binary Operations //
 
@@ -322,13 +321,18 @@ export type Modulo = ComponentPrimitive<
   'modulo',
   { expression: NumericComparison }
 >;
+export type Random = ComponentPrimitive<
+  'random',
+  { expression: NumericComparison }
+>;
 export type BinaryOperation =
   | Add
   | Subtract
   | Multiply
   | Divide
   | Modulo
-  | Exponent;
+  | Exponent
+  | Random;
 
 // Output //
 

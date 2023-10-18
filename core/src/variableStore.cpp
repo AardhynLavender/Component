@@ -7,8 +7,8 @@ void Variable::Invariant(const std::string name, const std::string primitive) co
     throw BadDefinition(name, primitive);
 }
 
-Variable::Variable(const std::string name, const std::string primitive)
-: name(name), primitive(primitive) {
+Variable::Variable(const std::string key, const std::string name, const std::string primitive)
+: key(key), name(name), primitive(primitive) {
   Invariant(name, primitive);
   if (primitive == "string") value = std::string();
   else if (primitive == "number") value = 0;
@@ -16,8 +16,8 @@ Variable::Variable(const std::string name, const std::string primitive)
   else if (primitive == "list") value = Json::array(); // todo: use std::vector when we have a better value abstraction
 }
 
-Variable::Variable(const std::string name, const std::string primitive, const Any value)
-: name(name), primitive(primitive), value(value) {
+Variable::Variable(const std::string key, const std::string name, const std::string primitive, const Any value)
+: key(key), name(name), primitive(primitive), value(value) {
   Invariant(name, primitive);
 }
 

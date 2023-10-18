@@ -9,6 +9,8 @@
 #include <renderer.hpp>
 #include <blocks.hpp>
 #include <json.hpp>
+#include <random.hpp>
+
 
 class Parser final {
 private:
@@ -90,7 +92,7 @@ private:
         if (type == "min")          return std::min(lvalue, rvalue);
         if (type == "max")          return std::max(lvalue, rvalue);
 
-
+        if (type == "random")       return GenerateRandomNumber(lvalue, rvalue);
 
         throw std::invalid_argument("Invalid operation TYPE provided!");
     }
@@ -101,7 +103,7 @@ private:
 
         const auto list = ExtractValue<Json>(subscript["list"]);
         const auto& elements = list["expression"];
-        if (!elements.is_array()) throw std::runtime_error("value subscription must be LIST `list`!");
+        if (!elements.is_array()) throw std::runtime_error("value subscription must be `list`!"); // todo: subscript string literals and variables?
 
         const int size = elements.size();
         const auto index = (int)ExtractValue<double>(subscript["index"]); 
@@ -189,7 +191,8 @@ private:
             || type == "ceil"
             || type == "floor"
             || type == "min"
-            || type == "max";
+            || type == "max"
+            || type == "random";
     }
 
     [[nodiscard]] constexpr inline bool IsCondition(std::string_view type) const {

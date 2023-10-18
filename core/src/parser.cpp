@@ -12,7 +12,7 @@ void Parser::ParseDefinition(Json& definition) {
   using namespace std::string_literals;
   Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive);
 
-  store.Add(key, { name, primitive, value });
+  store.Add(key, { key, name, primitive, value });
 }
 
 void Parser::ParseAssignment(Json& assignment) {
@@ -30,7 +30,7 @@ void Parser::ParseAssignment(Json& assignment) {
 
 void Parser::ParseAppend(Json& append) {
   const std::string type = append["list"]["type"];
-  if (type != "variable") // todo: add `subscript` type
+  if (type != "variable") // todo: find a way to make `subscript` work here (appending into multidimensional arrays)
     throw std::invalid_argument("Append type must be either `variable`"); 
 
   // get list
@@ -69,7 +69,7 @@ void Parser::ParseRepeat(Json& repeat) {
   const int times = ExtractValue<int>(repetition);
 
   Json& components = repeat["components"];
-  if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is greater than MAX_REPEAT_LENGTH!");
+  if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is gre/ter than MAX_REPEAT_LENGTH!");
   if (!components.is_array()) throw std::invalid_argument("Repeat components must be an array!");
 
   stackMachine.Push(components); // create a new stack for the repeat block body

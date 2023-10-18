@@ -24,7 +24,7 @@ import Spacer from 'components/util/Spacer';
 
 const SPACER = '';
 const ComponentCategories = {
-  misc: ['comment'],
+  misc: ['comment', 'exit'],
   output: outputs,
   loops,
   rendering: renderers,
@@ -42,7 +42,7 @@ const ComponentCategories = {
 } as const;
 type ComponentCategory = keyof typeof ComponentCategories;
 
-const hiddenComponents: readonly ComponentType[] = ['size', 'random'];
+const hiddenComponents: readonly ComponentType[] = ['size'];
 function isHiddenComponent(type: ComponentType) {
   return !hiddenComponents.includes(type);
 }

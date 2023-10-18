@@ -238,7 +238,6 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'round':
     case 'sqrt':
     case 'log':
-    case 'random':
       component = {
         ...base(type),
         expression: { ...base('literal'), expression: null },
@@ -250,6 +249,7 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
     case 'divide':
     case 'modulo':
     case 'exponent':
+    case 'random':
       component = {
         ...base(type),
         expression: [

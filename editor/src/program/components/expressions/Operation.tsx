@@ -33,6 +33,8 @@ export function BinaryExpression({
       IsNumericVariable(c) || IsLiteral<number>(c) || IsOperation(c),
   };
 
+  const isRandom = block.type === 'random';
+
   return (
     <ExpressionDropzone
       parentId={parent?.id}
@@ -44,17 +46,20 @@ export function BinaryExpression({
       onColor="$onCyan"
     >
       <DragHandle css={{ d: 'flex', items: 'center', gap: 8 }}>
+        {isRandom && <s.span>random</s.span>}
         <GenericExpression
           expression={left}
           parent={{ ...props, locale: 'left' }}
           options={{ literals: ['number'] }}
+          placeholder={isRandom ? 'min' : ''}
           preview={preview}
         />
-        <Op type={block.type} />
+        {!isRandom && <Op type={block.type} />}
         <GenericExpression
           expression={right}
           parent={{ ...props, locale: 'right' }}
           options={{ literals: ['number'] }}
+          placeholder={isRandom ? 'max' : ''}
           preview={preview}
         />
       </DragHandle>
@@ -62,7 +67,7 @@ export function BinaryExpression({
   );
 }
 
-type OpType = BinaryOperation['type'];
+type OpType = Exclude<BinaryOperation['type'], 'random'>;
 const numericOperator: Record<OpType, string> = {
   add: '+',
   subtract: '-',

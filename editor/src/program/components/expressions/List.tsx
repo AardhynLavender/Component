@@ -65,7 +65,7 @@ export function ListExpression({
             <IconButton
               color="component"
               onClick={handleRemoveItem}
-              disabled={expression.expression.length < 2}
+              disabled={!expression.expression.length}
             >
               <MinusIcon />
             </IconButton>

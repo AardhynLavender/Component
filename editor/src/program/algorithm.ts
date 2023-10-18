@@ -116,6 +116,7 @@ export namespace algorithm {
       case 'divide':
       case 'modulo':
       case 'exponent':
+      case 'random':
         const [lvalue, rvalue] = state.expression;
         found ??= FindExpression(id, lvalue); // expression lvalue
         if (rvalue) found ??= FindExpression(id, rvalue); // optional expression rvalue
@@ -129,7 +130,6 @@ export namespace algorithm {
       case 'abs':
       case 'sqrt':
       case 'log':
-      case 'random':
         found ??= RemoveExpression(id, state.expression);
         break;
       case 'subscript':
@@ -248,6 +248,7 @@ export namespace algorithm {
         case 'divide':
         case 'modulo':
         case 'exponent':
+        case 'random':
           const [lvalue, rvalue] = draft.expression;
           draft.expression[0] = RemoveExpression(id, lvalue); // expression lvalue
           if (rvalue) draft.expression[1] = RemoveExpression(id, rvalue); // optional expression rvalue
@@ -261,7 +262,6 @@ export namespace algorithm {
         case 'abs':
         case 'sqrt':
         case 'log':
-        case 'random':
           draft.expression = RemoveExpression(id, draft.expression);
           break;
         case 'subscript':
@@ -382,6 +382,7 @@ export namespace algorithm {
         case 'divide':
         case 'modulo':
         case 'exponent':
+        case 'random':
           const [lvalue, rvalue] = draft.expression;
           draft.expression[0] = MutateExpression(id, lvalue, mutation); // expression lvalue
           if (rvalue)
@@ -396,7 +397,6 @@ export namespace algorithm {
         case 'abs':
         case 'sqrt':
         case 'log':
-        case 'random':
           draft.expression = MutateExpression(id, draft.expression, mutation);
           break;
         case 'subscript':
@@ -527,15 +527,14 @@ export namespace algorithm {
                 case 'append':
                   if (
                     locale === 'list' &&
-                    (IsVariable(component) ||
-                      IsList(component) ||
-                      IsSubscript(component))
+                    (IsVariable(component) || IsSubscript(component))
                   )
                     draft.list = component;
                   else if (
                     locale === 'item' &&
                     (IsVariable(component) ||
                       IsLiteral(component) ||
+                      IsList(component) ||
                       IsOperation(component) ||
                       IsCondition(component) ||
                       IsSubscript(component))
@@ -781,6 +780,7 @@ export namespace algorithm {
           case 'divide':
           case 'modulo':
           case 'exponent':
+          case 'random':
             const [lvalue, rvalue] = draft.expression;
             if (lvalue)
               draft.expression[0] = EmplaceExpression(emplacement, lvalue);
@@ -797,7 +797,6 @@ export namespace algorithm {
           case 'floor':
           case 'ceil':
           case 'log':
-          case 'random':
             // @ts-ignore
             if (draft.expression)
               draft.expression = EmplaceExpression(

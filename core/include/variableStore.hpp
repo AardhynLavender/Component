@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <tuple>
 #include <stdexcept>
 
 typedef std::variant<std::string, int, double, bool, Json> Any;
@@ -24,18 +25,20 @@ public:
 
 class Variable final {
 private:
+    std::string key; // unique identifier
+    std::string name; // user-defined name
     Any value;
     std::string primitive; // runtime type
-    std::string name; // user-defined name
 public:
     Variable() = delete;
-    Variable(const std::string name, const std::string primitive);
-    Variable(const std::string name, const std::string primitive, const Any value);
+    Variable(const std::string key, const std::string name, const std::string primitive);
+    Variable(const std::string key, const std::string name, const std::string primitive, const Any value);
 
     void Invariant(const std::string name, const std::string primitive) const; // throws `BadDefinition`
 
     [[nodiscard]] inline std::string GetName() const { return name; }
     [[nodiscard]] inline std::string GetPrimitive() const { return primitive; }
+    [[nodiscard]] inline std::string GetKey() const { return key; }
 
     template<typename T = Any>
     [[nodiscard]] inline constexpr const T& Get() const { 
@@ -81,7 +84,7 @@ public:
         else throw std::invalid_argument("Invalid type!");
 
         const auto key = std::to_string(stored);
-        Add(key, { key, primitive, value }); 
+        Add(key, { key, key, primitive, value }); 
 
         return key;
     }

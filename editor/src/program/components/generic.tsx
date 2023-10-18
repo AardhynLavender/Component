@@ -239,7 +239,6 @@ export function GetJsxComponent(
     case 'ceil':
     case 'round':
     case 'log':
-    case 'random':
       return <UnaryOperationExpression expression={component} {...stdProps} />;
     case 'add':
     case 'subtract':
@@ -247,6 +246,7 @@ export function GetJsxComponent(
     case 'divide':
     case 'modulo':
     case 'exponent':
+    case 'random':
       return <BinaryExpression block={component} {...stdProps} />;
 
     default:

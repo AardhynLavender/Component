@@ -12,8 +12,7 @@ export function AppendBlock({
   block: Append;
   preview?: boolean;
 }): ReactElement | null {
-  const listPredicate = (c: Component) =>
-    IsVariable(c) || IsList(c) || IsSubscript(c);
+  const listPredicate = (c: Component) => IsVariable(c);
   const itemPredicate = (c: Component) =>
     IsVariable(c) || IsList(c) || IsSubscript(c) || IsLiteral(c);
 
