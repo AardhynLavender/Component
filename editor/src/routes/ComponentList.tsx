@@ -42,7 +42,7 @@ const ComponentCategories = {
 } as const;
 type ComponentCategory = keyof typeof ComponentCategories;
 
-const hiddenComponents: readonly ComponentType[] = ['size'];
+const hiddenComponents: readonly ComponentType[] = ['size', 'repeat'];
 function isHiddenComponent(type: ComponentType) {
   return !hiddenComponents.includes(type);
 }
