@@ -78,13 +78,4 @@ const Console = styled('div', {
   display: 'flex',
   gap: 4,
   flexDirection: 'column',
-  overflowY: 'auto',
-});
-
-const More = styled('div', {
-  pos: 'sticky',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 32,
 });
