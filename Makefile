@@ -64,10 +64,10 @@ build-core: core
 
 	mkdir -p \
 		editor/public \
-		editor/src/modules;
+		editor/src/modules
 
 	mv core/out/core.mjs editor/src/modules
-	mv core/out/core.wasm editor/public;
+	mv core/out/core.wasm editor/public
 
 build-core-native: core
 	cd core \
