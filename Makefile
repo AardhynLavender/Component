@@ -25,7 +25,7 @@ stop:
 clean:
 	docker compose down \
 		--rmi all \
-		--remove-orphans \
+		--remove-orphans
 
 rebuild:
 	make clean \
@@ -64,10 +64,10 @@ build-core: core
 
 	mkdir -p \
 		editor/public \
-		editor/src/modules
+		editor/src/modules;
 
 	mv core/out/core.mjs editor/src/modules
-	mv core/out/core.wasm editor/public
+	mv core/out/core.wasm editor/public;
 
 build-core-native: core
 	cd core \
@@ -95,7 +95,7 @@ build-core-native: core
 			-D __DEBUG__=$(debug_mode) \
 			-D __NOEXCEPT__=$(no_except) \
 			-std=$(cpp_std)	\
-			-o out/component \
+			-o out/component
 
 install-editor: editor/package.json
 	cd editor \
@@ -111,8 +111,8 @@ run-editor: editor
 
 clean-core: core
 	rm editor/public/core.wasm \
-		editor/src/modules/core.mjs;
+		editor/src/modules/core.mjs
 
 clean-editor: editor
 	cd editor \
-		&& rm dist -rf;
+		&& rm dist -rf
