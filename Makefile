@@ -1,17 +1,6 @@
-.PHONY: start build stop clean rebuild
+include .env
 
-# https://emscripten.org/docs/optimizing/Optimizing-Code.html
-no_optimization = -O0 # for development builds
-low_optimization = -O1
-medium_optimization = -O2
-full_optimization = -O3 # for release builds
-
-# variables
-debug_mode = 0
-no_except = 1
-optimization_level = $(full_optimization)
-cpp_std = c++23
-module_name = LoadModule
+.PHONY: start build stop clean rebuild restart
 
 start:
 	docker compose up
@@ -32,6 +21,10 @@ rebuild:
 		&& make build \
 		&& make start
 
+restart:
+	make stop \
+		&& make rebuild
+
 build-core: core
 	cd core \
 		&& mkdir -p out \
@@ -47,27 +40,27 @@ build-core: core
 			src/renderer.cpp \
 			src/stackMachine.cpp \
 			src/variableStore.cpp \
-			-D __DEBUG__=$(debug_mode) \
-			-D __NOEXCEPT__=$(no_except) \
+			-D __DEBUG__=$(DEBUG_MODE) \
+			-D __NOEXCEPT__=$(NO_EXCEPT) \
 			-o out/core.mjs \
 			-I include \
 			--pre-js pre/pre.js \
 			--js-library lib/print.js \
-			$(optimization_level) \
+			-$(OPTIMIZATION_LEVEL) \
 			-l embind \
 			-s ENVIRONMENT='web' \
 			-s NO_DISABLE_EXCEPTION_CATCHING \
-			-s EXPORT_NAME=$(module_name) \
+			-s EXPORT_NAME=$(MODULE_NAME) \
 			-s USE_SDL=2 \
 			-s USE_ES6_IMPORT_META=0 \
-			-std=$(cpp_std)
+			-std=c++$(CPP_STD)
 
 	mkdir -p \
 		editor/public \
 		editor/src/modules
 
-	mv core/out/core.mjs editor/src/modules
-	mv core/out/core.wasm editor/public
+	cp core/out/core.mjs editor/src/modules
+	cp core/out/core.wasm editor/public
 
 build-core-native: core
 	cd core \
@@ -91,10 +84,10 @@ build-core-native: core
 			-I include \
 			-L lib \
 			-l SDL2 \
-			$(optimization_level) \
-			-D __DEBUG__=$(debug_mode) \
-			-D __NOEXCEPT__=$(no_except) \
-			-std=$(cpp_std)	\
+			-$(OPTIMIZATION_LEVEL) \
+			-D __DEBUG__=$(DEBUG_MODE) \
+			-D __NOEXCEPT__=$(NO_EXCEPT) \
+			-std=c++$(CPP_STD)	\
 			-o out/component \
 
 install-editor: editor/package.json

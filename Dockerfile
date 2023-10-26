@@ -1,5 +1,6 @@
 FROM emscripten/emsdk:latest
 WORKDIR /app
+COPY .env .
 COPY Makefile .
 
 # install dependencies
