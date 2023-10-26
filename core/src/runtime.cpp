@@ -43,7 +43,7 @@ void Runtime::Cycle() {
     }
     PresentCanvas();
   } catch (const std::exception& e) { 
-    const auto message = std::string{errorMessageStart} + std::string{e.what()} + std::string{errorMessageEnd};
+    const auto message = std::string{errorMessageStart} + "Parsing Block: " + std::string{parser.GetCurrentBlockId()} + "<br/>" + std::string{e.what()} + std::string{errorMessageEnd};
     ClientPrint(message); 
 #ifdef __NOEXCEPT__
 #if __NOEXCEPT__ == 1

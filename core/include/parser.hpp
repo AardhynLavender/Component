@@ -25,6 +25,8 @@ private:
     StackMachine stackMachine;
     VariableStore store;
 
+    std::string currentBlockId;
+
     [[nodiscard]] const Variable& ParseVariable(Json& expression) {
         const std::string key = expression["definitionId"];
         using namespace std::string_literals;
@@ -234,10 +236,13 @@ private:
 
     void ParseBranch(Json& branch);
     [[nodiscard]] bool ParseCondition(Json& conditional);
+
+    bool ParseComponent(Json& component);
 public:
     explicit Parser(Renderer& renderer);
 
-    bool ParseComponent(Json& component);
     void ParseComponents(const std::string components);
     bool Next();
+
+    inline std::string GetCurrentBlockId() const { return currentBlockId; }
 };
