@@ -133,7 +133,7 @@ void Parser::ParseJump(Json& jump) {
 
 void Parser::ParseConditionJump(Json& jump) {
   Json& condition = jump["condition"];
-  bool result = ParseCondition(condition);
+  bool result = ExtractValue<bool>(condition);
   if (result) ParseJump(jump);
 }
 
@@ -273,6 +273,8 @@ bool Parser::ParseComponent(Json& component) {
   
   using std::string_literals::operator""s;
   Log("Parsing `"s + type + "` component"s);
+
+  currentBlockId = component["id"].get<std::string>();
 
   if (type == "comment")                return true; // ignore comments
   else if (type == "exit")              return false; // stop parsing
