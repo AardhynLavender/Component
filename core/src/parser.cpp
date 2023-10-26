@@ -67,6 +67,8 @@ void Parser::ParseRepeat(Json& repeat) {
   Json& repetition = repeat["repetition"];
 
   const int times = ExtractValue<int>(repetition);
+  if (!times) return; // nothing to repeat
+  if (times < 0) throw std::range_error("Repeat TIMES is less than 0!");
 
   Json& components = repeat["components"];
   if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is gre/ter than MAX_REPEAT_LENGTH!");
