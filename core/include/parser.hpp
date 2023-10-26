@@ -43,20 +43,20 @@ private:
         if (primitive != "number")
             throw std::invalid_argument("Invalid TYPE for UNARY ARITHMETIC expression!");
 
-        ApplyUnaryArithmetic<O>(key, variable.Get<double>());
+        ApplyUnaryArithmetic<O>(key, variable.Get<int>());
     }
 
     template<Block::ArithmeticOperation O, Block::Arithmetic T>
     void ApplyUnaryArithmetic(const std::string key, const T& value) {
         T result;
-        if constexpr (O == Block::ArithmeticOperation::INC) result = value + 1.0;
-        else if constexpr (O == Block::ArithmeticOperation::DEC) result = value - 1.0;
+        if constexpr (O == Block::ArithmeticOperation::INC) result = value + 1;
+        else if constexpr (O == Block::ArithmeticOperation::DEC) result = value - 1;
         else throw std::invalid_argument("Invalid arithmetic operation provided!");
 
         store.Set(key, result);
     }
 
-    template<Block::Arithmetic T = double>
+    template<Block::Arithmetic T = int>
     [[nodiscard]] T ParseOperation(Json& operation) {
         const std::string type = operation["type"];
         auto expression = operation["expression"];
@@ -108,7 +108,7 @@ private:
         if (!elements.is_array()) throw std::runtime_error("value subscription must be `list`!"); // todo: subscript string literals and variables?
 
         const int size = elements.size();
-        const auto index = (int)ExtractValue<double>(subscript["index"]); 
+        const auto index = (int)ExtractValue<int>(subscript["index"]); 
         if (std::abs(index) >= size) throw std::out_of_range("Subscript INDEX is out of range!");
 
         auto element = index >= 0 ? elements[index] : elements[size + index];
@@ -133,8 +133,8 @@ private:
         if (type == "literal") {
             if constexpr (std::is_same_v<T, Any>) {
                 const auto value = expression["expression"];
-                if (value.is_number_integer()) return value.get<double>(); // let's just assume that all numbers are doubles...
-                if (value.is_number_float()) return value.get<double>();
+                if (value.is_number_integer()) return value.get<int>();
+                if (value.is_number_float()) return (int)value.get<double>(); // let's keep things simple... and use integral math
                 if (value.is_boolean()) return value.get<bool>();
                 if (value.is_string()) return value.get<std::string>();
                 throw std::invalid_argument("Invalid literal type provided!");
@@ -144,7 +144,7 @@ private:
 
         if (IsOperation(type)) {
             if constexpr (std::is_same_v<T, Any> || std::is_arithmetic_v<T>)
-                return ParseOperation<double>(expression);
+                return ParseOperation<int>(expression);
             else throw std::invalid_argument("unconstrained typename T is not arithmetic; Can't process operation!");
         } 
 
