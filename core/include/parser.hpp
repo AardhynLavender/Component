@@ -96,7 +96,7 @@ private:
         if (type == "min")          return std::min(lvalue, rvalue);
         if (type == "max")          return std::max(lvalue, rvalue);
 
-        if (type == "random")       return GenerateRandomNumber(lvalue, rvalue);
+        if (type == "random")       return Random::generate(lvalue, rvalue);
 
         throw std::invalid_argument("Invalid operation TYPE provided!");
     }
