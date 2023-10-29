@@ -11,9 +11,6 @@ Json Parser::ReserveArray(Json list, const std::string elementIdSalt) {
   auto fill = list["fill"];
   if (!fill.is_object()) throw std::invalid_argument("List fill must be an object!");
 
-  // reserve the fill if needed
-  if (fill["type"] == "list") fill = ReserveArray(fill, elementIdSalt);
-
   // get reserve
   const auto reserve = ExtractValue<int>(list["reserve"]);
   if (reserve < MIN_ARRAY_SIZE) throw std::range_error("List reserve is less than 0!");
@@ -22,7 +19,12 @@ Json Parser::ReserveArray(Json list, const std::string elementIdSalt) {
   // reserve array
   auto reservedArray = Json::array();
   for (size_t i = 0; i < reserve; ++i) {
-    auto value = CreateLiteral(fill); // compute the value of the fill each element
+    // reserve the fill if needed (yes, we do this for each element, a `random` or `increment` might be called downstream)
+    auto reservedFill = fill;
+    if (fill["type"] == "list")
+      reservedFill = ReserveArray(fill, elementIdSalt);
+
+    auto value = CreateLiteral(reservedFill); // compute the value of the fill each element
     value["id"] = elementIdSalt + std::to_string(i); // append the index to some salt to keep the id unique
     reservedArray.push_back(value);
   }
