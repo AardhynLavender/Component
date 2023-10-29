@@ -10,7 +10,7 @@ constexpr auto errorMessageStart = "<div style=\"color:var(--colors-onError);bac
 constexpr auto errorMessageEnd = "</div></div><br/><br/>";
 
 Runtime::Runtime()
-: window{ "Component", Window::centered, { DEFAULT_RESOLUTION, DEFAULT_RESOLUTION / DEFAULT_ASPECT_RATIO }, { .opengl = true } },
+: window{ "Component", Window::centered, { (int)DEFAULT_RESOLUTION, (int)(DEFAULT_RESOLUTION / DEFAULT_ASPECT_RATIO) }, { .opengl = true } },
   renderer{ window, { } }, 
   parser{ renderer },
   running{ false } {

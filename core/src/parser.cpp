@@ -173,10 +173,10 @@ void Parser::ParseConditionJump(Json& jump) {
 // Rendering //
 
 void Parser::ParseDrawLine(Json& draw) {
-  const auto x1 = ExtractValue<double>(draw["x1"]);
-  const auto y1 = ExtractValue<double>(draw["y1"]);
-  const auto x2 = ExtractValue<double>(draw["x2"]);
-  const auto y2 = ExtractValue<double>(draw["y2"]);
+  const auto x1 = ExtractValue<int>(draw["x1"]);
+  const auto y1 = ExtractValue<int>(draw["y1"]);
+  const auto x2 = ExtractValue<int>(draw["x2"]);
+  const auto y2 = ExtractValue<int>(draw["y2"]);
 
   const Vec2 start{ x1, y1 };
   const Vec2 end{ x2, y2 };
@@ -185,10 +185,10 @@ void Parser::ParseDrawLine(Json& draw) {
 }
 
 void Parser::ParseDrawRect(Json& draw) {
-  const auto x = ExtractValue<double>(draw["x"]);
-  const auto y = ExtractValue<double>(draw["y"]);
-  const auto w = ExtractValue<double>(draw["w"]);
-  const auto h = ExtractValue<double>(draw["h"]);
+  const auto x = ExtractValue<int>(draw["x"]);
+  const auto y = ExtractValue<int>(draw["y"]);
+  const auto w = ExtractValue<int>(draw["w"]);
+  const auto h = ExtractValue<int>(draw["h"]);
 
   const Rec2 rect{ { x, y }, { w, h } };
 
@@ -196,8 +196,8 @@ void Parser::ParseDrawRect(Json& draw) {
 }
 
 void Parser::ParseDrawPixel(Json& draw) {
-  const auto x = ExtractValue<double>(draw["x"]);
-  const auto y = ExtractValue<double>(draw["y"]);
+  const auto x = ExtractValue<int>(draw["x"]);
+  const auto y = ExtractValue<int>(draw["y"]);
 
   const Vec2 pixel{ x, y };
 

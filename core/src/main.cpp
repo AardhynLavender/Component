@@ -85,12 +85,12 @@ std::string getScaleQuality() {
 
 int getCanvasWidth() {
     const auto w = runtime.GetCanvasResolution().x;
-    return (int)w;
+    return w;
 }
 
 int getCanvasHeight() {
     const auto h = runtime.GetCanvasResolution().y;
-    return (int)h;
+    return h;
 }
 
 void clearCanvas() {
@@ -98,7 +98,7 @@ void clearCanvas() {
 }
 
 void setSize(int width, int height) {
-    runtime.SetCanvasResolution({ (double)width, (double)height });
+    runtime.SetCanvasResolution({ width, height });
 }
 
 EMSCRIPTEN_BINDINGS(parser) { 

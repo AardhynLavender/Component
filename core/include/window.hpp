@@ -48,7 +48,7 @@ public:
   Window& operator=(Window&& other) noexcept; // move assignment
   ~Window();
 
-  static inline Vec2 centered{ (double)SDL_WINDOWPOS_CENTERED, (double)SDL_WINDOWPOS_CENTERED };
+  static inline Vec2 centered{ SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED };
 
   [[nodiscard]] Vec2 Size() const;
   void SetSize(const Vec2 size);
