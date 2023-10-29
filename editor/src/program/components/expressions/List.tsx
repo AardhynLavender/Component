@@ -2,7 +2,14 @@ import { ReactElement, useEffect } from 'react';
 import { Drag } from 'util/Drag';
 import { IsLiteral } from 'types';
 import { ExpressionParent } from './types';
-import { Component, Expression, List, Subscript, ListItem } from '../types';
+import {
+  Component,
+  Expression,
+  List,
+  Subscript,
+  ListItem,
+  Literal,
+} from '../types';
 import { IsNumericVariable, IsVariable } from 'types/predicates';
 import { ExpressionDropzone } from 'program/components/dropzone';
 import { GenericExpression } from './Expression';
@@ -29,9 +36,14 @@ export function ListExpression({
     mutate(
       expression.id,
       produce(expression, (draft) => {
-        const item = { id: uuid(), type: 'literal', expression: '' };
-        // @ts-ignore
+        const item: Literal = { id: uuid(), type: 'literal', expression: '' };
         draft.expression.push(item);
+
+        // list has been provided initial elements, remove reservation
+        if (draft.expression.length) {
+          draft.fill = null;
+          draft.reserve = null;
+        }
       }),
     );
   };
@@ -39,8 +51,13 @@ export function ListExpression({
     mutate(
       expression.id,
       produce(expression, (draft) => {
-        // @ts-ignore
         draft.expression.pop();
+
+        // if the list is empty, we'll default reserve zero empty literals for the list
+        if (!draft.expression.length) {
+          draft.fill = { id: uuid(), type: 'literal', expression: '' };
+          draft.reserve = { id: uuid(), type: 'literal', expression: 0 };
+        }
       }),
     );
   };
@@ -71,25 +88,78 @@ export function ListExpression({
             </IconButton>
           </>
         )}
-        <span>list</span>
-        {expression.expression.map((item, index) => {
-          const parent = {
-            id: expression.id,
-            dropPredicate: IsExpression,
-            locale: index.toString(),
-          };
-
-          return (
-            <GenericExpression
-              key={index}
-              parent={parent}
-              expression={item}
-              preview={preview}
-            />
-          );
-        })}
+        {!expression.expression.length ? (
+          // Initialize a list of some size with some value
+          <ListSize expression={expression} preview={preview} />
+        ) : (
+          // provide an initial list of elements
+          <ListElements expression={expression} preview={preview} />
+        )}
       </DragHandle>
     </ExpressionDropzone>
+  );
+}
+
+function ListElements({
+  expression,
+  preview = false,
+}: {
+  expression: List;
+  preview?: boolean;
+}) {
+  return (
+    <>
+      <span> list </span>
+      {expression.expression.map((item, index) => {
+        const parent = {
+          id: expression.id,
+          dropPredicate: IsExpression,
+          locale: index.toString(),
+        };
+
+        return (
+          <GenericExpression
+            key={index}
+            parent={parent}
+            expression={item}
+            preview={preview}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function ListSize({
+  expression,
+  preview = false,
+}: {
+  expression: List;
+  preview?: boolean;
+}) {
+  return (
+    <>
+      <span>list sized </span>
+      <GenericExpression
+        expression={expression.reserve}
+        preview={preview}
+        parent={{
+          id: expression.id,
+          dropPredicate: IsExpression,
+          locale: 'reserve',
+        }}
+      />
+      <span> of </span>
+      <GenericExpression
+        expression={expression.fill}
+        preview={preview}
+        parent={{
+          id: expression.id,
+          dropPredicate: IsExpression,
+          locale: 'fill',
+        }}
+      />
+    </>
   );
 }
 

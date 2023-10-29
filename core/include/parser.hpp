@@ -15,6 +15,8 @@
 class Parser final {
 private:
     static constexpr int MAX_REPEAT_LENGTH = 2048;
+    static constexpr int MIN_ARRAY_SIZE = 0;
+    static constexpr int MAX_ARRAY_SIZE = 2048;
     static constexpr int MAX_BRANCHES = 2;
     static constexpr int LVALUE = 0;
     static constexpr int RVALUE = 1;
@@ -112,8 +114,40 @@ private:
         if (std::abs(index) >= size) throw std::out_of_range("Subscript INDEX is out of range!");
 
         auto element = index >= 0 ? elements[index] : elements[size + index];
-        Log(element);
         return ExtractValue<T>(element);
+    }
+
+    [[nodiscard]] Json CreateLiteral(Json& expression) {
+        Log("creating literal...");
+        Log(expression.dump());
+        auto value = ExtractValue(expression);
+
+        auto literal = Json::object();
+        literal["id"] = expression["id"]; // keep things simple... use the same id
+        literal["type"] = "literal";
+
+        if (std::holds_alternative<Json>(value)) {
+            auto json = std::get<Json>(value);
+            if (json.is_array()) {
+                literal["expression"] = Json::array();
+                for (auto& element : json)
+                    literal["expression"].push_back(CreateLiteral(element));
+            } else if (json["type"] == "literal")
+                literal["expression"] = json["expression"];
+            else
+                literal["expression"] = json;
+        } else if (std::holds_alternative<int>(value)) {
+            literal["expression"] = std::get<int>(value);
+        } else if (std::holds_alternative<double>(value))
+            literal["expression"] = std::get<double>(value);
+        else if (std::holds_alternative<bool>(value))
+            literal["expression"] = std::get<bool>(value);
+        else if (std::holds_alternative<std::string>(value))
+            literal["expression"] = std::get<std::string>(value);
+        else
+            throw std::invalid_argument("Invalid value TYPE provided!");
+
+        return literal;
     }
 
     template<typename T = Any>
@@ -132,14 +166,23 @@ private:
         
         if (type == "literal") {
             if constexpr (std::is_same_v<T, Any>) {
-                const auto value = expression["expression"];
-                if (value.is_number_integer()) return value.get<int>();
-                if (value.is_number_float()) return (int)value.get<double>(); // let's keep things simple... and use integral math
-                if (value.is_boolean()) return value.get<bool>();
-                if (value.is_string()) return value.get<std::string>();
+                auto value = expression["expression"];
+                if (value.is_null())            return ""s;
+                if (value.is_number_integer())  return value.get<int>();
+                if (value.is_number_float())    return (int)value.get<double>(); // let's keep things simple... and use integral math
+                if (value.is_boolean())         return value.get<bool>();
+                if (value.is_string())          return value.get<std::string>();
+
+                if (value.is_array())
+                    throw std::invalid_argument("Unexpected array literal outside of `list` expression");
+
+                if (value.is_object() && value["type"] == "list")
+                    return ExtractValue(value);
+
+                Log(value.dump());
                 throw std::invalid_argument("Invalid literal type provided!");
-            }
-            else return expression["expression"].get<T>();
+            } else 
+                return expression["expression"].get<T>();
         }
 
         if (IsOperation(type)) {
@@ -209,6 +252,8 @@ private:
             || type == "le"
             || type == "ge";
     }
+
+    [[nodiscard]] Json ReserveArray(Json list, const std::string elementIdSalt);
 
     void ParseDefinition(Json& definition);
     void ParseAssignment(Json& assignment);

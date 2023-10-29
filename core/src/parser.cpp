@@ -3,16 +3,51 @@
 
 // Variable and Definition //
 
+Json Parser::ReserveArray(Json list, const std::string elementIdSalt) { 
+  if (list["reserve"].is_null()) return list; // nothing to reserve
+
+  // get fill
+  if (list["fill"].is_null()) throw std::invalid_argument("Reserved list must have a `fill` value!");
+  auto fill = list["fill"];
+  if (!fill.is_object()) throw std::invalid_argument("List fill must be an object!");
+
+  // reserve the fill if needed
+  if (fill["type"] == "list") fill = ReserveArray(fill, elementIdSalt);
+
+  // get reserve
+  const auto reserve = ExtractValue<int>(list["reserve"]);
+  if (reserve < MIN_ARRAY_SIZE) throw std::range_error("List reserve is less than 0!");
+  if (reserve > MAX_ARRAY_SIZE) throw std::range_error("List reserve is greater than MAX_LIST_LENGTH!");
+
+  // reserve array
+  auto reservedArray = Json::array();
+  for (size_t i = 0; i < reserve; ++i) {
+    auto value = CreateLiteral(fill); // compute the value of the fill each element
+    value["id"] = elementIdSalt + std::to_string(i); // append the index to some salt to keep the id unique
+    reservedArray.push_back(value);
+  }
+  list["expression"] = reservedArray;
+
+  return list;
+}
+
 void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
   const std::string primitive = definition["primitive"];
-  auto value = ExtractValue(definition["expression"]);
 
   using namespace std::string_literals;
   Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive);
 
-  store.Add(key, { key, name, primitive, value });
+  if (primitive == "list") {
+    const auto expression = ExtractValue<Json>(definition["expression"]);
+    auto reservedArray = ReserveArray(expression, key);
+
+    store.Add(key, { key, name, primitive, reservedArray });
+  } else {
+    const auto value = ExtractValue(definition["expression"]);
+    store.Add(key, { key, name, primitive, value });
+  }
 }
 
 void Parser::ParseAssignment(Json& assignment) {
@@ -37,15 +72,11 @@ void Parser::ParseAppend(Json& append) {
   const std::string key = append["list"]["definitionId"];
   auto variable = ParseVariable(append["list"]);
   const auto primitive = variable.GetPrimitive();
-  Log(key);
-  Log(primitive);
   if (primitive != "list") throw std::invalid_argument("Appending variable must be of `list` primitive!");
   auto list = variable.Get<Json>();
   if (!list["expression"].is_array()) throw std::invalid_argument("Appending variable must be an array!");
 
-  Log(list);
   list["expression"].push_back(append["item"]);
-  Log(list);
 
   store.Set(key, list);
 
@@ -244,8 +275,12 @@ void Parser::PrintExpression(Json& expression) {
 
   else if (std::holds_alternative<Json>(value)) {
     const auto& expression = std::get<Json>(value);
+    Log(".");
+    Log(expression);
     const std::string type = expression["type"];
-    if (type == "list")
+
+    if (expression.is_null()) ClientPrint("null");
+    else if (type == "list")
       // recursively print each item in the list
       for (auto item : expression["expression"])
         PrintExpression(item);

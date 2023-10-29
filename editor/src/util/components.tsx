@@ -61,9 +61,17 @@ export function CreateComponent<T extends Component>(type: ComponentType): T {
         expression: [
           {
             ...base('literal'),
-            expression: null,
+            expression: '',
           },
         ],
+        reserve: {
+          ...base('literal'),
+          expression: 0,
+        },
+        fill: {
+          ...base('literal'),
+          expression: '',
+        },
       };
       break;
 
