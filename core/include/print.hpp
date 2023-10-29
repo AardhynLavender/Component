@@ -28,13 +28,16 @@ inline void Log(T value) {
 }
 
 /**
- * Log a message to the console with an indent
+ * Log a error to the console
  * @param value The message to log
- * @param indent The number of tabs to indent
  */
 template<typename T>
-void Log(T value, const int& indent) {
-    Log(std::string(indent, '\t') + value);
+inline void LogError(T value) { 
+#ifdef __DEBUG__
+#if __DEBUG__ == 1
+    std::cerr << value << "\n";
+#endif // __DEBUG__ == 1
+#endif // __DEBUG__
 }
 
 /**
