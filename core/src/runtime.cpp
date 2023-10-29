@@ -3,9 +3,11 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/bind.h>
 #endif // __EMSCRIPTEN__
-#include <timing.hpp>
 
-constexpr auto doneMessage = "<span style=\"color:var(--colors-text2);\">program completed</span><br/><br/>";
+constexpr auto startMessageStart = "<span style=\"color:var(--colors-text2);\">program started at ";
+constexpr auto startMessageEnd = "</span><br/><br/>";
+constexpr auto doneMessageStart = "<span style=\"color:var(--colors-text2);\">program completed in "; 
+constexpr auto doneMessageEnd = "</span><br/><br/>";
 constexpr auto errorMessageStart = "<div style=\"color:var(--colors-onError);background-color:var(--colors-error);border-radius:8px;padding:8px\"><strong>Component</strong> encountered an error:<div style=\"padding:8px;\">";
 constexpr auto errorMessageEnd = "</div></div><br/><br/>";
 
@@ -19,32 +21,35 @@ Runtime::Runtime()
 
 Runtime::~Runtime() { Terminate(); }
 
-void Runtime::Daemon() {
+void Runtime::Run() {
   running = true;
-#ifdef __EMSCRIPTEN__
-  // todo: bind cycle to emscripten main loop
-#else
+  runtime.Start();
+  #ifdef __EMSCRIPTEN__
+  emscripten_set_main_loop_arg(Cycle, this, USE_BROWSER_FPS, SIMULATE_INFINITE_LOOP);
+  #else
   while (running) Cycle();
-#endif // __EMSCRIPTEN__
+  #endif // __EMSCRIPTEN__
 }
 
 void Runtime::Cycle() {
-  using namespace std::chrono_literals;
-  const auto CLOCK_SPEED = 10ms;
-  const auto start = Timing::Now();
+  const auto start = Time::Now();
 
   try {
     // process as many instructions as possible in `CLOCK_SPEED` milliseconds
-    while (!Timing::Elapsed(start, CLOCK_SPEED)) {
+    while (!Time::Elapsed(start, CLOCK_SPEED)) {
       if (parser.Next()) continue; // next instruction
-      ClientPrint(doneMessage); 
+
       Terminate();
+      ClientPrint(doneMessageStart + runtime.ElapsedTimestamp() + doneMessageEnd); 
+
       break; // no more instructions, terminate
     }
+
     PresentCanvas();
   } catch (const std::exception& e) { 
     const auto message = std::string{errorMessageStart} + "Parsing Block: " + std::string{parser.GetCurrentBlockId()} + "<br/>" + std::string{e.what()} + std::string{errorMessageEnd};
     ClientPrint(message); 
+
 #ifdef __NOEXCEPT__
 #if __NOEXCEPT__ == 1
     // no recovery from exceptions, just terminate
@@ -54,7 +59,7 @@ void Runtime::Cycle() {
 #endif // __NOEXCEPT__
   } catch (...) { 
     // should never happen as all exceptions should derive `std::exception`...
-    ClientPrint("An UNHANDLED exception was thrown while parsing AST"); 
+    ClientPrint("An UNHANDLED exception was thrown while parsing"); 
   }
 }
 
@@ -63,6 +68,7 @@ void Runtime::Terminate() {
   emscripten_cancel_main_loop();
 #endif // __EMSCRIPTEN__
   running = false;
+  runtime.Stop();
 }
 
 void Runtime::Load(std::string ast) {

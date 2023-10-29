@@ -10,19 +10,10 @@
 #include <emscripten/bind.h>
 #endif // __EMSCRIPTEN__
 
-#ifdef __EMSCRIPTEN__
-
-constexpr int USE_BROWSER_FPS = 0; // run as fast as the browser wants to render (usually 60fps)
-constexpr int SIMULATE_INFINITE_LOOP = 0; // invoking `emscripten_main_loop()` is non-blocking
-
-#else
-
 constexpr int MIN_CMD_ARGS = 2;
 constexpr int MAX_CMD_ARGS = 2;
 constexpr int PROGRAM_NAME_ARG = 0;
 constexpr int PROGRAM_FILE_ARG = 1;
-
-#endif // __EMSCRIPTEN__
 
 Runtime runtime;
 
@@ -48,7 +39,7 @@ int main(int argc, char* argv[]) {
     const auto program = readFile(filepath);
 
     runtime.Load(program);
-    runtime.Daemon();
+    runtime.Run();
 
 #endif // __EMSCRIPTEN__
 
@@ -59,18 +50,14 @@ int main(int argc, char* argv[]) {
 
 #ifdef __EMSCRIPTEN__
 
-void mainLoop() { 
-    runtime.Cycle();
-}
-
 void terminate() {
     runtime.Terminate();
 }
 
-void load(std::string ast) {
+void run(std::string ast) {
+    terminate(); // terminate any existing program
     runtime.Load(ast);
-    terminate();
-    emscripten_set_main_loop(&mainLoop, USE_BROWSER_FPS, SIMULATE_INFINITE_LOOP);
+    runtime.Run();
 }
 
 void setScaleQuality(std::string quality) { 
@@ -102,7 +89,7 @@ void setSize(int width, int height) {
 }
 
 EMSCRIPTEN_BINDINGS(parser) { 
-    emscripten::function("Load", &load); 
+    emscripten::function("Run", &run); 
     emscripten::function("Terminate", &terminate);
 
     emscripten::function("ClearCanvas", &clearCanvas);

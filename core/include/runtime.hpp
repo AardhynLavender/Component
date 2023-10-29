@@ -2,11 +2,21 @@
 #include <renderer.hpp>
 #include <parser.hpp>
 #include <window.hpp>
+#include <time.hpp>
+#include <chrono>
 
 class Runtime final {
 private:
+  typedef void* RuntimePtr;
+
   static constexpr double DEFAULT_RESOLUTION = 1024.0;
   static constexpr double DEFAULT_ASPECT_RATIO = 16.0 / 9.0;
+  static constexpr std::chrono::milliseconds CLOCK_SPEED{10};
+
+  #ifdef __EMSCRIPTEN__
+  static constexpr int USE_BROWSER_FPS = 0;         // run as fast as the browser wants to render (usually 60fps)
+  static constexpr int SIMULATE_INFINITE_LOOP = 0;  // invoking `emscripten_main_loop()` is non-blocking
+  #endif // __EMSCRIPTEN__
 
   int angle = 0;
 
@@ -14,11 +24,15 @@ private:
   Renderer renderer;
   Parser parser;
   bool running = false;
+
+  Time::Timer runtime;
+
+  static inline void Cycle(RuntimePtr instance) { reinterpret_cast<Runtime*>(instance)->Cycle(); }
 public:
   Runtime();
   ~Runtime();
-
-  void Daemon();
+  
+  void Run();
   void Cycle();
   void Terminate();
   void Load(std::string ast);
