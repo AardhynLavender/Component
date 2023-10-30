@@ -144,6 +144,8 @@ export namespace algorithm {
           found ??= FindExpression(id, expression); // search expressions
           if (found) break; // early return
         }
+        found ??= FindExpression(id, state.reserve); // search second expression
+        found ??= FindExpression(id, state.fill); // search first expression
         break;
     }
     return found;
@@ -271,6 +273,8 @@ export namespace algorithm {
         case 'list':
           for (const [index, expression] of draft.expression.entries())
             draft.expression[index] = RemoveExpression(id, expression); // search expressions
+          draft.fill = RemoveExpression(id, draft.fill); // search first expression
+          draft.reserve = RemoveExpression(id, draft.reserve); // search second expression
           break;
       }
     });
@@ -410,6 +414,9 @@ export namespace algorithm {
               expression,
               mutation,
             ); // search expressions
+          draft.reserve = MutateExpression(id, draft.reserve, mutation);
+          draft.fill = MutateExpression(id, draft.fill, mutation);
+          break;
       }
     });
   }
@@ -729,7 +736,7 @@ export namespace algorithm {
             // @ts-ignore
             if (locale === 'left') draft.expression[0] = component;
             // @ts-ignore
-            else if (locale === 'right') draft.expression[1] = component;
+            if (locale === 'right') draft.expression[1] = component;
             break;
           case 'size':
             // @ts-ignore
@@ -756,9 +763,16 @@ export namespace algorithm {
             break;
           case 'list':
             const index = Number.parseInt(locale);
+            console.log('locale:', locale);
             if (!isNaN(index) && index >= 0 && index < draft.expression.length)
               // @ts-ignore
               draft.expression[index] = component;
+            if (locale === 'reserve')
+              // @ts-ignore
+              draft.reserve = component;
+            if (locale === 'fill')
+              // @ts-ignore
+              draft.fill = component;
             break;
         }
       });
@@ -816,18 +830,22 @@ export namespace algorithm {
             break;
           case 'list':
             if (draft.expression)
-              for (const [index, expression] of draft.expression.entries())
+              for (const [index, expression] of draft.expression.entries()) {
                 if (expression)
                   draft.expression[index] = EmplaceExpression(
                     emplacement,
                     expression,
                   );
+              }
+            if (draft.reserve)
+              draft.reserve = EmplaceExpression(emplacement, draft.reserve);
+            if (draft.fill)
+              draft.fill = EmplaceExpression(emplacement, draft.fill);
             break;
         }
       });
   }
 
-  // Please ensure that a move will be successful ( valid typing ) before deleting the original!
   export function Move(
     sourceId: string,
     destinationId: string | null,

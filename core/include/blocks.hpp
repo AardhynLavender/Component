@@ -78,6 +78,7 @@ namespace Block {
     if (!value && !variable) throw std::invalid_argument("JUMP instruction cannot be 0!");
 
     Json block;
+    block["id"] = "jmp";
     block["type"] = "jump";
 
     // Determine if the conditional is a variable or literal
@@ -98,6 +99,7 @@ namespace Block {
     if (!condition.is_object()) throw std::invalid_argument("CONDITIONAL_JUMP condition cannot be an object!");
 
     Json block = Jump<variable>(instructions);
+    block["id"] = "cjmp";
     block["type"] = "conditional_jump"; // change the type
     block["condition"] = condition;
 
@@ -107,6 +109,7 @@ namespace Block {
   template<ArithmeticOperation O, Arithmetic T = int>
   Json Incrementor(std::string key) {
     Json block;
+    block["id"] = "inc";
     if constexpr (O == ArithmeticOperation::INC) block["type"] = "increment";
     else if constexpr (O == ArithmeticOperation::DEC) block["type"] = "decrement";
     else throw std::invalid_argument("Invalid compile-time evaluated arithmetic operation!");

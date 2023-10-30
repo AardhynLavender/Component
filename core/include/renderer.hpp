@@ -56,7 +56,7 @@ public:
 
   inline Vec2 GetSize() const {
     if (auto size = SDL_Rect{}; !SDL_GetRendererOutputSize(renderer, &size.w, &size.h))
-      return { (double)size.w, (double)size.h };
+      return { size.w, size.h };
     throw SDL2Exception(SDL_GetError());
   }
   inline Vec2 SetSize(Vec2 size) {

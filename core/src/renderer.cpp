@@ -28,7 +28,7 @@ Renderer& Renderer::operator=(Renderer&& other) noexcept {
 
 void Renderer::DrawLine(const Vec2 a, const Vec2 b, const Color color) {
   SetColor(color);
-  if (SDL_RenderDrawLine(renderer, (int)a.x, (int)a.y, (int)b.x, (int)b.y))
+  if (SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y))
     throw SDL2Exception(SDL_GetError());
 }
 
@@ -47,6 +47,6 @@ void Renderer::DrawRect(const Rec2 rect, const Color color, const Color fill) {
 
 void Renderer::DrawPixel(const Vec2 vec, const Color color) {
   SetColor(color);
-  if (SDL_RenderDrawPoint(renderer, (int)vec.x, (int)vec.y))
+  if (SDL_RenderDrawPoint(renderer, vec.x, vec.y))
     throw SDL2Exception(SDL_GetError());
 }

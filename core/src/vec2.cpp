@@ -1,8 +1,8 @@
 #include <vec2.hpp>
 
-Vec2::Vec2(double x, double y) : x(x), y(y) { }
+Vec2::Vec2(int x, int y) : x(x), y(y) { }
 
-Vec2::Vec2() : x(0), y(0) { }
+Vec2::Vec2() : x(ORIGIN), y(ORIGIN) { }
 
 Vec2 Vec2::operator+(const Vec2& other) const {
   return { x + other.x, y + other.y };
@@ -20,11 +20,11 @@ Vec2 Vec2::operator/(const Vec2& other) const {
   return { x / other.x, y / other.y };
 }
 
-Vec2 Vec2::operator*(const double scalar) const {
+Vec2 Vec2::operator*(const int scalar) const {
   return { x * scalar, y * scalar };
 }
 
-Vec2 Vec2::operator/(const double scalar) const {
+Vec2 Vec2::operator/(const int scalar) const {
   return { x / scalar, y / scalar };
 }
 
@@ -52,13 +52,14 @@ Vec2& Vec2::operator/=(const Vec2& other) {
   return *this;
 }
 
-Vec2& Vec2::operator*=(const double scalar) {
+Vec2& Vec2::operator*=(const int scalar) {
   x *= scalar;
   y *= scalar;
   return *this;
 }
 
-Vec2& Vec2::operator/=(const double scalar) {
+// todo: integer division is not precise...
+Vec2& Vec2::operator/=(const int scalar) {
   x /= scalar;
   y /= scalar;
   return *this;

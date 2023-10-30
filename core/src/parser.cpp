@@ -3,16 +3,53 @@
 
 // Variable and Definition //
 
+Json Parser::ReserveArray(Json list, const std::string elementIdSalt) { 
+  if (list["reserve"].is_null()) return list; // nothing to reserve
+
+  // get fill
+  if (list["fill"].is_null()) throw std::invalid_argument("Reserved list must have a `fill` value!");
+  auto fill = list["fill"];
+  if (!fill.is_object()) throw std::invalid_argument("List fill must be an object!");
+
+  // get reserve
+  const auto reserve = ExtractValue<int>(list["reserve"]);
+  if (reserve < MIN_ARRAY_SIZE) throw std::range_error("List reserve is less than 0!");
+  if (reserve > MAX_ARRAY_SIZE) throw std::range_error("List reserve is greater than MAX_LIST_LENGTH!");
+
+  // reserve array
+  auto reservedArray = Json::array();
+  for (size_t i = 0; i < reserve; ++i) {
+    // reserve the fill if needed (yes, we do this for each element, a `random` or `increment` might be called downstream)
+    auto reservedFill = fill;
+    if (fill["type"] == "list")
+      reservedFill = ReserveArray(fill, elementIdSalt);
+
+    auto value = CreateLiteral(reservedFill); // compute the value of the fill each element
+    value["id"] = elementIdSalt + std::to_string(i); // append the index to some salt to keep the id unique
+    reservedArray.push_back(value);
+  }
+  list["expression"] = reservedArray;
+
+  return list;
+}
+
 void Parser::ParseDefinition(Json& definition) {
   const std::string key = definition["id"];
   const std::string name = definition["name"];
   const std::string primitive = definition["primitive"];
-  auto value = ExtractValue(definition["expression"]);
 
   using namespace std::string_literals;
   Log("Pushing variable `"s + key + "` ("s + name + ") of type `"s + primitive);
 
-  store.Add(key, { key, name, primitive, value });
+  if (primitive == "list") {
+    const auto expression = ExtractValue<Json>(definition["expression"]);
+    auto reservedArray = ReserveArray(expression, key);
+
+    store.Add(key, { key, name, primitive, reservedArray });
+  } else {
+    const auto value = ExtractValue(definition["expression"]);
+    store.Add(key, { key, name, primitive, value });
+  }
 }
 
 void Parser::ParseAssignment(Json& assignment) {
@@ -37,15 +74,11 @@ void Parser::ParseAppend(Json& append) {
   const std::string key = append["list"]["definitionId"];
   auto variable = ParseVariable(append["list"]);
   const auto primitive = variable.GetPrimitive();
-  Log(key);
-  Log(primitive);
   if (primitive != "list") throw std::invalid_argument("Appending variable must be of `list` primitive!");
   auto list = variable.Get<Json>();
   if (!list["expression"].is_array()) throw std::invalid_argument("Appending variable must be an array!");
 
-  Log(list);
   list["expression"].push_back(append["item"]);
-  Log(list);
 
   store.Set(key, list);
 
@@ -67,6 +100,8 @@ void Parser::ParseRepeat(Json& repeat) {
   Json& repetition = repeat["repetition"];
 
   const int times = ExtractValue<int>(repetition);
+  if (!times) return; // nothing to repeat
+  if (times < 0) throw std::range_error("Repeat TIMES is less than 0!");
 
   Json& components = repeat["components"];
   if (times < 0 || times > MAX_REPEAT_LENGTH) throw std::range_error("Repeat TIMES is gre/ter than MAX_REPEAT_LENGTH!");
@@ -133,17 +168,17 @@ void Parser::ParseJump(Json& jump) {
 
 void Parser::ParseConditionJump(Json& jump) {
   Json& condition = jump["condition"];
-  bool result = ParseCondition(condition);
+  bool result = ExtractValue<bool>(condition);
   if (result) ParseJump(jump);
 }
 
 // Rendering //
 
 void Parser::ParseDrawLine(Json& draw) {
-  const auto x1 = ExtractValue<double>(draw["x1"]);
-  const auto y1 = ExtractValue<double>(draw["y1"]);
-  const auto x2 = ExtractValue<double>(draw["x2"]);
-  const auto y2 = ExtractValue<double>(draw["y2"]);
+  const auto x1 = ExtractValue<int>(draw["x1"]);
+  const auto y1 = ExtractValue<int>(draw["y1"]);
+  const auto x2 = ExtractValue<int>(draw["x2"]);
+  const auto y2 = ExtractValue<int>(draw["y2"]);
 
   const Vec2 start{ x1, y1 };
   const Vec2 end{ x2, y2 };
@@ -152,10 +187,10 @@ void Parser::ParseDrawLine(Json& draw) {
 }
 
 void Parser::ParseDrawRect(Json& draw) {
-  const auto x = ExtractValue<double>(draw["x"]);
-  const auto y = ExtractValue<double>(draw["y"]);
-  const auto w = ExtractValue<double>(draw["w"]);
-  const auto h = ExtractValue<double>(draw["h"]);
+  const auto x = ExtractValue<int>(draw["x"]);
+  const auto y = ExtractValue<int>(draw["y"]);
+  const auto w = ExtractValue<int>(draw["w"]);
+  const auto h = ExtractValue<int>(draw["h"]);
 
   const Rec2 rect{ { x, y }, { w, h } };
 
@@ -163,8 +198,8 @@ void Parser::ParseDrawRect(Json& draw) {
 }
 
 void Parser::ParseDrawPixel(Json& draw) {
-  const auto x = ExtractValue<double>(draw["x"]);
-  const auto y = ExtractValue<double>(draw["y"]);
+  const auto x = ExtractValue<int>(draw["x"]);
+  const auto y = ExtractValue<int>(draw["y"]);
 
   const Vec2 pixel{ x, y };
 
@@ -242,8 +277,12 @@ void Parser::PrintExpression(Json& expression) {
 
   else if (std::holds_alternative<Json>(value)) {
     const auto& expression = std::get<Json>(value);
+    Log(".");
+    Log(expression);
     const std::string type = expression["type"];
-    if (type == "list")
+
+    if (expression.is_null()) ClientPrint("null");
+    else if (type == "list")
       // recursively print each item in the list
       for (auto item : expression["expression"])
         PrintExpression(item);
@@ -273,6 +312,8 @@ bool Parser::ParseComponent(Json& component) {
   
   using std::string_literals::operator""s;
   Log("Parsing `"s + type + "` component"s);
+
+  currentBlockId = component["id"].get<std::string>();
 
   if (type == "comment")                return true; // ignore comments
   else if (type == "exit")              return false; // stop parsing

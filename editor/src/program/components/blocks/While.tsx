@@ -1,18 +1,10 @@
 import { styled } from 'theme/stitches.config';
-import {
-  Component,
-  Forever,
-  IsCondition,
-  IsLiteral,
-  IsNumericVariable,
-  IsSubscript,
-} from 'types';
+import { Component, IsCondition, IsLiteral, IsSubscript } from 'types';
 import GenericBlockSet from './BlockSet';
 import { BlockRoot } from '../generic';
-import { ExpressionDropzone } from 'program/components/dropzone';
-import { ConditionExpression } from '.';
 import { While } from '../types';
 import { GenericExpression } from '../expressions/Expression';
+import { IsVariable } from '../../../types/predicates';
 
 export function WhileBlock({
   block,
@@ -22,7 +14,7 @@ export function WhileBlock({
   preview?: boolean;
 }) {
   const dropPredicate = (c: Component) =>
-    IsCondition(c) || IsCondition(c) || IsLiteral(c) || IsSubscript(c);
+    IsCondition(c) || IsLiteral(c) || IsSubscript(c) || IsVariable(c);
 
   const parent = {
     id: block.id,

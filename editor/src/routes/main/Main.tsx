@@ -28,7 +28,7 @@ export default function Main({ css }: { css?: CSS }) {
         DEFAULT_CANVAS_RESOLUTION /
           (DEFAULT_CANVAS_RESOLUTION / DEFAULT_CANVAS_RATIO),
     );
-    core?.Load(ast);
+    core?.Run(ast);
   };
   const handleTerminate = () => core?.Terminate();
 

@@ -150,7 +150,20 @@ export type ListItem =
   | Exclude<UnaryOperation, Increment | Decrement>
   | null;
 
-export type List = ComponentPrimitive<'list', { expression: ListItem[] }>;
+export type List = ComponentPrimitive<
+  'list',
+  {
+    expression: ListItem[];
+    reserve:
+      | Literal<number>
+      | Variable
+      | null
+      | Subscript
+      | BinaryOperation
+      | Exclude<UnaryOperation, Increment | Decrement>;
+    fill: ListItem | null;
+  }
+>;
 
 export type Subscript = ComponentPrimitive<
   'subscript',

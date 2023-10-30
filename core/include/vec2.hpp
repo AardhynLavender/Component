@@ -3,10 +3,12 @@
 
 // todo: template<std::arithmetic T>
 struct Vec2 {
-  double x;
-  double y;
+  inline static constexpr int ORIGIN = 0;
 
-  Vec2(double x, double y);
+  int x;
+  int y;
+
+  Vec2(int x, int y);
   Vec2();
 
   Vec2 operator+(const Vec2& other) const;
@@ -19,10 +21,10 @@ struct Vec2 {
   Vec2& operator*=(const Vec2& other);
   Vec2& operator/=(const Vec2& other);
 
-  Vec2 operator*(const double scalar) const;
-  Vec2 operator/(const double scalar) const;
-  Vec2& operator*=(const double scalar);
-  Vec2& operator/=(const double scalar);
+  Vec2 operator*(const int scalar) const;
+  Vec2 operator/(const int scalar) const;
+  Vec2& operator*=(const int scalar);
+  Vec2& operator/=(const int scalar);
 
   bool operator==(const Vec2& other) const;
   bool operator!=(const Vec2& other) const;

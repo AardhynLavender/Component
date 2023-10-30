@@ -46,7 +46,7 @@ build-core: core
 			-I include \
 			--pre-js pre/pre.js \
 			--js-library lib/print.js \
-			-$(OPTIMIZATION_LEVEL) \
+			-O$(OPTIMIZATION_LEVEL) \
 			-l embind \
 			-s ENVIRONMENT='web' \
 			-s NO_DISABLE_EXCEPTION_CATCHING \
@@ -84,7 +84,7 @@ build-core-native: core
 			-I include \
 			-L lib \
 			-l SDL2 \
-			-$(OPTIMIZATION_LEVEL) \
+			-O$(OPTIMIZATION_LEVEL) \
 			-D __DEBUG__=$(DEBUG_MODE) \
 			-D __NOEXCEPT__=$(NO_EXCEPT) \
 			-std=c++$(CPP_STD)	\
