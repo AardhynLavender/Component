@@ -55,9 +55,9 @@ It's possible to build the core as a headless CLI native executable.
 
 As I've avoided using **CMake** so far, the Makefile rule for native builds is hardcoded with **gcc** — I've not tested **Clang** at this stage, so make a PR if your _really_ want to use it.
 
-You will need to download and extract the [SDL2](https://www.libsdl.org/) library. **SDL** is not bundled with any compilers outside of emscripten that I known of.
+You will need to download and extract the [SDL2](https://www.libsdl.org/) library. **SDL** is not bundled with any compilers outside of emscripten that I know of.
 
-> Use the latest stable build of SDL2 for this project. My include headers are for this version, and I've not tested **SDL3** yet.
+> Use the latest stable build of **SDL2** for this project. My include headers are for this version, and I've not tested **SDL3** yet.
 
 #### Windows
 
