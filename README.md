@@ -44,7 +44,7 @@ View the [`Makefile`](./Makefile) for more build, execution, and cleaning rules.
 make install-editor # installs editor dependencies
 make build-core     # compiles core into wasm
 make build-editor   # builds the editor ( depends on core )
-make run-editor     # run on the configured port
+make run-editor     # run on the configured port ( 4096 )
 ```
 
 ### Native Core
@@ -73,17 +73,16 @@ Write a program in the web client, `download` it, and pass it to `component.exe`
 ./component.exe program.json
 ```
 
-#### MacOS
+#### Other Systems
 
-```
+> I've not tested compilation on MacOS or Linux distributions.
 
-```
+## References
 
-#### Linux
-
-```
-
-```
+|Tool|Description|
+|:---|:---|
+|GitHub Copilot|Aided in code generation|
+|ChatGPT|For boucinng ideas and issues off, never responsible for writing production code|
 
 ## License
 
